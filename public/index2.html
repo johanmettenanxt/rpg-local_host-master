@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RPG Battle</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: #fff; font-family: 'Arial', sans-serif; min-height: 100vh; padding: 20px; }
+        .hidden { display: none !important; }
+        .battle-container { background: #2a2a3e; border: 3px solid #ff6b6b; border-radius: 10px; padding: 20px; max-width: 600px; width: 100%; margin: 0 auto; box-shadow: 0 0 20px rgba(255,107,107,0.5); }
+        .battle-container.boss-fight { border-color: #ffd93d; box-shadow: 0 0 30px rgba(255,217,61,0.5); }
+        .battle-container.elite-fight { border-color: #ffd700; box-shadow: 0 0 30px rgba(255,215,0,0.5); }
+        .back-btn { margin-bottom: 15px; padding: 10px 15px; background: #ff6b6b; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .menu-btn { padding: 15px 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; }
+        .battle-header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #ff6b6b; padding-bottom: 15px; }
+        .battle-title { font-size: 24px; font-weight: bold; }
+        .level-info { font-size: 12px; color: #aaa; margin-top: 5px; }
+        .battle-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+        .player-stats, .enemy-stats { background: #1a1a2e; padding: 15px; border-radius: 8px; border-left: 4px solid #4ecdc4; }
+        .enemy-stats.boss-stats { border-left-color: #ffd93d; }
+        .enemy-stats.elite-stats { border-left-color: #ffd700; }
+        .stat-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .health-bar, .mana-bar { flex: 1; height: 20px; background: #333; border-radius: 5px; overflow: hidden; border: 1px solid #555; }
+        .health-fill { height: 100%; background: linear-gradient(90deg, #ff6b6b 0%, #ff8e8e 100%); border-radius: 5px; transition: width 0.3s ease; }
+        .health-fill.boss-health { background: linear-gradient(90deg, #ffd93d 0%, #ff8c00 100%); }
+        .health-fill.elite-health { background: linear-gradient(90deg, #ffd700 0%, #ffaa00 100%); }
+        .mana-fill { height: 100%; background: linear-gradient(90deg, #4ecdc4 0%, #6ee7de 100%); border-radius: 5px; transition: width 0.3s ease; }
+        .stat-text { min-width: 70px; text-align: right; font-size: 12px; color: #aaa; }
+        .combat-log-section { background: #1a1a2e; border: 2px solid #ff6b6b; border-radius: 8px; padding: 15px; margin-bottom: 15px; }
+        .combat-log-title { font-weight: bold; margin-bottom: 10px; color: #ff6b6b; }
+        .combat-log { height: 100px; overflow-y: auto; font-size: 12px; line-height: 1.6; color: #ccc; }
+        .turn-info { background: #1a1a2e; border-left: 4px solid #ffd93d; padding: 10px; margin-bottom: 20px; border-radius: 4px; font-size: 12px; color: #aaa; }
+        .abilities-section { margin-bottom: 20px; }
+        .ability-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 8px; }
+        .ability-row:last-child { grid-template-columns: repeat(5, 1fr); }
+        .ability-btn { padding: 12px 8px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; color: #fff; }
+        .ability-btn:hover:not(:disabled) { transform: translateY(-2px); }
+        .ability-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .strike { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .fireball { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .heal { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .stun { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+        .poison { background: linear-gradient(135deg, #a8e063 0%, #56ab2f 100%); }
+        .defend { background: linear-gradient(135deg, #30cfd0 0%, #330867 100%); }
+        .rage { background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%); }
+        .item { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
+        .flee { background: linear-gradient(135deg, #ff9a56 0%, #ff6a88 100%); }
+        .defeat-overlay, .victory-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 2000; }
+        .defeat-box, .victory-box { background: #2a2a3e; border: 3px solid #ff6b6b; border-radius: 15px; padding: 40px; text-align: center; }
+        .victory-box { border-color: #ffd93d; }
+        .defeat-box h2 { color: #ff6b6b; font-size: 36px; margin-bottom: 20px; }
+        .victory-box h2 { color: #ffd93d; font-size: 36px; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+<div id="battle-screen" class="battle-container">
+    <button class="back-btn" onclick="backToMenu()">← Back to Menu</button>
+    <div class="battle-header"><div class="battle-title" id="battle-type">⚔️ Battle</div></div>
+    <div class="battle-stats">
+        <div class="player-stats">
+            <div class="player-name">❤️ <span id="player-display-name">Player</span></div>
+            <div class="level-info">Level <span id="player-level">1</span> | EXP: <span id="player-exp">0</span>/<span id="player-exp-max">100</span></div>
+            <div class="stat-bar"><div class="health-bar"><div class="health-fill" id="player-health-fill"></div></div><div class="stat-text" id="player-health-text">100/100</div></div>
+            <div class="stat-bar"><div class="mana-bar"><div class="mana-fill" id="player-mana-fill"></div></div><div class="stat-text" id="player-mana-text">50/50</div></div>
+        </div>
+        <div class="enemy-stats" id="enemy-stats-panel">
+            <div class="enemy-name"><span id="enemy-display-name">Enemy</span></div>
+            <div class="level-info">Level <span id="enemy-level">1</span> | 💰 <span id="enemy-gold">0</span></div>
+            <div class="stat-bar"><div class="health-bar"><div class="health-fill" id="enemy-health-fill"></div></div><div class="stat-text" id="enemy-health-text">100/100</div></div>
+        </div>
+    </div>
+    <div class="combat-log-section"><div class="combat-log-title">⚔️ Combat Log</div><div class="combat-log" id="combat-log"></div></div>
+    <div class="turn-info" id="turn-info">Turn 1</div>
+    <div class="abilities-section">
+        <div class="ability-row">
+            <button class="ability-btn strike" id="strike-btn">⚔️ Strike</button>
+            <button class="ability-btn fireball" id="fireball-btn">🔥 Fireball</button>
+            <button class="ability-btn heal" id="heal-btn">💚 Heal</button>
+            <button class="ability-btn stun" id="stun-btn">⚡ Stun</button>
+        </div>
+        <div class="ability-row">
+            <button class="ability-btn poison" id="poison-btn">☠️ Poison</button>
+            <button class="ability-btn defend" id="defend-btn">🛡️ Defend</button>
+            <button class="ability-btn rage" id="rage-btn">😈 Rage</button>
+            <button class="ability-btn item" id="item-btn">📦 Item</button>
+            <button class="ability-btn flee" id="flee-btn">💨 Flee</button>
+        </div>
+    </div>
+</div>
+<div id="defeat-overlay" class="defeat-overlay hidden"><div class="defeat-box"><h2>💀 Defeated!</h2><button class="menu-btn" id="retry-btn">⚔️ Retry</button><button class="back-btn" id="defeat-back-btn" style="margin-top:10px;">← Menu</button></div></div>
+<div id="victory-overlay" class="victory-overlay hidden"><div class="victory-box"><h2>🏆 Victory!</h2><p id="victory-message"></p><button class="menu-btn" id="victory-continue-btn">Continue</button></div></div>
+
+<script src="gamestate.js"></script>
+<script>
+    var enemyDatabase = {
+        1:[{name:'Goblin',icon:'👹',healthMult:0.6,damageMult:0.6,goldMin:10,goldMax:15},{name:'Goblin Archer',icon:'🏹',healthMult:0.5,damageMult:0.7,goldMin:12,goldMax:18},{name:'Wild Boar',icon:'🐗',healthMult:0.8,damageMult:0.6,goldMin:15,goldMax:20},{name:'Dire Wolf',icon:'🐺',healthMult:0.7,damageMult:0.8,goldMin:18,goldMax:22},{name:'Troll',icon:'👹',healthMult:1.0,damageMult:0.8,goldMin:20,goldMax:25}],
+        5:[{name:'Orc Warrior',icon:'⚔️',healthMult:0.8,damageMult:0.9,goldMin:25,goldMax:35},{name:'Shadow Beast',icon:'👾',healthMult:0.9,damageMult:0.9,goldMin:28,goldMax:38},{name:'Giant Spider',icon:'🕷️',healthMult:0.7,damageMult:0.8,goldMin:22,goldMax:30},{name:'Stone Golem',icon:'🪨',healthMult:1.3,damageMult:0.7,goldMin:30,goldMax:40},{name:'Orc Shaman',icon:'🧙‍♂️',healthMult:0.6,damageMult:1.1,goldMin:35,goldMax:45}],
+        10:[{name:'Dark Knight',icon:'⚔️',healthMult:1.0,damageMult:1.0,goldMin:40,goldMax:55},{name:'Demon',icon:'👿',healthMult:1.0,damageMult:1.2,goldMin:45,goldMax:60},{name:'Wraith',icon:'😈',healthMult:0.8,damageMult:1.3,goldMin:50,goldMax:65},{name:'Void Beast',icon:'⬛',healthMult:1.2,damageMult:1.1,goldMin:42,goldMax:58},{name:'Skeleton Warrior',icon:'💀',healthMult:0.9,damageMult:1.0,goldMin:38,goldMax:50}],
+        20:[{name:'Wyvern',icon:'🐉',healthMult:1.2,damageMult:1.3,goldMin:60,goldMax:80},{name:'Lich Knight',icon:'💀',healthMult:1.1,damageMult:1.4,goldMin:65,goldMax:85},{name:'Nightmare Beast',icon:'😱',healthMult:1.4,damageMult:1.4,goldMin:70,goldMax:90},{name:'Infernal Guard',icon:'🔥',healthMult:1.3,damageMult:1.3,goldMin:55,goldMax:75},{name:'Shadow Lord',icon:'🖤',healthMult:1.3,damageMult:1.4,goldMin:75,goldMax:95}],
+        30:[{name:'Greater Demon',icon:'👿',healthMult:1.5,damageMult:1.7,goldMin:90,goldMax:120},{name:'Ancient Dragon',icon:'🐉',healthMult:1.7,damageMult:1.5,goldMin:100,goldMax:130},{name:'Reality Ripper',icon:'⚡',healthMult:1.4,damageMult:1.8,goldMin:95,goldMax:125},{name:'Arch Lich',icon:'💀',healthMult:1.3,damageMult:1.9,goldMin:110,goldMax:140},{name:'Void Lord',icon:'⬛',healthMult:1.6,damageMult:1.6,goldMin:105,goldMax:135}],
+        50:[{name:'Eldritch Abomination',icon:'👾',healthMult:2.0,damageMult:2.1,goldMin:150,goldMax:200},{name:'Void Emperor',icon:'⬛',healthMult:2.1,damageMult:2.1,goldMin:160,goldMax:210},{name:'Cosmic Horror',icon:'🌌',healthMult:2.0,damageMult:2.0,goldMin:145,goldMax:195},{name:'Apocalypse Herald',icon:'📯',healthMult:2.0,damageMult:2.2,goldMin:170,goldMax:220}],
+        75:[{name:'Transcendent Being',icon:'✨',healthMult:2.5,damageMult:2.5,goldMin:220,goldMax:300},{name:'Beyond Existence',icon:'🌌',healthMult:2.7,damageMult:2.7,goldMin:250,goldMax:330},{name:'Celestial Tyrant',icon:'⭐',healthMult:2.6,damageMult:2.6,goldMin:230,goldMax:310},{name:'God of Ruin',icon:'⚡',healthMult:2.8,damageMult:2.6,goldMin:260,goldMax:340}],
+        100:[{name:'The Eternal One',icon:'👑',healthMult:3.5,damageMult:3.5,goldMin:350,goldMax:500},{name:'The Infinite Terror',icon:'👻',healthMult:3.7,damageMult:3.7,goldMin:380,goldMax:530},{name:'Absolute Sovereign',icon:'⭐',healthMult:3.5,damageMult:3.8,goldMin:400,goldMax:550},{name:'Chaos Unbound',icon:'🌀',healthMult:3.8,damageMult:3.5,goldMin:420,goldMax:580}]
+    };
+
+    function BattleSystem(config) {
+        var self = this;
+        this.isBossFight = config.isBossFight || false;
+        this.isElite = false;
+        this.bossIndex = config.bossIndex;
+        this.worldLevel = config.worldLevel;
+        this.enemiesDefeated = 0; this.totalGoldEarned = 0;
+        this.poisonTurns = 0; this.poisonDamage = 0;
+
+        if (this.isBossFight) {
+            this.bossData = gameState.bosses[this.bossIndex]; this.worldLevel = this.bossData.worldLevel;
+            document.getElementById('battle-screen').classList.add('boss-fight');
+            document.getElementById('enemy-stats-panel').classList.add('boss-stats');
+            document.getElementById('battle-type').innerHTML = '👑 BOSS: ' + this.bossData.name;
+        } else {
+            var w = null;
+            for (var i = 0; i < gameState.worlds.length; i++) { if (gameState.worlds[i].level === this.worldLevel) { w = gameState.worlds[i]; break; } }
+            document.getElementById('battle-type').innerHTML = '⚔️ ' + (w ? w.name : 'World ' + this.worldLevel);
+        }
+
+        var bmh = gameState.player.maxHealth;
+        this.player = { name: gameState.player.name, level: gameState.player.level, maxHealth: bmh, health: bmh, maxMana: gameState.player.maxMana, mana: gameState.player.maxMana, defending: false, rage: 0 };
+        this.turn = 1; this.combatLog = []; this.gameActive = true;
+
+        this.initListeners = function() {
+            document.getElementById('strike-btn').onclick = function() { self.useAbility('strike'); };
+            document.getElementById('fireball-btn').onclick = function() { self.useAbility('fireball'); };
+            document.getElementById('heal-btn').onclick = function() { self.useAbility('heal'); };
+            document.getElementById('stun-btn').onclick = function() { self.useAbility('stun'); };
+            document.getElementById('poison-btn').onclick = function() { self.useAbility('poison'); };
+            document.getElementById('defend-btn').onclick = function() { self.useAbility('defend'); };
+            document.getElementById('rage-btn').onclick = function() { self.useAbility('rage'); };
+            document.getElementById('item-btn').onclick = function() { self.useAbility('item'); };
+            document.getElementById('flee-btn').onclick = function() { self.useAbility('flee'); };
+        };
+
+        this.spawnEnemy = function() {
+            if (self.isBossFight) {
+                var b = self.bossData;
+                self.enemy = { name: b.name, icon: b.icon, level: b.worldLevel, maxHealth: Math.floor(self.player.maxHealth*0.5*b.healthMult), health: Math.floor(self.player.maxHealth*0.5*b.healthMult), baseDamage: Math.floor(self.player.maxHealth*0.12*b.damageMult), goldMin: b.goldMin, goldMax: b.goldMax, isBoss: true, amulet: b.amulet, expReward: b.expReward };
+                document.getElementById('enemy-health-fill').classList.add('boss-health');
+            } else {
+                var enemies = enemyDatabase[self.worldLevel];
+                var tpl = enemies[Math.floor(Math.random() * enemies.length)];
+                self.isElite = Math.random() < 0.15;
+                var eliteMult = self.isElite ? 1.5 : 1;
+                var eliteGoldMult = self.isElite ? 2 : 1;
+                self.enemy = { name: (self.isElite ? '⭐ ' : '') + tpl.name, icon: tpl.icon, level: self.worldLevel, maxHealth: Math.floor(self.player.maxHealth*0.4*tpl.healthMult*eliteMult), health: Math.floor(self.player.maxHealth*0.4*tpl.healthMult*eliteMult), baseDamage: Math.floor(self.player.maxHealth*0.10*tpl.damageMult*eliteMult), goldMin: Math.floor(tpl.goldMin*eliteGoldMult), goldMax: Math.floor(tpl.goldMax*eliteGoldMult), isBoss: false, isElite: self.isElite };
+                if (self.isElite) {
+                    document.getElementById('battle-screen').classList.add('elite-fight');
+                    document.getElementById('enemy-stats-panel').classList.add('elite-stats');
+                    document.getElementById('enemy-health-fill').classList.add('elite-health');
+                }
+            }
+            self.poisonTurns = 0; self.poisonDamage = 0;
+        };
+
+        this.useAbility = function(key) {
+            if (!self.gameActive) return;
+            var costs = { strike: 0, fireball: 20, heal: 25, stun: 15, poison: 15, defend: 0, rage: 30, item: 0, flee: 0 };
+            if (costs[key] > self.player.mana) { self.addLog('⚠️ Not enough mana!'); return; }
+            self.player.mana = Math.max(0, self.player.mana - costs[key]);
+            var t = gameState.getTotalStats();
+            var msg = '';
+            var isCrit = Math.random() < 0.10;
+
+            if (key === 'strike') {
+                var baseDmg = self.rand([15, 25]) + Math.floor(t.damage * 0.5);
+                if (self.player.rage > 0) { baseDmg = Math.floor(baseDmg * 1.5); self.player.rage = 0; }
+                if (isCrit) baseDmg = Math.floor(baseDmg * 2);
+                self.enemy.health = Math.max(0, self.enemy.health - baseDmg);
+                msg = '⚔️ Strike: ' + baseDmg + ' dmg' + (isCrit ? ' 💥CRIT!' : '') + (self.player.rage > 0 ? '' : '');
+            } else if (key === 'fireball') {
+                var baseDmg = self.rand([30, 50]) + Math.floor(t.intelligence * 0.6);
+                if (self.player.rage > 0) { baseDmg = Math.floor(baseDmg * 1.5); self.player.rage = 0; }
+                if (isCrit) baseDmg = Math.floor(baseDmg * 2);
+                self.enemy.health = Math.max(0, self.enemy.health - baseDmg);
+                msg = '🔥 Fireball: ' + baseDmg + ' dmg' + (isCrit ? ' 💥CRIT!' : '');
+            } else if (key === 'heal') {
+                var h = self.rand([30, 50]); if (t.healBoost > 0) h = Math.floor(h * (1 + t.healBoost / 100));
+                self.player.health = Math.min(self.player.maxHealth, self.player.health + h);
+                msg = '💚 Heal: +' + h + ' HP';
+            } else if (key === 'stun') { self.enemy.stunned = true; msg = '⚡ ' + self.enemy.name + ' stunned!'; }
+            else if (key === 'poison') {
+                self.poisonTurns = 3;
+                self.poisonDamage = Math.floor(self.player.maxHealth * 0.03) + Math.floor(t.intelligence * 0.3);
+                msg = '☠️ Poisoned for 3 turns! (' + self.poisonDamage + ' dmg/turn)';
+            } else if (key === 'defend') { self.player.defending = true; msg = '🛡️ Defending!'; }
+            else if (key === 'rage') { self.player.rage = 1.5; msg = '😈 Rage! Next attack +50% dmg'; }
+            else if (key === 'item') { var h = self.rand([40, 80]); if (t.healBoost > 0) h = Math.floor(h * (1 + t.healBoost / 100)); self.player.health = Math.min(self.player.maxHealth, self.player.health + h); msg = '📦 Item: +' + h + ' HP'; }
+            else if (key === 'flee') { if (self.isBossFight) { msg = '🚫 Cannot flee!'; } else if (Math.random() < 0.4) { self.gameActive = false; self.endBattle(false); return; } else msg = '💨 Failed!'; }
+
+            self.addLog(msg); self.updateUI();
+            if (!self.gameActive) return;
+            setTimeout(function() { self.enemyTurn(); }, 500);
+        };
+
+        this.enemyTurn = function() {
+            if (!self.gameActive) return;
+            if (self.poisonTurns > 0) {
+                self.enemy.health = Math.max(0, self.enemy.health - self.poisonDamage);
+                self.addLog('☠️ Poison: ' + self.poisonDamage + ' dmg (' + (self.poisonTurns - 1) + 't left)');
+                self.poisonTurns--;
+                if (self.enemy.health <= 0) { self.enemy.health = 0; self.updateUI(); self.checkBattleEnd(); return; }
+            }
+            if (self.enemy.stunned) { self.addLog('⚡ Stunned!'); self.enemy.stunned = false; }
+            else {
+                var dmg = self.rand([self.enemy.baseDamage * 0.7, self.enemy.baseDamage * 1.3]);
+                if (self.player.defending) { dmg = Math.floor(dmg * 0.4); self.player.defending = false; self.addLog(self.enemy.icon + ' Attacks! Defended: ' + dmg + ' dmg'); }
+                else { self.player.health = Math.max(0, self.player.health - dmg); self.addLog(self.enemy.icon + ' Attacks: ' + dmg + ' dmg!'); }
+            }
+            self.player.mana = Math.min(self.player.maxMana, self.player.mana + 15);
+            self.turn++; self.updateUI(); self.checkBattleEnd();
+        };
+
+        this.checkBattleEnd = function() {
+            if (self.player.health <= 0) { self.addLog('💀 Defeated!'); self.gameActive = false; self.updateUI(); setTimeout(function() { self.showDefeat(); }, 600); }
+            else if (self.enemy.health <= 0) {
+                self.enemiesDefeated++;
+                if (self.isBossFight) { self.addLog('🏆 BOSS DEFEATED!'); self.bossReward(); }
+                else { self.addLog('✨ ' + self.enemy.name + ' defeated! (' + self.enemiesDefeated + ')'); self.reward(); self.spawnNext(); }
+            }
+        };
+
+        this.reward = function() {
+            var gr = self.rand([self.enemy.goldMin, self.enemy.goldMax]);
+            var bg = gameState.gainGold(gr);
+            var w = null; for (var i = 0; i < gameState.worlds.length; i++) { if (gameState.worlds[i].level === self.worldLevel) { w = gameState.worlds[i]; break; } }
+            gameState.gainExp(w ? w.baseExp : 50);
+            gameState.addKill();
+            self.totalGoldEarned += gr + bg;
+            var m = '💰 ' + gr + ' Gold!'; if (bg > 0) m += ' (+' + bg + ')'; self.addLog(m);
+            var dt = gameState.dropTables[self.worldLevel];
+            if (dt) { var roll = Math.random(); var cum = 0; for (var j = 0; j < dt.length; j++) { cum += dt[j].dropRate; if (roll < cum) { gameState.addDropToInventory(dt[j]); gameState.addMaterial(dt[j]); self.addLog('💎 ' + dt[j].name + '!'); break; } } }
+        };
+
+        this.bossReward = function() {
+            var gr = self.rand([self.enemy.goldMin, self.enemy.goldMax]), bg = gameState.gainGold(gr);
+            gameState.gainExp(self.enemy.expReward); gameState.addKill(); self.totalGoldEarned += gr + bg;
+            var m = '💰 ' + gr + ' Gold!'; if (bg > 0) m += ' (+' + bg + ')'; self.addLog(m + ' +' + self.enemy.expReward + ' EXP');
+            if (!gameState.player.bossDefeats[self.bossData.worldLevel]) {
+                gameState.player.bossDefeats[self.bossData.worldLevel] = true;
+                gameState.addToInventory({ id: self.enemy.amulet.id, name: self.enemy.amulet.name, icon: self.enemy.amulet.icon, description: self.enemy.amulet.description, stats: JSON.parse(JSON.stringify(self.enemy.amulet.stats)), type: 'amulet', price: 0, quantity: 1, unique: true });
+                gameState.saveToLocalStorage();
+                self.showVictory('🎉 First defeat! Earned ' + self.enemy.amulet.name + '!\n' + self.enemy.amulet.description);
+            } else { self.showVictory('💰 +' + (gr + bg) + ' Gold | +' + self.enemy.expReward + ' EXP'); }
+        };
+
+        this.showVictory = function(msg) { self.gameActive = false; self.updateUI(); document.getElementById('victory-message').textContent = msg; document.getElementById('victory-overlay').classList.remove('hidden'); document.getElementById('victory-continue-btn').onclick = function() { window.location.href = 'index.html'; }; };
+        this.showDefeat = function() { document.getElementById('defeat-overlay').classList.remove('hidden'); document.getElementById('retry-btn').onclick = function() { document.getElementById('defeat-overlay').classList.add('hidden'); self.restart(); }; document.getElementById('defeat-back-btn').onclick = function() { window.location.href = 'index.html'; }; };
+        this.restart = function() { self.player.health = self.player.maxHealth; self.player.mana = self.player.maxMana; self.player.defending = false; self.player.rage = 0; self.turn = 1; self.combatLog = []; self.gameActive = true; self.poisonTurns = 0; self.spawnEnemy(); self.updateUI(); self.updateCombatLog(); self.addLog('🔄 Ready!'); };
+        this.spawnNext = function() { self.addLog('🎪 New enemy!'); self.spawnEnemy(); self.turn = 1; self.updateUI(); };
+        this.endBattle = function(fled) { if (fled === undefined) fled = true; if (fled) self.addLog('💨 Fled! ' + self.enemiesDefeated + ' kills. ' + self.totalGoldEarned + 'g.'); setTimeout(function() { window.location.href = 'index.html'; }, 1500); };
+        this.rand = function(r) { return Math.floor(Math.random() * (r[1] - r[0] + 1)) + r[0]; };
+        this.addLog = function(m) { self.combatLog.push('[T' + self.turn + '] ' + m); if (self.combatLog.length > 15) self.combatLog.shift(); self.updateCombatLog(); };
+        this.updateCombatLog = function() { var el = document.getElementById('combat-log'); el.innerHTML = ''; for (var i = 0; i < self.combatLog.length; i++) el.innerHTML += '<div>' + self.combatLog[i] + '</div>'; el.scrollTop = el.scrollHeight; };
+        this.updateUI = function() {
+            document.getElementById('player-display-name').textContent = self.player.name;
+            document.getElementById('player-level').textContent = self.player.level;
+            document.getElementById('player-exp').textContent = gameState.player.exp;
+            document.getElementById('player-exp-max').textContent = gameState.player.expToNextLevel;
+            document.getElementById('enemy-display-name').textContent = self.enemy.icon + ' ' + self.enemy.name;
+            document.getElementById('enemy-level').textContent = self.enemy.level;
+            document.getElementById('enemy-gold').textContent = self.enemy.goldMin + '-' + self.enemy.goldMax;
+            document.getElementById('player-health-fill').style.width = (self.player.health / self.player.maxHealth * 100) + '%';
+            document.getElementById('player-health-text').textContent = self.player.health + '/' + self.player.maxHealth;
+            document.getElementById('enemy-health-fill').style.width = (self.enemy.health / self.enemy.maxHealth * 100) + '%';
+            document.getElementById('enemy-health-text').textContent = self.enemy.health + '/' + self.enemy.maxHealth;
+            document.getElementById('player-mana-fill').style.width = (self.player.mana / self.player.maxMana * 100) + '%';
+            document.getElementById('player-mana-text').textContent = self.player.mana + '/' + self.player.maxMana;
+            var ps = self.poisonTurns > 0 ? ' ☠️ P:' + self.poisonTurns + 't' : '';
+            document.getElementById('turn-info').textContent = 'Turn ' + self.turn + ' • Kills: ' + self.enemiesDefeated + ' • Gold: ' + self.totalGoldEarned + ps;
+            var btns = document.querySelectorAll('.ability-btn'); for (var i = 0; i < btns.length; i++) btns[i].disabled = !self.gameActive;
+        };
+
+        this.initListeners(); this.spawnEnemy(); this.updateUI();
+    }
+
+    function backToMenu() { window.location.href = 'index.html'; }
+    var params = new URLSearchParams(window.location.search);
+    var wp = params.get('world'), bp = params.get('boss');
+    if (bp !== null) new BattleSystem({ isBossFight: true, bossIndex: parseInt(bp) });
+    else if (wp !== null) new BattleSystem({ isBossFight: false, worldLevel: gameState.worlds[parseInt(wp)].level });
+</script>
+</body>
+</html>
