@@ -13,10 +13,12 @@
         .menu-buttons { display: flex; flex-direction: column; gap: 12px; }
         .menu-btn { padding: 14px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; border: none; border-radius: 8px; font-weight: bold; font-size: 15px; cursor: pointer; transition: all 0.3s ease; }
         .menu-btn:hover { transform: translateY(-3px); box-shadow: 0 5px 20px rgba(0,0,0,0.3); }
+        .menu-btn:active { transform: translateY(0); }
         .menu-btn.reset-btn { background: linear-gradient(135deg, #ff6b6b 0%, #c0392b 100%); }
         .menu-btn.boss-btn { background: linear-gradient(135deg, #f39c12 0%, #e74c3c 100%); }
         .menu-btn.amulet-btn { background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%); }
         .menu-btn.gamble-btn { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+        .menu-btn.minigames-btn { background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); }
         .menu-btn.small-btn { padding: 8px 16px; font-size: 13px; background: linear-gradient(135deg, #4ecdc4 0%, #2ecc71 100%); }
         .menu-btn.sell-btn { background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); }
         .menu-btn.equip-btn { background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%); }
@@ -26,7 +28,7 @@
         .modal-content { background: #2a2a3e; border: 3px solid #ff6b6b; border-radius: 15px; padding: 30px; max-width: 1000px; max-height: 85vh; overflow-y: auto; box-shadow: 0 0 30px rgba(255,107,107,0.5); position: relative; }
         .modal-content h2 { margin-bottom: 20px; color: #ff6b6b; font-size: 32px; }
         .modal-content p { margin-bottom: 20px; color: #aaa; }
-        .close-btn { position: absolute; top: 15px; right: 15px; background: #ff6b6b; color: #fff; border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 24px; cursor: pointer; z-index: 10; }
+        .close-btn { position: absolute; top: 15px; right: 15px; background: #ff6b6b; color: #fff; border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 24px; cursor: pointer; transition: all 0.3s ease; z-index: 10; }
         .close-btn:hover { transform: scale(1.1); }
         .world-grid, .boss-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
         .world-btn, .boss-btn-card { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; border: 2px solid #4ecdc4; border-radius: 10px; padding: 20px; cursor: pointer; transition: all 0.3s ease; text-align: center; font-weight: bold; }
@@ -34,13 +36,14 @@
         .world-btn:hover, .boss-btn-card:hover:not(.locked) { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.3); border-color: #ff6b6b; }
         .boss-btn-card.locked { opacity: 0.5; cursor: not-allowed; background: #444; border-color: #666; }
         .world-btn .level, .boss-btn-card .level { display: block; font-size: 24px; margin-bottom: 10px; }
+        .world-btn .difficulty, .boss-btn-card .difficulty { display: block; font-size: 12px; color: #aaa; }
         .world-btn .world-name { display: block; font-size: 14px; color: #4ecdc4; margin-bottom: 5px; }
         .boss-btn-card .boss-name { display: block; font-size: 14px; color: #ffd93d; }
         .boss-btn-card .amulet-info { display: block; font-size: 10px; color: #43e97b; margin-top: 5px; }
         .boss-btn-card .defeated-badge { display: inline-block; background: #43e97b; color: #1a1a2e; padding: 2px 8px; border-radius: 4px; font-size: 10px; margin-top: 5px; }
         .boss-btn-card .kills-needed { display: block; font-size: 10px; color: #e74c3c; margin-top: 5px; }
         .shop-info, .inventory-info { background: #1a1a2e; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-weight: bold; color: #ffd93d; font-size: 18px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
-        .inventory-mode-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
+        .inventory-mode-buttons { display: flex; gap: 10px; }
         .shop-category-section, .inventory-category-section { margin-bottom: 25px; }
         .shop-category-header, .inventory-category-header { color: #ff6b6b; font-size: 20px; font-weight: bold; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 2px solid #ff6b6b; }
         .shop-grid, .inventory-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
@@ -48,7 +51,7 @@
         .shop-item.locked-item { opacity: 0.4; cursor: not-allowed; border-color: #666; }
         .shop-item:hover:not(.locked-item), .inventory-item:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
         .shop-item-icon, .inventory-item-icon { font-size: 30px; margin-bottom: 6px; }
-        .shop-item-name, .inventory-item-name { font-weight: bold; margin-bottom: 4px; font-size: 11px; }
+        .shop-item-name, .inventory-item-name { font-weight: bold; margin-bottom: 4px; font-size: 12px; }
         .shop-item-price, .inventory-item-price { color: #ffd93d; font-weight: bold; font-size: 12px; margin-top: 4px; }
         .shop-item-desc, .inventory-item-desc { font-size: 10px; color: #aaa; margin-top: 2px; }
         .shop-item-stats, .inventory-item-stats { font-size: 10px; margin-top: 3px; }
@@ -64,13 +67,19 @@
         .gamble-options { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
         .gamble-btn-opt { background: #f59e0b; color: #1a1a2e; border: none; padding: 20px 25px; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; }
         .gamble-btn-opt:hover { transform: scale(1.05); box-shadow: 0 5px 20px rgba(245,158,11,0.5); }
-        .reset-confirm { text-align: center; } .reset-confirm h2 { color: #ff6b6b; } .reset-confirm .warning { color: #ffd93d; font-size: 18px; margin: 20px 0; }
+        .reset-confirm { text-align: center; }
+        .reset-confirm h2 { color: #ff6b6b; }
+        .reset-confirm .warning { color: #ffd93d; font-size: 18px; margin: 20px 0; }
         .reset-confirm-buttons { display: flex; gap: 15px; justify-content: center; margin-top: 20px; }
         .btn-yes { background: #ff6b6b; color: #fff; border: none; padding: 12px 30px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; }
         .btn-no { background: #4ecdc4; color: #fff; border: none; padding: 12px 30px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; }
+        .levelup-content { text-align: center; background: linear-gradient(135deg, #ff6b6b 0%, #f5576c 100%); border-color: #ffd93d; }
+        .levelup-content h2 { font-size: 48px; margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
+        #levelup-message { font-size: 24px; margin-bottom: 30px; }
         @media (max-width: 768px) { .shop-grid, .inventory-grid { grid-template-columns: repeat(3, 1fr); } }
         @media (max-width: 600px) {
-            .menu-content { padding: 25px; } .menu-content h1 { font-size: 32px; }
+            .menu-content { padding: 30px; } .menu-content h1 { font-size: 36px; }
+            .world-grid, .boss-grid { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); }
             .shop-grid, .inventory-grid { grid-template-columns: repeat(2, 1fr); }
         }
     </style>
@@ -85,6 +94,7 @@
             <button class="menu-btn" id="shop-btn">🏪 Shop</button>
             <button class="menu-btn amulet-btn" id="amulet-shop-btn">🔮 Amulet Shop</button>
             <button class="menu-btn gamble-btn" id="gamble-btn">🎰 Gamble</button>
+            <button class="menu-btn minigames-btn" id="minigames-btn">🎮 Minigames</button>
             <button class="menu-btn" id="inventory-btn">🎒 Inventory</button>
             <button class="menu-btn" id="stats-btn">📊 Stats</button>
             <button class="menu-btn reset-btn" id="reset-btn">🔄 Reset Game</button>
@@ -92,112 +102,222 @@
     </div>
 </div>
 
-<div id="world-picker" class="modal hidden"><div class="modal-content"><h2>🌍 Select Your World</h2><p>All worlds are open!</p><div class="world-grid" id="world-grid"></div><button class="close-btn" onclick="closeWorldPicker()">✕</button></div></div>
-<div id="boss-picker" class="modal hidden"><div class="modal-content"><h2>👑 World Bosses</h2><p>Total Kills: <strong id="total-kills-boss">0</strong></p><div class="boss-grid" id="boss-grid"></div><button class="close-btn" onclick="closeBossPicker()">✕</button></div></div>
-<div id="shop-modal" class="modal hidden"><div class="modal-content"><h2>🏪 Shop</h2><p>Kills: <strong id="total-kills-shop">0</strong></p><div class="shop-info"><span>💰 Gold: <span id="player-gold-shop">0</span></span></div><div id="shop-categories"></div><button class="close-btn" onclick="closeShop()">✕</button></div></div>
-<div id="amulet-shop-modal" class="modal hidden"><div class="modal-content"><h2>🔮 Amulet Shop</h2><div class="shop-info"><span>💰 Gold: <span id="player-gold-amulet">0</span></span></div><div id="amulet-shop-categories"></div><button class="close-btn" onclick="closeAmuletShop()">✕</button></div></div>
-<div id="gamble-modal" class="modal hidden"><div class="modal-content" style="text-align:center;"><h2>🎰 Gamble Vendor</h2><p>Risk your gold for a chance at rare loot!</p><div class="shop-info"><span>💰 Gold: <span id="player-gold-gamble">0</span></span></div><div class="gamble-options"><button class="gamble-btn-opt" onclick="doGamble(50)">💰 50g<br><small>Low risk</small></button><button class="gamble-btn-opt" onclick="doGamble(200)">💰 200g<br><small>Medium risk</small></button><button class="gamble-btn-opt" onclick="doGamble(500)">💰 500g<br><small>High risk</small></button><button class="gamble-btn-opt" onclick="doGamble(1000)">💰 1000g<br><small>Jackpot!</small></button></div><button class="close-btn" onclick="closeGamble()">✕</button></div></div>
+<div id="world-picker" class="modal hidden">
+    <div class="modal-content">
+        <h2>🌍 Select Your World</h2>
+        <p>All worlds are open! Higher levels = stronger enemies & better rewards.</p>
+        <div class="world-grid" id="world-grid"></div>
+        <button class="close-btn" onclick="closeWorldPicker()">✕</button>
+    </div>
+</div>
+
+<div id="boss-picker" class="modal hidden">
+    <div class="modal-content">
+        <h2>👑 World Bosses</h2>
+        <p>Bosses require kills to unlock. Total Kills: <strong id="total-kills-boss">0</strong></p>
+        <div class="boss-grid" id="boss-grid"></div>
+        <button class="close-btn" onclick="closeBossPicker()">✕</button>
+    </div>
+</div>
+
+<div id="shop-modal" class="modal hidden">
+    <div class="modal-content shop-content">
+        <h2>🏪 Shop</h2>
+        <p>Kills: <strong id="total-kills-shop">0</strong></p>
+        <div class="shop-info"><span>💰 Gold: <span id="player-gold-shop">0</span></span></div>
+        <div id="shop-categories"></div>
+        <button class="close-btn" onclick="closeShop()">✕</button>
+    </div>
+</div>
+
+<div id="amulet-shop-modal" class="modal hidden">
+    <div class="modal-content shop-content">
+        <h2>🔮 Amulet Shop</h2>
+        <p>Powerful amulets with unique stat bonuses!</p>
+        <div class="shop-info"><span>💰 Gold: <span id="player-gold-amulet">0</span></span></div>
+        <div id="amulet-shop-categories"></div>
+        <button class="close-btn" onclick="closeAmuletShop()">✕</button>
+    </div>
+</div>
+
+<div id="gamble-modal" class="modal hidden">
+    <div class="modal-content" style="text-align:center;">
+        <h2>🎰 Gamble Vendor</h2>
+        <p>Risk your gold for a chance at rare loot!</p>
+        <div class="shop-info"><span>💰 Gold: <span id="player-gold-gamble">0</span></span></div>
+        <div class="gamble-options">
+            <button class="gamble-btn-opt" onclick="doGamble(50)">💰 50g<br><small>Low risk</small></button>
+            <button class="gamble-btn-opt" onclick="doGamble(200)">💰 200g<br><small>Medium risk</small></button>
+            <button class="gamble-btn-opt" onclick="doGamble(500)">💰 500g<br><small>High risk</small></button>
+            <button class="gamble-btn-opt" onclick="doGamble(1000)">💰 1000g<br><small>Jackpot!</small></button>
+        </div>
+        <button class="close-btn" onclick="closeGamble()">✕</button>
+    </div>
+</div>
+
 <div id="inventory-modal" class="modal hidden">
     <div class="modal-content inventory-content">
         <h2>🎒 Inventory</h2>
-        <div class="inventory-info"><span>💰 Gold: <span id="player-gold-inv">0</span></span>
+        <div class="inventory-info">
+            <span>💰 Gold: <span id="player-gold-inv">0</span></span>
             <div class="inventory-mode-buttons">
-                <button class="menu-btn small-btn equip-btn" id="mode-equip-btn">⚔️ Equip</button>
-                <button class="menu-btn small-btn sell-btn" id="mode-sell-btn">💰 Sell</button>
-                <button class="menu-btn small-btn upgrade-btn" id="mode-upgrade-btn">⬆️ Upgrade</button>
-                <button class="menu-btn small-btn" id="mode-view-btn" style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);">👁️ View</button>
+                <button class="menu-btn small-btn equip-btn" id="mode-equip-btn">⚔️ Equip Mode</button>
+                <button class="menu-btn small-btn sell-btn" id="mode-sell-btn">💰 Sell Mode</button>
+                <button class="menu-btn small-btn upgrade-btn" id="mode-upgrade-btn">⬆️ Upgrade Mode</button>
+                <button class="menu-btn small-btn" id="mode-view-btn" style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);">👁️ View Mode</button>
             </div>
         </div>
-        <div class="inventory-info" style="background:#333;padding:8px;margin-bottom:20px;border-radius:6px;text-align:center;" id="inventory-mode-indicator"><span style="color:#4ecdc4;">👁️ View Mode</span></div>
+        <div class="inventory-info" style="background:#333; padding:8px; margin-bottom:20px; border-radius:6px; text-align:center;" id="inventory-mode-indicator">
+            <span style="color:#4ecdc4;">👁️ View Mode - Click an item to see details</span>
+        </div>
         <div id="inventory-categories"></div>
         <button class="close-btn" onclick="closeInventory()">✕</button>
     </div>
 </div>
-<div id="stats-modal" class="modal hidden"><div class="modal-content"><h2>📊 Player Stats</h2><div class="stats-display" id="stats-display"></div><button class="close-btn" onclick="closeStats()">✕</button></div></div>
-<div id="reset-modal" class="modal hidden"><div class="modal-content reset-confirm"><h2>⚠️ Reset Game?</h2><p class="warning">Delete ALL progress!</p><div class="reset-confirm-buttons"><button class="btn-yes" id="reset-confirm-yes">Yes</button><button class="btn-no" id="reset-confirm-no">No</button></div></div></div>
-<div id="reset-final-modal" class="modal hidden"><div class="modal-content reset-confirm"><h2>🛑 FINAL WARNING!</h2><p class="warning">Cannot be undone!</p><div class="reset-confirm-buttons"><button class="btn-yes" id="reset-final-yes">Reset</button><button class="btn-no" id="reset-final-no">Cancel</button></div></div></div>
+
+<div id="stats-modal" class="modal hidden">
+    <div class="modal-content stats-content">
+        <h2>📊 Player Stats</h2>
+        <div class="stats-display" id="stats-display"></div>
+        <button class="close-btn" onclick="closeStats()">✕</button>
+    </div>
+</div>
+
+<div id="levelup-modal" class="modal hidden">
+    <div class="modal-content levelup-content">
+        <h2>🎉 Level Up!</h2>
+        <div id="levelup-message"></div>
+        <button class="menu-btn" onclick="closeLevelUp()">Continue</button>
+    </div>
+</div>
+
+<div id="reset-modal" class="modal hidden">
+    <div class="modal-content reset-confirm">
+        <h2>⚠️ Reset Game?</h2>
+        <p class="warning">This will permanently delete ALL your progress, gold, inventory, and purchases!</p>
+        <p style="color:#aaa;">Are you absolutely sure you want to continue?</p>
+        <div class="reset-confirm-buttons">
+            <button class="btn-yes" id="reset-confirm-yes">Yes, Delete Everything</button>
+            <button class="btn-no" id="reset-confirm-no">No, Cancel</button>
+        </div>
+    </div>
+</div>
+
+<div id="reset-final-modal" class="modal hidden">
+    <div class="modal-content reset-confirm">
+        <h2>🛑 FINAL WARNING!</h2>
+        <p class="warning">This is your last chance! All your data will be erased forever.</p>
+        <p style="color:#ff6b6b; font-size: 16px;">This action CANNOT be undone!</p>
+        <div class="reset-confirm-buttons">
+            <button class="btn-yes" id="reset-final-yes">I Understand, Reset Everything</button>
+            <button class="btn-no" id="reset-final-no">Keep My Progress</button>
+        </div>
+    </div>
+</div>
 
 <script src="gamestate.js"></script>
 <script>
-    function showMainMenu() { document.getElementById('main-menu').classList.remove('hidden'); document.getElementById('world-picker').classList.add('hidden'); document.getElementById('boss-picker').classList.add('hidden'); }
-    function showWorldPicker() { document.getElementById('main-menu').classList.add('hidden'); document.getElementById('world-picker').classList.remove('hidden'); renderWorldGrid(); }
+    function showMainMenu() {
+        document.getElementById('main-menu').classList.remove('hidden');
+        document.getElementById('world-picker').classList.add('hidden');
+        document.getElementById('boss-picker').classList.add('hidden');
+    }
+
+    function showWorldPicker() {
+        document.getElementById('main-menu').classList.add('hidden');
+        document.getElementById('world-picker').classList.remove('hidden');
+        renderWorldGrid();
+    }
+
     function closeWorldPicker() { showMainMenu(); }
-    function showBossPicker() { document.getElementById('main-menu').classList.add('hidden'); document.getElementById('boss-picker').classList.remove('hidden'); renderBossGrid(); }
+
+    function showBossPicker() {
+        document.getElementById('main-menu').classList.add('hidden');
+        document.getElementById('boss-picker').classList.remove('hidden');
+        renderBossGrid();
+    }
+
     function closeBossPicker() { showMainMenu(); }
 
     function renderWorldGrid() {
         var grid = document.getElementById('world-grid'); grid.innerHTML = '';
-        gameState.worlds.forEach(function(world, index) {
+        for (var i = 0; i < gameState.worlds.length; i++) {
+            var world = gameState.worlds[i];
             var btn = document.createElement('button'); btn.className = 'world-btn';
-            btn.innerHTML = '<span class="level">Lvl ' + world.level + '</span><span class="world-name">' + world.name + '</span><span class="difficulty" style="font-size:12px;color:#aaa;">' + world.difficulty + '</span>';
-            btn.onclick = (function(i) { return function() { gameState.saveToLocalStorage(); window.location.href = 'index2.html?world=' + i; }; })(index);
+            btn.innerHTML = '<span class="level">Lvl ' + world.level + '</span><span class="world-name">' + world.name + '</span><span class="difficulty">' + world.difficulty + '</span>';
+            btn.onclick = (function(idx) { return function() { gameState.saveToLocalStorage(); window.location.href = 'index2.html?world=' + idx; }; })(i);
             grid.appendChild(btn);
-        });
+        }
     }
 
     function renderBossGrid() {
         var grid = document.getElementById('boss-grid'); grid.innerHTML = '';
         document.getElementById('total-kills-boss').textContent = gameState.player.totalKills;
-        gameState.bosses.forEach(function(boss, index) {
+        for (var i = 0; i < gameState.bosses.length; i++) {
+            var boss = gameState.bosses[i];
             var btn = document.createElement('button'); btn.className = 'boss-btn-card';
             var defeated = gameState.player.bossDefeats && gameState.player.bossDefeats[boss.worldLevel];
             var unlocked = gameState.player.totalKills >= boss.killsRequired;
             if (!unlocked && !defeated) btn.classList.add('locked');
             var html = '<span class="level">Lvl ' + boss.worldLevel + '</span><span class="boss-name">' + boss.icon + ' ' + boss.name + '</span><span class="amulet-info">🏆 ' + boss.amulet.name + '</span>';
             if (defeated) html += '<span class="defeated-badge">✅ Defeated</span>';
-            if (!unlocked && !defeated) html += '<span class="kills-needed">🔒 ' + boss.killsRequired + ' kills</span>';
+            if (!unlocked && !defeated) html += '<span class="kills-needed">🔒 ' + boss.killsRequired + ' kills needed</span>';
             html += '<span style="display:block;font-size:10px;color:#ffd93d;margin-top:5px;">💰 ' + boss.goldMin + '-' + boss.goldMax + ' Gold</span>';
             btn.innerHTML = html;
-            if (unlocked || defeated) btn.onclick = (function(i) { return function() { gameState.saveToLocalStorage(); window.location.href = 'index2.html?boss=' + i; }; })(index);
+            if (unlocked || defeated) { btn.onclick = (function(idx) { return function() { gameState.saveToLocalStorage(); window.location.href = 'index2.html?boss=' + idx; }; })(i); }
             grid.appendChild(btn);
-        });
+        }
     }
 
-    function showShop() { document.getElementById('shop-modal').classList.remove('hidden'); renderShop(); }
+    function showShop() { document.getElementById('shop-modal').classList.remove('hidden'); renderShop(false); }
     function closeShop() { document.getElementById('shop-modal').classList.add('hidden'); }
-    function showAmuletShop() { document.getElementById('amulet-shop-modal').classList.remove('hidden'); renderAmuletShop(); }
+    function showAmuletShop() { document.getElementById('amulet-shop-modal').classList.remove('hidden'); renderShop(true); }
     function closeAmuletShop() { document.getElementById('amulet-shop-modal').classList.add('hidden'); }
     function showGamble() { document.getElementById('gamble-modal').classList.remove('hidden'); document.getElementById('player-gold-gamble').textContent = gameState.player.gold; }
     function closeGamble() { document.getElementById('gamble-modal').classList.add('hidden'); }
+
     function doGamble(amount) {
-        closeGamble();
-        var r = gameState.gamble(amount);
-        alert(r.message);
-    }
-    function renderShop() {
-        var container = document.getElementById('shop-categories');
-        document.getElementById('player-gold-shop').textContent = gameState.player.gold;
-        document.getElementById('total-kills-shop').textContent = gameState.player.totalKills;
-        container.innerHTML = '';
-        if (gameState.shops.length === 0) { container.innerHTML = '<div class="empty-inventory">Sold out!</div>'; return; }
-        var categories = [
-            { name: '⚔️ Melee Weapons', filter: function(i) { return i.category === 'melee' && !i.requirement; }, borderColor: '#ff6b6b' },
-            { name: '🏹 Ranged Weapons', filter: function(i) { return i.category === 'ranged' && !i.requirement; }, borderColor: '#43e97b' },
-            { name: '🔮 Magic Weapons', filter: function(i) { return i.category === 'magic' && !i.requirement; }, borderColor: '#a366ff' },
-            { name: '🛡️ Armor', filter: function(i) { return i.type === 'armor' && !i.requirement; }, borderColor: '#4ecdc4' },
-            { name: '🧪 Consumables', filter: function(i) { return i.type === 'consumable'; }, borderColor: '#ffd93d' },
-            { name: '🌟 Special Items', filter: function(i) { return i.requirement; }, borderColor: '#a855f7' }
-        ];
-        categories.forEach(function(cat) {
-            var items = gameState.shops.filter(cat.filter);
-            if (items.length === 0) return;
-            appendShopSection(container, cat.name, items, cat.borderColor, false);
-        });
+        var result = gameState.gamble(amount);
+        document.getElementById('gamble-modal').classList.add('hidden');
+        alert(result.message);
     }
 
-    function renderAmuletShop() {
-        var container = document.getElementById('amulet-shop-categories');
-        document.getElementById('player-gold-amulet').textContent = gameState.player.gold;
+    function renderShop(isSpecial) {
+        isSpecial = isSpecial || false;
+        var container = isSpecial ? document.getElementById('amulet-shop-categories') : document.getElementById('shop-categories');
+        var goldEl = isSpecial ? document.getElementById('player-gold-amulet') : document.getElementById('player-gold-shop');
+        var shopList = isSpecial ? gameState.specialShop : gameState.shops;
+        goldEl.textContent = gameState.player.gold;
+        if (!isSpecial) document.getElementById('total-kills-shop').textContent = gameState.player.totalKills;
         container.innerHTML = '';
-        if (gameState.specialShop.length === 0) { container.innerHTML = '<div class="empty-inventory">Sold out!</div>'; return; }
-        appendShopSection(container, '📿 Amulets', gameState.specialShop, '#ffd93d', true);
+        if (shopList.length === 0) { container.innerHTML = '<div class="empty-inventory" style="padding:40px;">🏪 Sold out!</div>'; return; }
+
+        if (!isSpecial) {
+            var categories = [
+                { name: '⚔️ Melee Weapons', filter: function(i) { return i.category === 'melee' && !i.requirement; }, borderColor: '#ff6b6b' },
+                { name: '🏹 Ranged Weapons', filter: function(i) { return i.category === 'ranged' && !i.requirement; }, borderColor: '#43e97b' },
+                { name: '🔮 Magic Weapons', filter: function(i) { return i.category === 'magic' && !i.requirement; }, borderColor: '#a366ff' },
+                { name: '🛡️ Armor', filter: function(i) { return i.type === 'armor' && !i.requirement; }, borderColor: '#4ecdc4' },
+                { name: '🧪 Consumables', filter: function(i) { return i.type === 'consumable'; }, borderColor: '#ffd93d' },
+                { name: '🌟 Special Items', filter: function(i) { return i.requirement; }, borderColor: '#a855f7' }
+            ];
+            for (var c = 0; c < categories.length; c++) {
+                var cat = categories[c]; var items = [];
+                for (var k = 0; k < shopList.length; k++) { if (cat.filter(shopList[k])) items.push(shopList[k]); }
+                if (items.length === 0) continue;
+                appendShopSection(container, cat.name, items, cat.borderColor, false);
+            }
+        } else {
+            appendShopSection(container, '📿 Amulets', shopList, '#ffd93d', true);
+        }
     }
 
     function appendShopSection(container, name, items, borderColor, isSpecial) {
         var section = document.createElement('div'); section.className = 'shop-category-section';
         var header = document.createElement('div'); header.className = 'shop-category-header'; header.textContent = name; section.appendChild(header);
         var grid = document.createElement('div'); grid.className = 'shop-grid';
-        items.forEach(function(item) {
+        for (var j = 0; j < items.length; j++) {
+            var item = items[j];
             var unlocked = item.requirement ? gameState.isSpecialItemUnlocked(item) : true;
             var tierColor = item.tier ? gameState.getTierColor(item.tier) : borderColor;
             var statsDisplay = '';
@@ -214,25 +334,31 @@
                 if (item.stats.heal) statsDisplay += '<span style="color:#43e97b;">❤️' + item.stats.heal + ' </span>';
                 if (item.stats.mana) statsDisplay += '<span style="color:#6ee7de;">💙' + item.stats.mana + '</span>';
             }
-            if (item.tier) { statsDisplay += ' <span style="color:' + tierColor + ';">[' + gameState.getTierName(item.tier) + ']</span>'; }
+            if (item.tier) statsDisplay += ' <span style="color:' + tierColor + ';">[' + gameState.getTierName(item.tier) + ']</span>';
             var reqText = '';
             if (item.requirement) {
-                if (item.requirement.type === 'kills') reqText = '🔒 ' + item.requirement.amount + ' kills';
+                if (item.requirement.type === 'kills') reqText = '🔒 ' + item.requirement.amount + ' kills required';
                 else if (item.requirement.type === 'boss') reqText = '🔒 Defeat Lvl ' + item.requirement.worldLevel + ' boss';
             }
             var card = document.createElement('div'); card.className = 'shop-item';
             if (!unlocked) card.classList.add('locked-item');
             card.style.borderColor = unlocked ? tierColor : '#666';
-            card.onclick = (function(id, sp, unl) { return function() { if (unl) purchaseItem(id, sp); else alert('Not unlocked!'); }; })(item.id, isSpecial, unlocked);
             card.innerHTML = '<div class="shop-item-icon">' + item.icon + '</div><div class="shop-item-name">' + item.name + '</div><div class="shop-item-desc">' + item.description + '</div>' + (statsDisplay ? '<div class="shop-item-stats">' + statsDisplay + '</div>' : '') + (reqText ? '<div class="shop-item-requirement">' + reqText + '</div>' : '') + '<div class="shop-item-price">💰 ' + item.price + ' Gold</div>';
+            card.addEventListener('click', (function(id, sp, unl) { return function() { if (unl) purchaseItem(id, sp); else alert('Requirements not met!'); }; })(item.id, isSpecial, unlocked));
             grid.appendChild(card);
-        });
+        }
         section.appendChild(grid); container.appendChild(section);
     }
 
-    function purchaseItem(itemId, isSpecial) { isSpecial = isSpecial || false; var r = gameState.buyItem(itemId, isSpecial); if (r.success) { if (isSpecial) renderAmuletShop(); else renderShop(); alert(r.message); } else alert(r.message); }
+    function purchaseItem(itemId, isSpecial) {
+        isSpecial = isSpecial || false;
+        var result = gameState.buyItem(itemId, isSpecial);
+        if (result.success) { renderShop(isSpecial); alert(result.message); }
+        else { alert(result.message); }
+    }
 
     var inventoryMode = 'view';
+
     function showInventory() { document.getElementById('inventory-modal').classList.remove('hidden'); setInventoryMode('view'); }
     function closeInventory() { document.getElementById('inventory-modal').classList.add('hidden'); }
 
@@ -242,11 +368,11 @@
         document.getElementById('mode-equip-btn').style.opacity = mode === 'equip' ? '1' : '0.6';
         document.getElementById('mode-sell-btn').style.opacity = mode === 'sell' ? '1' : '0.6';
         document.getElementById('mode-upgrade-btn').style.opacity = mode === 'upgrade' ? '1' : '0.6';
-        var ind = document.getElementById('inventory-mode-indicator');
-        if (mode === 'view') ind.innerHTML = '<span style="color:#4ecdc4;">👁️ View Mode</span>';
-        else if (mode === 'equip') ind.innerHTML = '<span style="color:#f39c12;">⚔️ Equip Mode</span>';
-        else if (mode === 'sell') ind.innerHTML = '<span style="color:#e74c3c;">💰 Sell Mode</span>';
-        else if (mode === 'upgrade') ind.innerHTML = '<span style="color:#06b6d4;">⬆️ Upgrade Mode - Costs gold, boosts stats</span>';
+        var indicator = document.getElementById('inventory-mode-indicator');
+        if (mode === 'view') indicator.innerHTML = '<span style="color:#4ecdc4;">👁️ View Mode - Click an item to see details</span>';
+        else if (mode === 'equip') indicator.innerHTML = '<span style="color:#f39c12;">⚔️ Equip Mode - Click a weapon/armor/amulet to equip it</span>';
+        else if (mode === 'sell') indicator.innerHTML = '<span style="color:#e74c3c;">💰 Sell Mode - Click an item to sell it for 50% of its value</span>';
+        else if (mode === 'upgrade') indicator.innerHTML = '<span style="color:#06b6d4;">⬆️ Upgrade Mode - Click to upgrade (gold + materials)</span>';
         renderInventory();
     }
 
@@ -254,150 +380,131 @@
         var container = document.getElementById('inventory-categories');
         document.getElementById('player-gold-inv').textContent = gameState.player.gold;
         container.innerHTML = '';
-        if (gameState.player.inventory.length === 0) { container.innerHTML = '<div class="empty-inventory">Empty</div>'; return; }
+        if (gameState.player.inventory.length === 0) { container.innerHTML = '<div class="empty-inventory">Your inventory is empty</div>'; return; }
+
         var categories = [
             { name: '⭐ Equipped', filter: function(i) { return i.id === gameState.player.equippedWeapon || i.id === gameState.player.equippedArmor || i.id === gameState.player.equippedAmulet; }, borderColor: '#f39c12' },
-            { name: '⚔️ Melee', filter: function(i) { return i.category === 'melee' && i.id !== gameState.player.equippedWeapon; }, borderColor: '#ff6b6b' },
-            { name: '🏹 Ranged', filter: function(i) { return i.category === 'ranged' && i.id !== gameState.player.equippedWeapon; }, borderColor: '#43e97b' },
-            { name: '🔮 Magic', filter: function(i) { return i.category === 'magic' && i.id !== gameState.player.equippedWeapon; }, borderColor: '#a366ff' },
+            { name: '⚔️ Melee Weapons', filter: function(i) { return i.category === 'melee' && i.id !== gameState.player.equippedWeapon; }, borderColor: '#ff6b6b' },
+            { name: '🏹 Ranged Weapons', filter: function(i) { return i.category === 'ranged' && i.id !== gameState.player.equippedWeapon; }, borderColor: '#43e97b' },
+            { name: '🔮 Magic Weapons', filter: function(i) { return i.category === 'magic' && i.id !== gameState.player.equippedWeapon; }, borderColor: '#a366ff' },
             { name: '🛡️ Armor', filter: function(i) { return i.type === 'armor' && i.id !== gameState.player.equippedArmor; }, borderColor: '#4ecdc4' },
             { name: '📿 Amulets', filter: function(i) { return i.type === 'amulet' && i.id !== gameState.player.equippedAmulet; }, borderColor: '#ffd93d' },
             { name: '🧪 Consumables', filter: function(i) { return i.type === 'consumable'; }, borderColor: '#ffd93d' },
-            { name: '💎 Loot', filter: function(i) { return i.type === 'loot'; }, borderColor: '#aaa' }
+            { name: '💎 Loot & Other', filter: function(i) { return i.type === 'loot' && i.id !== gameState.player.equippedWeapon && i.id !== gameState.player.equippedArmor && i.id !== gameState.player.equippedAmulet; }, borderColor: '#aaa' }
         ];
-        categories.forEach(function(cat) {
-            var items = gameState.player.inventory.filter(cat.filter);
-            if (items.length === 0) return;
+
+        for (var c = 0; c < categories.length; c++) {
+            var cat = categories[c]; var items = [];
+            for (var k = 0; k < gameState.player.inventory.length; k++) { if (cat.filter(gameState.player.inventory[k])) items.push(gameState.player.inventory[k]); }
+            if (items.length === 0) continue;
             var section = document.createElement('div'); section.className = 'inventory-category-section';
             var header = document.createElement('div'); header.className = 'inventory-category-header'; header.textContent = cat.name; section.appendChild(header);
             var grid = document.createElement('div'); grid.className = 'inventory-grid';
-            items.forEach(function(item) {
+            for (var j = 0; j < items.length; j++) {
+                var item = items[j];
                 var tierColor = item.tier ? gameState.getTierColor(item.tier) : cat.borderColor;
                 if (item.rarity === 'legendary') tierColor = '#ffd700';
                 else if (item.rarity === 'uncommon') tierColor = '#a366ff';
-                var statsDisplay = '';
-                if (item.stats) {
-                    if (item.stats.damage) statsDisplay += '<span style="color:#ff6b6b;">⚔️+' + item.stats.damage + ' </span>';
-                    if (item.stats.intelligence) statsDisplay += '<span style="color:#a366ff;">📚+' + item.stats.intelligence + ' </span>';
-                    if (item.stats.defense) statsDisplay += '<span style="color:#4ecdc4;">🛡️+' + item.stats.defense + ' </span>';
-                    if (item.stats.damageBoost) statsDisplay += '<span style="color:#ff6b6b;">⚔️+' + item.stats.damageBoost + ' </span>';
-                    if (item.stats.defenseBoost) statsDisplay += '<span style="color:#4ecdc4;">🛡️+' + item.stats.defenseBoost + ' </span>';
-                    if (item.stats.hpBoost) statsDisplay += '<span style="color:#ff6b6b;">❤️+' + item.stats.hpBoost + ' </span>';
-                    if (item.stats.manaBoost) statsDisplay += '<span style="color:#6ee7de;">💙+' + item.stats.manaBoost + ' </span>';
-                    if (item.stats.healBoost) statsDisplay += '<span style="color:#43e97b;">💚+' + item.stats.healBoost + '% </span>';
-                    if (item.stats.goldBoost) statsDisplay += '<span style="color:#ffd93d;">💰+' + item.stats.goldBoost + '% </span>';
-                    if (item.stats.heal) statsDisplay += '<span style="color:#43e97b;">❤️' + item.stats.heal + ' </span>';
-                    if (item.stats.mana) statsDisplay += '<span style="color:#6ee7de;">💙' + item.stats.mana + '</span>';
-                }
-                if (item.tier) { statsDisplay += ' <span style="color:' + tierColor + ';">[' + gameState.getTierName(item.tier) + ']</span>'; }
+                if (item.type === 'amulet') tierColor = '#ffd93d';
                 var card = document.createElement('div'); card.className = 'inventory-item'; card.style.borderColor = tierColor;
-                card.onclick = (function(it) { return function() { handleInventoryClick(it); }; })(item);
-                var eq = (item.id === gameState.player.equippedWeapon || item.id === gameState.player.equippedArmor || item.id === gameState.player.equippedAmulet) ? '<div class="inventory-item-equipped">E</div>' : '';
-                var qty = item.quantity > 1 ? '<div class="inventory-item-quantity">x' + item.quantity + '</div>' : '';
-                var sellInfo = '';
-                if (inventoryMode === 'sell' && item.price) sellInfo = '<div class="inventory-item-price">💰 Sell: ' + Math.floor(item.price/2) + 'g</div>';
-                if (inventoryMode === 'upgrade' && item.tier && item.tier < 5) sellInfo = '<div class="inventory-item-price">⬆️ Upgrade: ' + (item.tier * 500) + 'g</div>';
-                card.innerHTML = eq + qty + '<div class="inventory-item-icon">' + item.icon + '</div><div class="inventory-item-name" style="color:' + tierColor + ';">' + item.name + '</div>' + (statsDisplay ? '<div class="inventory-item-stats">' + statsDisplay + '</div>' : '') + sellInfo;
+                var h = '';
+                if (item.id === gameState.player.equippedWeapon || item.id === gameState.player.equippedArmor || item.id === gameState.player.equippedAmulet) h += '<div class="inventory-item-equipped">E</div>';
+                if (item.quantity > 1) h += '<div class="inventory-item-quantity">x' + item.quantity + '</div>';
+                h += '<div class="inventory-item-icon">' + item.icon + '</div><div class="inventory-item-name" style="color:' + tierColor + ';">' + item.name + '</div>';
+                var sd = '';
+                if (item.stats) {
+                    if (item.stats.damage) sd += '<span style="color:#ff6b6b;">⚔️+' + item.stats.damage + ' </span>';
+                    if (item.stats.intelligence) sd += '<span style="color:#a366ff;">📚+' + item.stats.intelligence + ' </span>';
+                    if (item.stats.defense) sd += '<span style="color:#4ecdc4;">🛡️+' + item.stats.defense + ' </span>';
+                    if (item.stats.damageBoost) sd += '<span style="color:#ff6b6b;">⚔️+' + item.stats.damageBoost + ' </span>';
+                    if (item.stats.defenseBoost) sd += '<span style="color:#4ecdc4;">🛡️+' + item.stats.defenseBoost + ' </span>';
+                    if (item.stats.hpBoost) sd += '<span style="color:#ff6b6b;">❤️+' + item.stats.hpBoost + ' </span>';
+                    if (item.stats.manaBoost) sd += '<span style="color:#6ee7de;">💙+' + item.stats.manaBoost + ' </span>';
+                    if (item.stats.healBoost) sd += '<span style="color:#43e97b;">💚+' + item.stats.healBoost + '% </span>';
+                    if (item.stats.goldBoost) sd += '<span style="color:#ffd93d;">💰+' + item.stats.goldBoost + '% </span>';
+                    if (item.stats.heal) sd += '<span style="color:#43e97b;">❤️' + item.stats.heal + ' </span>';
+                    if (item.stats.mana) sd += '<span style="color:#6ee7de;">💙' + item.stats.mana + '</span>';
+                }
+                if (item.tier) sd += ' <span style="color:' + tierColor + ';">[' + gameState.getTierName(item.tier) + ']</span>';
+                if (sd) h += '<div class="inventory-item-stats">' + sd + '</div>';
+                if (inventoryMode === 'sell') { var sp = item.price ? Math.floor(item.price / 2) : 1; h += '<div class="inventory-item-price">💰 Sell: ' + sp + ' Gold</div>'; }
+                else if (inventoryMode === 'upgrade' && item.tier && item.tier < 5) { var cost = gameState.getUpgradeCost(item.tier); h += '<div class="inventory-item-price">⬆️ ' + cost.gold + 'g + ' + cost.amount + 'x T' + cost.materialTier + ' mats</div>'; }
+                card.innerHTML = h;
+                card.addEventListener('click', (function(it) { return function(e) { e.stopPropagation(); handleInventoryClick(it); }; })(item));
                 grid.appendChild(card);
-            });
+            }
             section.appendChild(grid); container.appendChild(section);
-        });
+        }
     }
 
     function handleInventoryClick(item) {
         if (inventoryMode === 'equip') {
-            if (item.type === 'weapon' || item.type === 'armor' || item.type === 'amulet') { equipItem(item); }
-            else if (item.type === 'consumable') { useConsumable(item); }
-            else { alert('Cannot equip this item! Switch to Sell mode to sell it.'); }
+            if (item.type === 'weapon' || item.type === 'armor' || item.type === 'amulet') {
+                if (item.type === 'weapon') gameState.player.equippedWeapon = item.id;
+                else if (item.type === 'armor') gameState.player.equippedArmor = item.id;
+                else gameState.player.equippedAmulet = item.id;
+                gameState.recalculateStats(); gameState.saveToLocalStorage(); renderInventory();
+                alert('✅ Equipped ' + item.name + '!');
+            } else if (item.type === 'consumable') {
+                if (item.stats && item.stats.heal) gameState.player.health = Math.min(gameState.player.maxHealth, gameState.player.health + item.stats.heal);
+                else if (item.stats && item.stats.mana) gameState.player.mana = Math.min(gameState.player.maxMana, gameState.player.mana + item.stats.mana);
+                for (var i = 0; i < gameState.player.inventory.length; i++) { if (gameState.player.inventory[i].id === item.id) { if (gameState.player.inventory[i].quantity > 1) gameState.player.inventory[i].quantity--; else gameState.player.inventory.splice(i, 1); break; } }
+                gameState.saveToLocalStorage(); renderInventory();
+            } else { alert('Cannot equip this!'); }
         } else if (inventoryMode === 'sell') {
-            if (item.id === gameState.player.equippedWeapon || item.id === gameState.player.equippedArmor || item.id === gameState.player.equippedAmulet) { alert('Unequip first!'); }
-            else if (item.price && item.price > 0) { sellItem(item); }
-            else { alert('No sell value!'); }
+            if (item.id === gameState.player.equippedWeapon || item.id === gameState.player.equippedArmor || item.id === gameState.player.equippedAmulet) { alert('Unequip first!'); return; }
+            var sp = item.price ? Math.floor(item.price / 2) : 1;
+            gameState.player.gold += sp;
+            if (gameState.player.equippedWeapon === item.id) gameState.player.equippedWeapon = null;
+            if (gameState.player.equippedArmor === item.id) gameState.player.equippedArmor = null;
+            if (gameState.player.equippedAmulet === item.id) gameState.player.equippedAmulet = null;
+            for (var i = 0; i < gameState.player.inventory.length; i++) { if (gameState.player.inventory[i].id === item.id) { if (gameState.player.inventory[i].quantity > 1) gameState.player.inventory[i].quantity--; else gameState.player.inventory.splice(i, 1); break; } }
+            gameState.recalculateStats(); gameState.saveToLocalStorage(); renderInventory();
+            alert('💰 Sold ' + item.name + ' for ' + sp + ' Gold!');
         } else if (inventoryMode === 'upgrade') {
-            if (!item.tier) { alert('Cannot upgrade this item!'); }
-            else if (item.tier >= 5) { alert('Already max tier!'); }
-            else { var r = gameState.upgradeItem(item.id); alert(r.message); if (r.success) renderInventory(); }
+            if (!item.tier) { alert('Cannot upgrade!'); }
+            else if (item.tier >= 5) { alert('Max tier!'); }
+            else { var cost = gameState.getUpgradeCost(item.tier); alert('Cost: ' + cost.gold + 'g + ' + cost.amount + 'x T' + cost.materialTier + ' mats'); }
         } else {
             var info = item.icon + ' ' + item.name + '\n' + (item.description || '') + '\n';
             if (item.tier) info += 'Tier: ' + gameState.getTierName(item.tier) + '\n';
-            if (item.stats) {
-                if (item.stats.damage) info += 'Damage: +' + item.stats.damage + '\n';
-                if (item.stats.intelligence) info += 'Int: +' + item.stats.intelligence + '\n';
-                if (item.stats.defense) info += 'Defense: +' + item.stats.defense + '\n';
-                if (item.stats.damageBoost) info += 'Dmg Boost: +' + item.stats.damageBoost + '\n';
-                if (item.stats.defenseBoost) info += 'Def Boost: +' + item.stats.defenseBoost + '\n';
-                if (item.stats.hpBoost) info += 'HP: +' + item.stats.hpBoost + '\n';
-                if (item.stats.manaBoost) info += 'Mana: +' + item.stats.manaBoost + '\n';
-                if (item.stats.healBoost) info += 'Heal: +' + item.stats.healBoost + '%\n';
-                if (item.stats.goldBoost) info += 'Gold: +' + item.stats.goldBoost + '%\n';
-            }
+            if (item.stats) { if (item.stats.damage) info += 'Damage: +' + item.stats.damage + '\n'; if (item.stats.defense) info += 'Defense: +' + item.stats.defense + '\n'; if (item.stats.damageBoost) info += 'Dmg+: +' + item.stats.damageBoost + '\n'; if (item.stats.defenseBoost) info += 'Def+: +' + item.stats.defenseBoost + '\n'; if (item.stats.hpBoost) info += 'HP+: +' + item.stats.hpBoost + '\n'; if (item.stats.manaBoost) info += 'Mana+: +' + item.stats.manaBoost + '\n'; if (item.stats.healBoost) info += 'Heal: +' + item.stats.healBoost + '%\n'; if (item.stats.goldBoost) info += 'Gold: +' + item.stats.goldBoost + '%\n'; }
             if (item.price) info += 'Value: ' + item.price + 'g\n';
             alert(info);
         }
     }
 
-    function equipItem(item) {
-        if (item.type === 'weapon') gameState.player.equippedWeapon = item.id;
-        else if (item.type === 'armor') gameState.player.equippedArmor = item.id;
-        else gameState.player.equippedAmulet = item.id;
-        gameState.recalculateStats(); gameState.saveToLocalStorage(); renderInventory();
-        alert('✅ Equipped ' + item.name + '!');
-    }
-
-    function sellItem(item) {
-        var sp = Math.floor(item.price / 2);
-        if (confirm('Sell ' + item.name + ' for ' + sp + 'g?')) {
-            gameState.player.gold += sp;
-            if (gameState.player.equippedWeapon === item.id) gameState.player.equippedWeapon = null;
-            if (gameState.player.equippedArmor === item.id) gameState.player.equippedArmor = null;
-            if (gameState.player.equippedAmulet === item.id) gameState.player.equippedAmulet = null;
-            for (var i = 0; i < gameState.player.inventory.length; i++) {
-                if (gameState.player.inventory[i].id === item.id) {
-                    if (gameState.player.inventory[i].quantity > 1) gameState.player.inventory[i].quantity--;
-                    else gameState.player.inventory.splice(i, 1);
-                    break;
-                }
-            }
-            gameState.recalculateStats(); gameState.saveToLocalStorage(); renderInventory();
-            alert('💰 Sold for ' + sp + 'g!');
-        }
-    }
-
-    function useConsumable(item) {
-        if (item.stats && item.stats.heal) { gameState.player.health = Math.min(gameState.player.maxHealth, gameState.player.health + item.stats.heal); }
-        else if (item.stats && item.stats.mana) { gameState.player.mana = Math.min(gameState.player.maxMana, gameState.player.mana + item.stats.mana); }
-        for (var i = 0; i < gameState.player.inventory.length; i++) { if (gameState.player.inventory[i].id === item.id) { if (gameState.player.inventory[i].quantity > 1) gameState.player.inventory[i].quantity--; else gameState.player.inventory.splice(i, 1); break; } }
-        gameState.saveToLocalStorage(); renderInventory();
-    }
-
     function showStats() { document.getElementById('stats-modal').classList.remove('hidden'); renderStats(); }
     function closeStats() { document.getElementById('stats-modal').classList.add('hidden'); }
+    function closeLevelUp() { document.getElementById('levelup-modal').classList.add('hidden'); }
 
     function renderStats() {
-        var p = gameState.player; var t = gameState.getTotalStats();
-        var w = gameState.getEquippedWeapon(); var a = gameState.getEquippedArmor(); var am = gameState.getEquippedAmulet();
+        var p = gameState.player; var totals = gameState.getTotalStats();
+        var weapon = gameState.getEquippedWeapon(); var armor = gameState.getEquippedArmor(); var amulet = gameState.getEquippedAmulet();
         document.getElementById('stats-display').innerHTML =
+            '<div class="stat-row"><span class="stat-label">Name:</span><span class="stat-value">' + p.name + '</span></div>' +
             '<div class="stat-row"><span class="stat-label">Level:</span><span class="stat-value">' + p.level + '</span></div>' +
-            '<div class="stat-row"><span class="stat-label">Kills:</span><span class="stat-value">💀 ' + p.totalKills + '</span></div>' +
-            '<div class="stat-row"><span class="stat-label">EXP:</span><span class="stat-value">' + p.exp + '/' + p.expToNextLevel + '</span></div>' +
+            '<div class="stat-row"><span class="stat-label">Total Kills:</span><span class="stat-value">💀 ' + p.totalKills + '</span></div>' +
+            '<div class="stat-row"><span class="stat-label">Experience:</span><span class="stat-value">' + p.exp + '/' + p.expToNextLevel + '</span></div>' +
             '<div class="stat-row"><span class="stat-label">Gold:</span><span class="stat-value">💰 ' + p.gold + '</span></div>' +
-            '<div class="stat-row"><span class="stat-label">Health:</span><span class="stat-value">' + p.health + '/' + p.maxHealth + (t.hpBoost>0?' <span style="color:#43e97b;">(+'+t.hpBoost+')</span>':'') + '</span></div>' +
-            '<div class="stat-row"><span class="stat-label">Mana:</span><span class="stat-value">' + p.mana + '/' + p.maxMana + (t.manaBoost>0?' <span style="color:#6ee7de;">(+'+t.manaBoost+')</span>':'') + '</span></div>' +
-            '<div class="stat-row"><span class="stat-label">Damage:</span><span class="stat-value">⚔️ ' + p.strength + (t.bonusDamage>0?' <span style="color:#43e97b;">(+'+t.bonusDamage+' gear)</span>':'') + ' = <strong style="color:#ff6b6b;">' + t.damage + '</strong></span></div>' +
-            '<div class="stat-row"><span class="stat-label">Defense:</span><span class="stat-value">🛡️ ' + p.defense + (t.bonusDefense>0?' <span style="color:#43e97b;">(+'+t.bonusDefense+' gear)</span>':'') + ' = <strong style="color:#4ecdc4;">' + t.defense + '</strong></span></div>' +
-            '<div class="stat-row"><span class="stat-label">Set Bonus:</span><span class="stat-value">' + (t.setBonus>0?'<span style="color:#ffd93d;">Tier '+t.setBonus+' active! (+'+(t.setBonus*2)+' Dmg/Def)</span>':'None') + '</span></div>' +
-            '<div class="stat-row"><span class="stat-label">Heal Boost:</span><span class="stat-value">'+(t.healBoost>0?'<span style="color:#43e97b;">+'+t.healBoost+'%</span>':'None')+'</span></div>' +
-            '<div class="stat-row"><span class="stat-label">Gold Boost:</span><span class="stat-value">'+(t.goldBoost>0?'<span style="color:#ffd93d;">+'+t.goldBoost+'%</span>':'None')+'</span></div>' +
-            '<div class="stat-row"><span class="stat-label">Weapon:</span><span class="stat-value">'+(w?w.icon+' '+w.name:'None')+'</span></div>' +
-            '<div class="stat-row"><span class="stat-label">Armor:</span><span class="stat-value">'+(a?a.icon+' '+a.name:'None')+'</span></div>' +
-            '<div class="stat-row"><span class="stat-label">Amulet:</span><span class="stat-value">'+(am?am.icon+' '+am.name:'None')+'</span></div>';
+            '<div class="stat-row"><span class="stat-label">Health:</span><span class="stat-value">' + p.health + '/' + p.maxHealth + (totals.hpBoost > 0 ? ' <span style="color:#43e97b;">(+' + totals.hpBoost + ' amulet)</span>' : '') + '</span></div>' +
+            '<div class="stat-row"><span class="stat-label">Mana:</span><span class="stat-value">' + p.mana + '/' + p.maxMana + (totals.manaBoost > 0 ? ' <span style="color:#6ee7de;">(+' + totals.manaBoost + ' amulet)</span>' : '') + '</span></div>' +
+            '<div class="stat-row"><span class="stat-label">Strength:</span><span class="stat-value">⚔️ ' + p.strength + (totals.bonusDamage > 0 ? ' <span style="color:#43e97b;">(+' + totals.bonusDamage + ' gear)</span>' : '') + ' = <strong style="color:#ff6b6b;">' + totals.damage + '</strong></span></div>' +
+            '<div class="stat-row"><span class="stat-label">Intelligence:</span><span class="stat-value">📚 ' + totals.intelligence + '</span></div>' +
+            '<div class="stat-row"><span class="stat-label">Defense:</span><span class="stat-value">🛡️ ' + p.defense + (totals.bonusDefense > 0 ? ' <span style="color:#43e97b;">(+' + totals.bonusDefense + ' gear)</span>' : '') + ' = <strong style="color:#4ecdc4;">' + totals.defense + '</strong></span></div>' +
+            '<div class="stat-row"><span class="stat-label">Heal Boost:</span><span class="stat-value">' + (totals.healBoost > 0 ? '<span style="color:#43e97b;">+' + totals.healBoost + '%</span>' : 'None') + '</span></div>' +
+            '<div class="stat-row"><span class="stat-label">Gold Boost:</span><span class="stat-value">' + (totals.goldBoost > 0 ? '<span style="color:#ffd93d;">+' + totals.goldBoost + '%</span>' : 'None') + '</span></div>' +
+            '<div class="stat-row"><span class="stat-label">Speed:</span><span class="stat-value">⚡ ' + p.speed + '</span></div>' +
+            '<div class="stat-row"><span class="stat-label">Weapon:</span><span class="stat-value">' + (weapon ? weapon.icon + ' ' + weapon.name : 'None') + '</span></div>' +
+            '<div class="stat-row"><span class="stat-label">Armor:</span><span class="stat-value">' + (armor ? armor.icon + ' ' + armor.name : 'None') + '</span></div>' +
+            '<div class="stat-row"><span class="stat-label">Amulet:</span><span class="stat-value">' + (amulet ? amulet.icon + ' ' + amulet.name : 'None') + '</span></div>';
     }
 
     function showResetConfirmation() { document.getElementById('reset-modal').classList.remove('hidden'); }
     function closeResetConfirmation() { document.getElementById('reset-modal').classList.add('hidden'); }
     function showFinalResetWarning() { closeResetConfirmation(); document.getElementById('reset-final-modal').classList.remove('hidden'); }
     function closeFinalResetWarning() { document.getElementById('reset-final-modal').classList.add('hidden'); }
-    function performReset() { gameState.resetGame(); closeFinalResetWarning(); alert('✅ Reset!'); showMainMenu(); }
+    function performReset() { gameState.resetGame(); closeFinalResetWarning(); alert('✅ Your game has been completely reset!'); showMainMenu(); }
 
     window.addEventListener('DOMContentLoaded', function() {
         document.getElementById('start-game-btn').onclick = showWorldPicker;
@@ -405,6 +512,7 @@
         document.getElementById('shop-btn').onclick = showShop;
         document.getElementById('amulet-shop-btn').onclick = showAmuletShop;
         document.getElementById('gamble-btn').onclick = showGamble;
+        document.getElementById('minigames-btn').onclick = function() { window.location.href = 'minigames.html'; };
         document.getElementById('inventory-btn').onclick = showInventory;
         document.getElementById('stats-btn').onclick = showStats;
         document.getElementById('reset-btn').onclick = showResetConfirmation;
