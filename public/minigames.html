@@ -7,29 +7,44 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: #fff; font-family: 'Arial', sans-serif; min-height: 100vh; padding: 20px; }
-        .container { max-width: 800px; margin: 0 auto; }
-        .header { text-align: center; margin-bottom: 30px; }
+        .container { max-width: 900px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 25px; }
         .header h1 { font-size: 42px; color: #ff6b6b; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
         .header p { color: #aaa; margin-top: 10px; }
         .back-btn { padding: 10px 20px; background: #ff6b6b; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; margin-bottom: 20px; }
         .back-btn:hover { transform: translateY(-2px); }
-        .minigame-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .minigame-card { background: #2a2a3e; border: 3px solid #ff6b6b; border-radius: 15px; padding: 30px; text-align: center; box-shadow: 0 0 20px rgba(255,107,107,0.3); }
-        .minigame-card h2 { font-size: 28px; margin-bottom: 15px; color: #ffd93d; }
-        .minigame-card .icon { font-size: 64px; margin-bottom: 15px; }
-        .minigame-card p { color: #aaa; margin-bottom: 20px; font-size: 14px; }
-        .minigame-btn { padding: 12px 30px; background: linear-gradient(135deg, #4ecdc4 0%, #2ecc71 100%); color: #fff; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; transition: all 0.3s ease; }
-        .minigame-btn:hover { transform: translateY(-3px); box-shadow: 0 5px 20px rgba(0,0,0,0.3); }
-        .minigame-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-        .result-area { margin-top: 20px; padding: 15px; background: #1a1a2e; border-radius: 8px; min-height: 50px; text-align: center; }
-        .result-area .result-icon { font-size: 48px; display: block; margin-bottom: 10px; }
-        .result-area .result-text { font-size: 16px; color: #4ecdc4; }
-        .inventory-preview { margin-top: 30px; background: #1a1a2e; border-radius: 10px; padding: 20px; }
-        .inventory-preview h3 { color: #ff6b6b; margin-bottom: 15px; }
-        .mats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; }
-        .mat-item { background: #2a2a3e; border: 1px solid #4ecdc4; border-radius: 8px; padding: 8px; text-align: center; font-size: 12px; }
-        .mat-item .mat-icon { font-size: 24px; display: block; }
-        @media (max-width: 600px) { .minigame-grid { grid-template-columns: 1fr; } }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; background: #2a2a3e; border-radius: 10px; padding: 12px 20px; margin-bottom: 20px; border: 2px solid #ff6b6b; }
+        .tab-bar { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tab-btn { padding: 12px 25px; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; transition: all 0.3s ease; color: #fff; }
+        .tab-btn.active { transform: translateY(-3px); box-shadow: 0 5px 20px rgba(0,0,0,0.3); }
+        .tab-fish { background: #4ecdc4; } .tab-fish.active { background: #3dbdb5; }
+        .tab-mine { background: #f39c12; } .tab-mine.active { background: #e67e22; }
+        .minigame-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+        .minigame-card { background: #2a2a3e; border: 3px solid #4ecdc4; border-radius: 15px; padding: 25px; text-align: center; }
+        .minigame-card.mining-card { border-color: #f39c12; }
+        .minigame-card h2 { font-size: 24px; margin-bottom: 10px; color: #ffd93d; }
+        .minigame-card .icon { font-size: 48px; margin-bottom: 10px; }
+        .minigame-card .stats { font-size: 13px; color: #aaa; margin-bottom: 15px; }
+        .option-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 15px; }
+        .option-btn { padding: 10px 18px; border: none; border-radius: 6px; font-weight: bold; font-size: 13px; cursor: pointer; transition: all 0.3s ease; color: #fff; }
+        .option-btn.active { transform: translateY(-2px); box-shadow: 0 3px 10px rgba(0,0,0,0.3); }
+        .bait-btn { background: #667eea; } .bait-btn.active { background: #4ecdc4; }
+        .depth-btn { background: #e74c3c; } .depth-btn.active { background: #c0392b; }
+        .action-btn { padding: 14px 35px; background: linear-gradient(135deg, #4ecdc4 0%, #2ecc71 100%); color: #fff; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; transition: all 0.3s ease; margin: 5px; }
+        .action-btn:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 5px 20px rgba(0,0,0,0.3); }
+        .action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .action-btn.sell-btn { background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%); }
+        .action-btn.speed-btn { background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%); }
+        .result-area { margin-top: 15px; padding: 15px; background: #1a1a2e; border-radius: 8px; min-height: 50px; text-align: center; }
+        .result-area .result-icon { font-size: 40px; display: block; margin-bottom: 8px; }
+        .result-area .result-text { font-size: 15px; color: #4ecdc4; }
+        .inventory-preview { margin-top: 25px; background: #1a1a2e; border-radius: 10px; padding: 20px; }
+        .inventory-preview h3 { color: #ff6b6b; margin-bottom: 12px; }
+        .mats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 6px; }
+        .mat-item { background: #2a2a3e; border: 1px solid #4ecdc4; border-radius: 6px; padding: 6px; text-align: center; font-size: 11px; }
+        .mat-item .mat-icon { font-size: 20px; display: block; }
+        .streak-badge { display: inline-block; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+        @media (max-width: 600px) { .option-row { flex-direction: column; align-items: center; } }
     </style>
 </head>
 <body>
@@ -37,84 +52,293 @@
     <button class="back-btn" onclick="window.location.href='index.html'">← Back to Menu</button>
     <div class="header">
         <h1>🎮 Minigames</h1>
-        <p>Relax and gather resources! Materials are used for upgrading gear.</p>
+        <p>Fish, mine, and gather resources! First 5 actions each day give double rewards.</p>
     </div>
-    <div class="minigame-grid">
-        <div class="minigame-card" id="fishing-card">
+    <div class="top-bar">
+        <span>💰 Gold: <strong id="gold-display" style="color:#ffd93d;">0</strong></span>
+        <span>📦 Loot in inventory: <strong id="loot-count" style="color:#4ecdc4;">0</strong></span>
+        <span>🎁 Daily bonus: <strong id="daily-bonus" style="color:#43e97b;">5 remaining</strong></span>
+    </div>
+
+    <div class="tab-bar">
+        <button class="tab-btn tab-fish active" id="tab-fish" onclick="switchTab('fish')">🎣 Fishing</button>
+        <button class="tab-btn tab-mine" id="tab-mine" onclick="switchTab('mine')">⛏️ Mining</button>
+    </div>
+
+    <!-- Fishing -->
+    <div id="fish-panel" class="minigame-grid">
+        <div class="minigame-card">
             <h2>🎣 Fishing</h2>
             <div class="icon">🐟</div>
-            <p>Cast your line and see what you catch! Fish, treasure, or maybe just an old boot...</p>
-            <button class="minigame-btn" id="fish-btn" onclick="doFishing()">🎣 Cast Line</button>
+            <div class="stats">
+                Streak: <span id="fish-streak" class="streak-badge" style="background:#333;">0</span> |
+                Rod: <span id="fish-rod" style="color:#ffd93d;">Wooden</span>
+            </div>
+            <div class="option-row">
+                <span style="color:#aaa;font-size:13px;">Bait:</span>
+                <button class="option-btn bait-btn active" onclick="setBait('none')">🪱 None (Free)</button>
+                <button class="option-btn bait-btn" onclick="setBait('shiny')">✨ Shiny (25g)</button>
+                <button class="option-btn bait-btn" onclick="setBait('golden')">🥇 Golden (100g)</button>
+            </div>
+            <div class="option-row">
+                <span style="color:#aaa;font-size:13px;">Rod:</span>
+                <button class="option-btn depth-btn active" onclick="setRod('wooden')">🪵 Wooden</button>
+                <button class="option-btn depth-btn" onclick="setRod('iron')">⛏️ Iron (500g)</button>
+                <button class="option-btn depth-btn" onclick="setRod('mythic')">🌟 Mythic (2500g)</button>
+            </div>
+            <div>
+                <button class="action-btn" id="fish-btn" onclick="doFishing()">🎣 Cast Line</button>
+                <button class="action-btn speed-btn" id="fish-speed-btn" onclick="doFishingSpeed()">⚡ Cast 5x</button>
+                <button class="action-btn sell-btn" id="fish-sell-btn" onclick="sellAllFish()">💰 Sell All Fish</button>
+            </div>
             <div class="result-area" id="fish-result">
                 <span style="color:#aaa;">Click to start fishing!</span>
             </div>
         </div>
-        <div class="minigame-card" id="mining-card">
+    </div>
+
+    <!-- Mining -->
+    <div id="mine-panel" class="minigame-grid" style="display:none;">
+        <div class="minigame-card mining-card">
             <h2>⛏️ Mining</h2>
             <div class="icon">💎</div>
-            <p>Swing your pickaxe and dig for valuable ores, gems, and minerals!</p>
-            <button class="minigame-btn" id="mine-btn" onclick="doMining()">⛏️ Mine</button>
+            <div class="stats">
+                Depth: <span id="mine-depth" style="color:#ffd93d;">Surface</span> |
+                Pickaxe: <span id="mine-pick" style="color:#ffd93d;">Stone</span>
+            </div>
+            <div class="option-row">
+                <span style="color:#aaa;font-size:13px;">Depth:</span>
+                <button class="option-btn depth-btn active" onclick="setDepth('surface')">🪨 Surface</button>
+                <button class="option-btn depth-btn" onclick="setDepth('medium')">⛏️ Medium</button>
+                <button class="option-btn depth-btn" onclick="setDepth('deep')">💎 Deep (5% cave-in)</button>
+            </div>
+            <div class="option-row">
+                <span style="color:#aaa;font-size:13px;">Pickaxe:</span>
+                <button class="option-btn bait-btn active" onclick="setPickaxe('stone')">🪨 Stone</button>
+                <button class="option-btn bait-btn" onclick="setPickaxe('iron')">⛏️ Iron (500g)</button>
+                <button class="option-btn bait-btn" onclick="setPickaxe('diamond')">💠 Diamond (2500g)</button>
+            </div>
+            <div>
+                <button class="action-btn" id="mine-btn" onclick="doMining()">⛏️ Mine</button>
+                <button class="action-btn speed-btn" id="mine-speed-btn" onclick="doMiningSpeed()">⚡ Mine 5x</button>
+                <button class="action-btn sell-btn" id="mine-sell-btn" onclick="sellAllOres()">💰 Sell All Ores</button>
+            </div>
             <div class="result-area" id="mine-result">
                 <span style="color:#aaa;">Click to start mining!</span>
             </div>
         </div>
     </div>
+
+    <!-- Inventory -->
     <div class="inventory-preview">
-        <h3>📦 Your Materials</h3>
-        <div class="mats-grid" id="materials-display">
-            <span style="color:#aaa;">No materials yet. Go fishing or mining!</span>
+        <h3>📦 Your Loot</h3>
+        <div class="mats-grid" id="loot-display">
+            <span style="color:#aaa;">No loot yet. Go fishing or mining!</span>
         </div>
     </div>
 </div>
 
 <script src="gamestate.js"></script>
 <script>
+    var currentTab = 'fish';
+    var currentBait = 'none';
+    var currentRod = 'wooden';
+    var currentDepth = 'surface';
+    var currentPickaxe = 'stone';
+    var fishStreak = 0;
+    var dailyActions = 5;
+    var lastDailyDate = '';
+
+    function switchTab(tab) {
+        currentTab = tab;
+        document.getElementById('tab-fish').classList.toggle('active', tab === 'fish');
+        document.getElementById('tab-mine').classList.toggle('active', tab === 'mine');
+        document.getElementById('fish-panel').style.display = tab === 'fish' ? 'block' : 'none';
+        document.getElementById('mine-panel').style.display = tab === 'mine' ? 'block' : 'none';
+    }
+
+    function setBait(bait) { currentBait = bait; document.querySelectorAll('#fish-panel .bait-btn').forEach(function(b,i) { b.classList.toggle('active', (i===0&&bait==='none')||(i===1&&bait==='shiny')||(i===2&&bait==='golden')); }); }
+    function setRod(rod) { currentRod = rod; document.querySelectorAll('#fish-panel .depth-btn').forEach(function(b,i) { b.classList.toggle('active', (i===0&&rod==='wooden')||(i===1&&rod==='iron')||(i===2&&rod==='mythic')); }); document.getElementById('fish-rod').textContent = rod==='wooden'?'Wooden':rod==='iron'?'Iron':'Mythic'; }
+    function setDepth(depth) { currentDepth = depth; document.querySelectorAll('#mine-panel .depth-btn').forEach(function(b,i) { b.classList.toggle('active', (i===0&&depth==='surface')||(i===1&&depth==='medium')||(i===2&&depth==='deep')); }); document.getElementById('mine-depth').textContent = depth==='surface'?'Surface':depth==='medium'?'Medium':'Deep'; }
+    function setPickaxe(pick) { currentPickaxe = pick; document.querySelectorAll('#mine-panel .bait-btn').forEach(function(b,i) { b.classList.toggle('active', (i===0&&pick==='stone')||(i===1&&pick==='iron')||(i===2&&pick==='diamond')); }); document.getElementById('mine-pick').textContent = pick==='stone'?'Stone':pick==='iron'?'Iron':'Diamond'; }
+
+    function checkDaily() {
+        var today = new Date().toDateString();
+        if (lastDailyDate !== today) { dailyActions = 5; lastDailyDate = today; }
+        document.getElementById('daily-bonus').textContent = dailyActions + ' remaining';
+    }
+
+    function getBonusMultiplier() {
+        checkDaily();
+        if (dailyActions > 0) { dailyActions--; checkDaily(); return 2; }
+        return 1;
+    }
+
     function doFishing() {
-        var btn = document.getElementById('fish-btn');
-        btn.disabled = true;
-        btn.textContent = '🎣 Casting...';
+        var baitCost = currentBait === 'shiny' ? 25 : currentBait === 'golden' ? 100 : 0;
+        var rodCost = currentRod === 'iron' ? 0 : currentRod === 'mythic' ? 0 : 0;
+        if (baitCost > 0 && gameState.player.gold < baitCost) { alert('Not enough gold for bait!'); return; }
+
+        var btn = document.getElementById('fish-btn'); btn.disabled = true; btn.textContent = '🎣 Casting...';
+        if (baitCost > 0) gameState.player.gold -= baitCost;
+
         setTimeout(function() {
+            var bonus = getBonusMultiplier();
             var result = gameState.fish();
+            var totalRewards = [];
+
+            if (bonus > 1) { var r2 = gameState.fish(); totalRewards.push(r2.reward); }
+            totalRewards.unshift(result.reward);
+
+            // Streak bonus
+            if (result.reward.id === 'fish_old_boot') { fishStreak = 0; }
+            else { fishStreak++; }
+            if (fishStreak >= 5) { var bonusGold = fishStreak * 5; gameState.player.gold += bonusGold; }
+
+            document.getElementById('fish-streak').textContent = fishStreak;
+            document.getElementById('fish-streak').style.background = fishStreak >= 3 ? '#43e97b' : '#333';
+
+            var msg = '🎣 ' + result.message;
+            if (bonus > 1) msg += ' (Daily bonus: 2x!)';
+            if (fishStreak >= 5) msg += ' +' + (fishStreak*5) + 'g streak bonus!';
+
             var area = document.getElementById('fish-result');
-            area.innerHTML = '<span class="result-icon">' + result.reward.icon + '</span><span class="result-text">' + result.message + '</span>';
-            btn.disabled = false;
-            btn.textContent = '🎣 Cast Again';
-            updateMaterialsDisplay();
-        }, 800);
+            area.innerHTML = '<span class="result-icon">' + result.reward.icon + '</span><span class="result-text">' + msg + '</span>';
+            btn.disabled = false; btn.textContent = '🎣 Cast Again';
+            updateDisplay();
+        }, 600);
     }
 
-    function doMining() {
-        var btn = document.getElementById('mine-btn');
-        btn.disabled = true;
-        btn.textContent = '⛏️ Mining...';
-        setTimeout(function() {
-            var result = gameState.mine();
-            var area = document.getElementById('mine-result');
-            area.innerHTML = '<span class="result-icon">' + result.reward.icon + '</span><span class="result-text">' + result.message + '</span>';
-            btn.disabled = false;
-            btn.textContent = '⛏️ Mine Again';
-            updateMaterialsDisplay();
-        }, 800);
+    function doFishingSpeed() {
+        var btn = document.getElementById('fish-speed-btn'); btn.disabled = true; btn.textContent = '⚡ Fishing...';
+        var results = [];
+        var totalMsg = '';
+        for (var i = 0; i < 5; i++) {
+            var baitCost = currentBait === 'shiny' ? 25 : currentBait === 'golden' ? 100 : 0;
+            if (baitCost > 0 && gameState.player.gold >= baitCost) gameState.player.gold -= baitCost;
+            var result = gameState.fish();
+            results.push(result);
+            totalMsg += result.reward.icon + ' ';
+        }
+        var area = document.getElementById('fish-result');
+        area.innerHTML = '<span class="result-text">⚡ 5 casts: ' + totalMsg + '</span>';
+        btn.disabled = false; btn.textContent = '⚡ Cast 5x';
+        updateDisplay();
     }
 
-    function updateMaterialsDisplay() {
-        var container = document.getElementById('materials-display');
-        var hasMaterials = false;
-        var html = '';
-        for (var key in gameState.player.materials) {
-            if (gameState.player.materials.hasOwnProperty(key) && gameState.player.materials[key] > 0) {
-                hasMaterials = true;
-                var mat = gameState.findMaterialById(key);
-                if (mat) {
-                    html += '<div class="mat-item"><span class="mat-icon">' + mat.icon + '</span>' + mat.name + '<br><strong>x' + gameState.player.materials[key] + '</strong><br><small style="color:#aaa;">Tier ' + (mat.tier || '?') + '</small></div>';
+    function sellAllFish() {
+        var fishItems = ['fish_common','fish_rare','fish_epic','fish_legendary','fish_old_boot','fish_seaweed','fish_pearl'];
+        var totalGold = 0;
+        for (var f = 0; f < fishItems.length; f++) {
+            for (var i = gameState.player.inventory.length-1; i >= 0; i--) {
+                if (gameState.player.inventory[i].id === fishItems[f]) {
+                    totalGold += (gameState.player.inventory[i].price || 1) * gameState.player.inventory[i].quantity;
+                    gameState.player.inventory.splice(i, 1);
                 }
             }
         }
-        if (!hasMaterials) html = '<span style="color:#aaa;grid-column:1/-1;">No materials yet. Go fishing or mining!</span>';
+        gameState.player.gold += totalGold;
+        gameState.saveToLocalStorage();
+        alert('💰 Sold all fish for ' + totalGold + ' gold!');
+        updateDisplay();
+    }
+
+    function doMining() {
+        var btn = document.getElementById('mine-btn'); btn.disabled = true; btn.textContent = '⛏️ Mining...';
+
+        setTimeout(function() {
+            // Cave-in check for deep mining
+            if (currentDepth === 'deep' && Math.random() < 0.05) {
+                var area = document.getElementById('mine-result');
+                area.innerHTML = '<span class="result-icon">💥</span><span class="result-text" style="color:#e74c3c;">Cave-in! You lost this turn.</span>';
+                btn.disabled = false; btn.textContent = '⛏️ Mine Again';
+                updateDisplay();
+                return;
+            }
+
+            var bonus = getBonusMultiplier();
+            var result = gameState.mine();
+
+            // Vein discovery (10% chance for 2 extra items)
+            var veinMsg = '';
+            if (Math.random() < 0.10) {
+                var extra1 = gameState.mine(); var extra2 = gameState.mine();
+                veinMsg = ' ⛓️ Rich vein! +2 extra items!';
+            }
+
+            var msg = '⛏️ ' + result.message;
+            if (bonus > 1) msg += ' (Daily bonus: 2x!)';
+            msg += veinMsg;
+
+            var area = document.getElementById('mine-result');
+            area.innerHTML = '<span class="result-icon">' + result.reward.icon + '</span><span class="result-text">' + msg + '</span>';
+            btn.disabled = false; btn.textContent = '⛏️ Mine Again';
+            updateDisplay();
+        }, 600);
+    }
+
+    function doMiningSpeed() {
+        var btn = document.getElementById('mine-speed-btn'); btn.disabled = true; btn.textContent = '⚡ Mining...';
+        var totalMsg = '';
+        for (var i = 0; i < 5; i++) {
+            if (currentDepth === 'deep' && Math.random() < 0.05) { totalMsg += '💥 '; continue; }
+            var result = gameState.mine();
+            totalMsg += result.reward.icon + ' ';
+        }
+        var area = document.getElementById('mine-result');
+        area.innerHTML = '<span class="result-text">⚡ 5 mines: ' + totalMsg + '</span>';
+        btn.disabled = false; btn.textContent = '⚡ Mine 5x';
+        updateDisplay();
+    }
+
+    function sellAllOres() {
+        var oreItems = ['mine_stone','mine_iron','mine_gold_nugget','mine_gem','mine_diamond','mine_coal'];
+        var totalGold = 0;
+        for (var o = 0; o < oreItems.length; o++) {
+            for (var i = gameState.player.inventory.length-1; i >= 0; i--) {
+                if (gameState.player.inventory[i].id === oreItems[o]) {
+                    totalGold += (gameState.player.inventory[i].price || 1) * gameState.player.inventory[i].quantity;
+                    gameState.player.inventory.splice(i, 1);
+                }
+            }
+        }
+        gameState.player.gold += totalGold;
+        gameState.saveToLocalStorage();
+        alert('💰 Sold all ores for ' + totalGold + ' gold!');
+        updateDisplay();
+    }
+
+    function updateDisplay() {
+        document.getElementById('gold-display').textContent = gameState.player.gold;
+        var lootCount = 0;
+        for (var i = 0; i < gameState.player.inventory.length; i++) {
+            if (gameState.player.inventory[i].type === 'loot') lootCount += gameState.player.inventory[i].quantity;
+        }
+        document.getElementById('loot-count').textContent = lootCount;
+        checkDaily();
+
+        var container = document.getElementById('loot-display');
+        var html = '';
+        var lootItems = {};
+        for (var i = 0; i < gameState.player.inventory.length; i++) {
+            var item = gameState.player.inventory[i];
+            if (item.type === 'loot') {
+                if (!lootItems[item.id]) lootItems[item.id] = { icon: item.icon, name: item.name, qty: 0, price: item.price };
+                lootItems[item.id].qty += item.quantity;
+            }
+        }
+        var hasLoot = false;
+        for (var key in lootItems) {
+            hasLoot = true;
+            var li = lootItems[key];
+            html += '<div class="mat-item"><span class="mat-icon">' + li.icon + '</span>' + li.name + '<br><strong>x' + li.qty + '</strong><br><small style="color:#ffd93d;">💰' + (li.price||1) + 'g</small></div>';
+        }
+        if (!hasLoot) html = '<span style="color:#aaa;grid-column:1/-1;">No loot yet. Go fishing or mining!</span>';
         container.innerHTML = html;
     }
 
-    updateMaterialsDisplay();
+    checkDaily();
+    updateDisplay();
 </script>
 </body>
 </html>

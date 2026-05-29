@@ -29,7 +29,7 @@
         .shop-item-name { font-weight: bold; margin-bottom: 4px; font-size: 12px; }
         .shop-item-price { color: #ffd93d; font-weight: bold; font-size: 12px; margin-top: 4px; }
         .shop-item-desc { font-size: 10px; color: #aaa; margin-top: 2px; }
-        .shop-item-stats { font-size: 10px; margin-top: 3px; }
+        .shop-item-stats { font-size: 15px; margin-top: 3px; }
         .shop-item-requirement { font-size: 10px; color: #e74c3c; margin-top: 4px; font-weight: bold; }
         .shop-item-discount { color: #43e97b; font-size: 10px; }
         .gamble-options { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
@@ -142,6 +142,13 @@
                 var tierColor = item.tier ? gameState.getTierColor(item.tier) : cat.borderColor;
                 var displayPrice = gameState.getDiscountedPrice(item.price);
 
+                var alreadyOwned = false;
+                if (item.type !== 'consumable') {
+                    for (var x = 0; x < gameState.player.inventory.length; x++) {
+                        if (gameState.player.inventory[x].id === item.id) { alreadyOwned = true; break; }
+                    }
+                }
+
                 var sd = '';
                 if (item.stats) {
                     if (item.stats.damage) sd += '<span style="color:#ff6b6b;">⚔️+' + item.stats.damage + ' </span>';
@@ -164,20 +171,25 @@
                     else rt = '🔒 Defeat Lvl ' + item.requirement.worldLevel + ' boss';
                 }
 
-                var priceHTML = '💰 ' + displayPrice + ' Gold';
-                if (displayPrice < item.price) priceHTML += ' <span class="shop-item-discount">(-' + (item.price - displayPrice) + ')</span>';
+                var priceHTML = '';
+                if (alreadyOwned) {
+                    priceHTML = '<span style="color:#888;">✅ OWNED</span>';
+                } else {
+                    priceHTML = '💰 ' + displayPrice + ' Gold';
+                    if (displayPrice < item.price) priceHTML += ' <span class="shop-item-discount">(-' + (item.price - displayPrice) + ')</span>';
+                }
 
                 var card = document.createElement('div'); card.className = 'shop-item';
                 if (!unlocked) card.classList.add('locked-item');
-                card.style.borderColor = unlocked ? tierColor : '#666';
+                if (alreadyOwned) card.style.opacity = '0.4';
+                card.style.borderColor = unlocked ? (alreadyOwned ? '#555' : tierColor) : '#666';
                 card.innerHTML = '<div class="shop-item-icon">' + item.icon + '</div><div class="shop-item-name">' + item.name + '</div><div class="shop-item-desc">' + item.description + '</div>' + (sd ? '<div class="shop-item-stats">' + sd + '</div>' : '') + (rt ? '<div class="shop-item-requirement">' + rt + '</div>' : '') + '<div class="shop-item-price">' + priceHTML + '</div>';
-                card.addEventListener('click', (function(id, unl) { return function() { if (unl) purchaseItem(id, false); else alert('Requirements not met!'); }; })(item.id, unlocked));
+                card.addEventListener('click', (function(id, unl, owned) { return function() { if (owned) { alert('You already own this item!'); return; } if (unl) purchaseItem(id, false); else alert('Requirements not met!'); }; })(item.id, unlocked, alreadyOwned));
                 grid.appendChild(card);
             }
             section.appendChild(grid); container.appendChild(section);
         }
     }
-
     function renderAmuletShop() {
         var container = document.getElementById('amulet-content');
         var shopList = gameState.specialShop;
@@ -190,6 +202,13 @@
 
         for (var j = 0; j < shopList.length; j++) {
             var item = shopList[j];
+
+            // Check if already owned
+            var alreadyOwned = false;
+            for (var x = 0; x < gameState.player.inventory.length; x++) {
+                if (gameState.player.inventory[x].id === item.id) { alreadyOwned = true; break; }
+            }
+
             var sd = '';
             if (item.stats) {
                 if (item.stats.damageBoost) sd += '<span style="color:#ff6b6b;">⚔️+' + item.stats.damageBoost + ' </span>';
@@ -199,14 +218,17 @@
                 if (item.stats.healBoost) sd += '<span style="color:#43e97b;">💚+' + item.stats.healBoost + '% </span>';
                 if (item.stats.goldBoost) sd += '<span style="color:#ffd93d;">💰+' + item.stats.goldBoost + '% </span>';
             }
+
+            var priceHTML = alreadyOwned ? '<span style="color:#888;">✅ OWNED</span>' : '💰 ' + item.price + ' Gold';
+
             var card = document.createElement('div'); card.className = 'shop-item'; card.style.borderColor = '#ffd93d';
-            card.innerHTML = '<div class="shop-item-icon">' + item.icon + '</div><div class="shop-item-name">' + item.name + '</div><div class="shop-item-desc">' + item.description + '</div>' + (sd ? '<div class="shop-item-stats">' + sd + '</div>' : '') + '<div class="shop-item-price">💰 ' + item.price + ' Gold</div>';
-            card.addEventListener('click', (function(id) { return function() { purchaseItem(id, true); }; })(item.id));
+            if (alreadyOwned) { card.style.opacity = '0.4'; card.style.borderColor = '#555'; }
+            card.innerHTML = '<div class="shop-item-icon">' + item.icon + '</div><div class="shop-item-name">' + item.name + '</div><div class="shop-item-desc">' + item.description + '</div>' + (sd ? '<div class="shop-item-stats">' + sd + '</div>' : '') + '<div class="shop-item-price">' + priceHTML + '</div>';
+            card.addEventListener('click', (function(id, owned) { return function() { if (owned) { alert('You already own this item!'); return; } purchaseItem(id, true); }; })(item.id, alreadyOwned));
             grid.appendChild(card);
         }
         section.appendChild(grid); container.appendChild(section);
     }
-
     function purchaseItem(itemId, isSpecial) {
         isSpecial = isSpecial || false;
         var result = gameState.buyItem(itemId, isSpecial);

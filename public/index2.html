@@ -483,14 +483,49 @@
                     stats: JSON.parse(JSON.stringify(self.enemy.amulet.stats)),
                     type: 'amulet', price: 0, quantity: 1, unique: true
                 });
+
+                // First defeat: guaranteed pet drop
+                if (self.bossData.petDrop && gameState.player.pets.indexOf(self.bossData.petDrop) === -1) {
+                    gameState.player.pets.push(self.bossData.petDrop);
+                    gameState.addPetToInventory(self.bossData.petDrop);
+                    var petInfo = gameState.getPetById(self.bossData.petDrop);
+                    if (petInfo) {
+                        self.addLog('🐾 Pet earned: ' + petInfo.icon + ' ' + petInfo.name + '!');
+                    }
+                }
+
                 gameState.saveToLocalStorage();
-                self.showVictory('🎉 First defeat! Earned ' + self.enemy.amulet.name + '!\n' + self.enemy.amulet.description + '\n💰 +' + (gr + bg) + ' Gold | +' + self.enemy.expReward + ' EXP');
+                var victoryMsg = '🎉 First defeat! Earned ' + self.enemy.amulet.name + '!\n' + self.enemy.amulet.description;
+                if (self.bossData.petDrop) {
+                    var petInfo = gameState.getPetById(self.bossData.petDrop);
+                    if (petInfo) victoryMsg += '\n🐾 Pet: ' + petInfo.icon + ' ' + petInfo.name;
+                }
+                victoryMsg += '\n💰 +' + (gr + bg) + ' Gold | +' + self.enemy.expReward + ' EXP';
+                self.showVictory(victoryMsg);
             } else {
+                // Repeat kill: 15% chance for pet drop
+                if (self.bossData.petDrop && gameState.player.pets.indexOf(self.bossData.petDrop) === -1) {
+                    if (Math.random() < 0.15) {
+                        gameState.player.pets.push(self.bossData.petDrop);
+                        gameState.addPetToInventory(self.bossData.petDrop);
+                        var petInfo = gameState.getPetById(self.bossData.petDrop);
+                        if (petInfo) {
+                            self.addLog('🐾 Pet dropped: ' + petInfo.icon + ' ' + petInfo.name + '!');
+                        }
+                    }
+                }
+
                 var dropTable = gameState.dropTables[self.bossData.worldLevel];
                 if (dropTable) {
                     var roll = Math.random();
                     var cum = 0;
-                    for (var j = 0; j < dropTable.length; j++) { cum += dropTable[j].dropRate; if (roll < cum) { gameState.addDropToInventory(dropTable[j]); break; } }
+                    for (var j = 0; j < dropTable.length; j++) {
+                        cum += dropTable[j].dropRate;
+                        if (roll < cum) {
+                            gameState.addDropToInventory(dropTable[j]);
+                            break;
+                        }
+                    }
                 }
                 gameState.saveToLocalStorage();
                 self.showVictory('💰 +' + (gr + bg) + ' Gold | +' + self.enemy.expReward + ' EXP');

@@ -43,7 +43,7 @@
         .inventory-item-name { font-weight: bold; margin-bottom: 4px; font-size: 12px; }
         .inventory-item-price { color: #ffd93d; font-weight: bold; font-size: 12px; margin-top: 4px; }
         .inventory-item-desc { font-size: 10px; color: #aaa; margin-top: 2px; }
-        .inventory-item-stats { font-size: 10px; margin-top: 3px; }
+        .inventory-item-stats { font-size: 15px; margin-top: 3px; }
         .inventory-item-quantity { position: absolute; top: 8px; right: 8px; background: #4ecdc4; color: #1a1a2e; border-radius: 50%; width: 22px; height: 22px; font-size: 10px; font-weight: bold; display: flex; align-items: center; justify-content: center; }
         .inventory-item-equipped { position: absolute; top: 8px; left: 8px; background: #f39c12; color: #1a1a2e; border-radius: 50%; width: 22px; height: 22px; font-size: 12px; font-weight: bold; display: flex; align-items: center; justify-content: center; }
         .empty-inventory { text-align: center; color: #aaa; padding: 40px 20px; grid-column: 1 / -1; }
@@ -274,7 +274,7 @@
         }
     }
 
-    function showStats() { document.getElementById('stats-modal').classList.remove('hidden'); renderStats(); }
+    function showStats() { document.getElementById('stats-modal').classList.remove('hidden'); renderStats(); updatePrestigeButton(); }
     function closeStats() { document.getElementById('stats-modal').classList.add('hidden'); }
 
     function renderStats() {
@@ -308,6 +308,62 @@
             '<div class="stat-row"><span class="stat-label">Amulet:</span><span class="stat-value">' + (amulet ? amulet.icon + ' ' + amulet.name : 'None') + '</span></div>' +
             '<div class="stat-row"><span class="stat-label">Pet:</span><span class="stat-value">' + (pet ? pet.icon + ' ' + pet.name : 'None') + '</span></div>' +
             '<div class="stat-row"><span class="stat-label">Achievements:</span><span class="stat-value" style="display:flex;gap:2px;flex-wrap:wrap;justify-content:flex-end;">' + achHTML + '</span></div>';
+    }
+    window.doPrestige = function() {
+        if (gameState.player.level < 250) {
+            var container = document.getElementById('prestige-btn-container');
+            if (container) container.innerHTML = '<p style="color:#e74c3c;text-align:center;">Must be level 250 to prestige!</p>';
+            return;
+        }
+
+        // First click - show confirmation
+        var container = document.getElementById('prestige-btn-container');
+        if (container && container.getAttribute('data-confirming') !== 'true') {
+            container.setAttribute('data-confirming', 'true');
+            container.innerHTML =
+                '<p style="color:#ffd93d;font-size:14px;margin-bottom:10px;">⚠️ This will reset:</p>' +
+                '<p style="color:#e74c3c;font-size:12px;margin-bottom:5px;">Level, Gold, Items, Materials, Skills, Kills, Boss Progress</p>' +
+                '<p style="color:#43e97b;font-size:12px;margin-bottom:10px;">✅ You keep: Achievements & Pets</p>' +
+                '<button class="menu-btn" onclick="window.confirmPrestige()" style="background:#e74c3c;color:#fff;font-size:14px;padding:10px 25px;">⚠️ Confirm Prestige</button>' +
+                '<button class="menu-btn" onclick="window.cancelPrestige()" style="background:#4ecdc4;color:#1a1a2e;font-size:14px;padding:10px 25px;margin-left:10px;">Cancel</button>';
+            return;
+        }
+    };
+
+    window.confirmPrestige = function() {
+        var r = gameState.prestige();
+        var container = document.getElementById('prestige-btn-container');
+        if (container) {
+            container.removeAttribute('data-confirming');
+            container.innerHTML = '<p style="color:#ffd93d;font-size:16px;">🌟 ' + r.message + '</p>';
+        }
+        setTimeout(function() {
+            closeStats();
+            showStats();
+        }, 2000);
+    };
+
+    window.cancelPrestige = function() {
+        var container = document.getElementById('prestige-btn-container');
+        if (container) {
+            container.removeAttribute('data-confirming');
+            container.innerHTML = '<button class="menu-btn" onclick="doPrestige()" style="background:linear-gradient(135deg,#ffd93d 0%,#f59e0b 100%);color:#1a1a2e;font-size:16px;">🌟 Prestige Now!</button><p style="color:#aaa;font-size:11px;margin-top:5px;">Resets EVERYTHING except achievements & pets. +5% permanent bonus per prestige.</p>';
+        }
+    };
+    function updatePrestigeButton() {
+        var statsDisplay = document.getElementById('stats-display');
+        if (!statsDisplay) return;
+
+        var oldBtn = document.getElementById('prestige-btn-container');
+        if (oldBtn) oldBtn.remove();
+
+        if (gameState.player.level >= 250) {
+            var container = document.createElement('div');
+            container.id = 'prestige-btn-container';
+            container.style.cssText = 'text-align:center;margin-top:15px;padding-top:15px;border-top:2px solid #ffd93d;';
+            container.innerHTML = '<button class="menu-btn" onclick="doPrestige()" style="background:linear-gradient(135deg,#ffd93d 0%,#f59e0b 100%);color:#1a1a2e;font-size:16px;">🌟 Prestige Now!</button><p style="color:#aaa;font-size:11px;margin-top:5px;">Resets level to 1. Keeps items, gold, skills. +5% permanent bonus per prestige.</p>';
+            statsDisplay.parentNode.appendChild(container);
+        }
     }
 
     function showResetConfirmation() { document.getElementById('reset-modal').classList.remove('hidden'); }

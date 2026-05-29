@@ -46,24 +46,71 @@
         grid.innerHTML = '';
         for (var i = 0; i < gameState.craftingRecipes.length; i++) {
             var recipe = gameState.craftingRecipes[i];
-            var card = document.createElement('div'); card.className = 'recipe-card';
+            var card = document.createElement('div');
+            card.className = 'recipe-card';
+
             var matsHTML = '';
             var canCraft = true;
             for (var j = 0; j < recipe.materials.length; j++) {
                 var mat = recipe.materials[j];
                 var owned = gameState.player.materials[mat.id] || 0;
                 if (owned < mat.amount) canCraft = false;
-                matsHTML += '<span style="color:' + (owned >= mat.amount ? '#43e97b' : '#e74c3c') + '">' + mat.amount + 'x ' + mat.id + '</span> (' + owned + ')<br>';
+                var matName = mat.id.replace(/_/g, ' ');
+                matsHTML += '<span style="color:' + (owned >= mat.amount ? '#43e97b' : '#e74c3c') + '">' + mat.amount + 'x ' + matName + '</span> (' + owned + ')<br>';
             }
-            card.innerHTML = '<div class="icon">' + recipe.icon + '</div><div class="name">' + recipe.name + '</div><div class="materials">' + matsHTML + '</div>';
-            var btn = document.createElement('button'); btn.className = 'craft-btn'; btn.textContent = 'Craft';
+
+            // Build stats display for the result item
+            var statsHTML = '';
+            var result = recipe.result;
+            if (result.stats) {
+                if (result.stats.damage) statsHTML += '<span style="color:#ff6b6b;">⚔️+' + result.stats.damage + ' </span>';
+                if (result.stats.intelligence) statsHTML += '<span style="color:#a366ff;">📚+' + result.stats.intelligence + ' </span>';
+                if (result.stats.defense) statsHTML += '<span style="color:#4ecdc4;">🛡️+' + result.stats.defense + ' </span>';
+                if (result.stats.damageBoost) statsHTML += '<span style="color:#ff6b6b;">⚔️+' + result.stats.damageBoost + ' </span>';
+                if (result.stats.defenseBoost) statsHTML += '<span style="color:#4ecdc4;">🛡️+' + result.stats.defenseBoost + ' </span>';
+                if (result.stats.hpBoost) statsHTML += '<span style="color:#ff6b6b;">❤️+' + result.stats.hpBoost + ' </span>';
+                if (result.stats.manaBoost) statsHTML += '<span style="color:#6ee7de;">💙+' + result.stats.manaBoost + ' </span>';
+                if (result.stats.healBoost) statsHTML += '<span style="color:#43e97b;">💚+' + result.stats.healBoost + '% </span>';
+                if (result.stats.goldBoost) statsHTML += '<span style="color:#ffd93d;">💰+' + result.stats.goldBoost + '% </span>';
+                if (result.stats.intelligenceBoost) statsHTML += '<span style="color:#a366ff;">📚+' + result.stats.intelligenceBoost + ' </span>';
+                if (result.stats.strengthBoost) statsHTML += '<span style="color:#ff6b6b;">💪+' + result.stats.strengthBoost + ' </span>';
+                if (result.stats.poisonChance) statsHTML += '<span style="color:#a8e063;">☠️+' + result.stats.poisonChance + '% </span>';
+                if (result.stats.stunChance) statsHTML += '<span style="color:#ffd93d;">⚡+' + result.stats.stunChance + '% </span>';
+                if (result.stats.critBonus) statsHTML += '<span style="color:#ff6b6b;">💥+' + result.stats.critBonus + '% </span>';
+                if (result.stats.damageReflect) statsHTML += '<span style="color:#e74c3c;">↩️+' + result.stats.damageReflect + '% </span>';
+                if (result.stats.fireResist) statsHTML += '<span style="color:#f39c12;">🔥+' + result.stats.fireResist + '% </span>';
+                if (result.stats.dodgeChance) statsHTML += '<span style="color:#6ee7de;">💨+' + result.stats.dodgeChance + '% </span>';
+                if (result.stats.critChance) statsHTML += '<span style="color:#ffd93d;">💥+' + result.stats.critChance + '% </span>';
+            }
+            if (result.tier) statsHTML += ' <span style="color:' + gameState.getTierColor(result.tier) + ';">[' + gameState.getTierName(result.tier) + ']</span>';
+            if (result.heal) statsHTML += '<span style="color:#43e97b;">❤️' + result.heal + ' HP </span>';
+            if (result.mana) statsHTML += '<span style="color:#6ee7de;">💙' + result.mana + ' Mana</span>';
+
+            card.innerHTML = '<div class="icon">' + recipe.icon + '</div>' +
+                '<div class="name">' + recipe.name + '</div>' +
+                (statsHTML ? '<div class="materials" style="color:#4ecdc4;font-size:11px;">' + statsHTML + '</div>' : '') +
+                '<div class="materials"><strong>Requires:</strong><br>' + matsHTML + '</div>';
+
+            var btn = document.createElement('button');
+            btn.className = 'craft-btn';
+            btn.textContent = 'Craft';
             if (!canCraft) btn.disabled = true;
-            btn.onclick = (function(id) { return function() { var r = gameState.craft(id); alert(r.message); renderRecipes(); renderMaterials(); }; })(recipe.id);
+            btn.onclick = (function(id) {
+                return function() {
+                    var r = gameState.craft(id);
+                    alert(r.message);
+                    // Apply elixir effects if crafted
+                    if (id === 'craft_elixir' && r.success) { gameState.player.strength += 1; gameState.recalculateStats(); gameState.saveToLocalStorage(); }
+                    if (id === 'craft_elixir_def' && r.success) { gameState.player.defense += 1; gameState.recalculateStats(); gameState.saveToLocalStorage(); }
+                    renderRecipes();
+                    renderMaterials();
+                };
+            })(recipe.id);
+
             card.appendChild(btn);
             grid.appendChild(card);
         }
     }
-
     function renderMaterials() {
         var container = document.getElementById('materials-display');
         var html = '';
