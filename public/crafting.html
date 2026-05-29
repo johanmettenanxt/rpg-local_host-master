@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crafting</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: #fff; font-family: 'Arial', sans-serif; min-height: 100vh; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; }
+        .back-btn { padding: 10px 20px; background: #ff6b6b; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; margin-bottom: 15px; }
+        .back-btn:hover { transform: translateY(-2px); }
+        .header { text-align: center; margin-bottom: 25px; }
+        .header h1 { font-size: 38px; color: #ff6b6b; }
+        .recipe-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; }
+        .recipe-card { background: #2a2a3e; border: 2px solid #4ecdc4; border-radius: 12px; padding: 20px; text-align: center; }
+        .recipe-card .icon { font-size: 40px; margin-bottom: 10px; }
+        .recipe-card .name { font-weight: bold; font-size: 16px; margin-bottom: 10px; }
+        .recipe-card .materials { font-size: 12px; color: #aaa; margin-bottom: 15px; }
+        .recipe-card .materials span { color: #ffd93d; }
+        .craft-btn { padding: 10px 25px; background: #4ecdc4; color: #1a1a2e; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px; }
+        .craft-btn:hover { background: #3dbdb5; }
+        .craft-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .materials-preview { margin-top: 30px; background: #1a1a2e; border-radius: 10px; padding: 20px; }
+        .materials-preview h3 { color: #ff6b6b; margin-bottom: 15px; }
+        .mats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; }
+        .mat-item { background: #2a2a3e; border: 1px solid #4ecdc4; border-radius: 8px; padding: 8px; text-align: center; font-size: 12px; }
+        .mat-item .mat-icon { font-size: 24px; display: block; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <button class="back-btn" onclick="window.location.href='index.html'">← Back to Menu</button>
+    <div class="header"><h1>🔨 Crafting</h1></div>
+    <div class="recipe-grid" id="recipes"></div>
+    <div class="materials-preview">
+        <h3>📦 Your Materials</h3>
+        <div class="mats-grid" id="materials-display"></div>
+    </div>
+</div>
+
+<script src="gamestate.js"></script>
+<script>
+    function renderRecipes() {
+        var grid = document.getElementById('recipes');
+        grid.innerHTML = '';
+        for (var i = 0; i < gameState.craftingRecipes.length; i++) {
+            var recipe = gameState.craftingRecipes[i];
+            var card = document.createElement('div'); card.className = 'recipe-card';
+            var matsHTML = '';
+            var canCraft = true;
+            for (var j = 0; j < recipe.materials.length; j++) {
+                var mat = recipe.materials[j];
+                var owned = gameState.player.materials[mat.id] || 0;
+                if (owned < mat.amount) canCraft = false;
+                matsHTML += '<span style="color:' + (owned >= mat.amount ? '#43e97b' : '#e74c3c') + '">' + mat.amount + 'x ' + mat.id + '</span> (' + owned + ')<br>';
+            }
+            card.innerHTML = '<div class="icon">' + recipe.icon + '</div><div class="name">' + recipe.name + '</div><div class="materials">' + matsHTML + '</div>';
+            var btn = document.createElement('button'); btn.className = 'craft-btn'; btn.textContent = 'Craft';
+            if (!canCraft) btn.disabled = true;
+            btn.onclick = (function(id) { return function() { var r = gameState.craft(id); alert(r.message); renderRecipes(); renderMaterials(); }; })(recipe.id);
+            card.appendChild(btn);
+            grid.appendChild(card);
+        }
+    }
+
+    function renderMaterials() {
+        var container = document.getElementById('materials-display');
+        var html = '';
+        var hasAny = false;
+        for (var key in gameState.player.materials) {
+            if (gameState.player.materials[key] > 0) {
+                hasAny = true;
+                var mat = gameState.findMaterialById(key);
+                if (mat) html += '<div class="mat-item"><span class="mat-icon">' + mat.icon + '</span>' + mat.name + '<br><strong>x' + gameState.player.materials[key] + '</strong></div>';
+            }
+        }
+        if (!hasAny) html = '<span style="color:#aaa;">No materials yet. Kill enemies, fish, or mine to get materials!</span>';
+        container.innerHTML = html;
+    }
+
+    renderRecipes();
+    renderMaterials();
+</script>
+</body>
+</html>

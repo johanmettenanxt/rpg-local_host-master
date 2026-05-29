@@ -19,6 +19,7 @@
         .menu-btn.gear-btn { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); }
         .menu-btn.skill-btn { background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); }
         .menu-btn.minigames-btn { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+        .menu-btn.crafting-btn { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
         .menu-btn.reset-btn { background: linear-gradient(135deg, #ff6b6b 0%, #c0392b 100%); }
         .menu-btn.small-btn { padding: 8px 16px; font-size: 13px; background: linear-gradient(135deg, #4ecdc4 0%, #2ecc71 100%); }
         .menu-btn.sell-btn { background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); }
@@ -57,9 +58,8 @@
         .reset-confirm-buttons { display: flex; gap: 15px; justify-content: center; margin-top: 20px; }
         .btn-yes { background: #ff6b6b; color: #fff; border: none; padding: 12px 30px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; }
         .btn-no { background: #4ecdc4; color: #fff; border: none; padding: 12px 30px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; }
-        .levelup-content { text-align: center; background: linear-gradient(135deg, #ff6b6b 0%, #f5576c 100%); border-color: #ffd93d; }
-        .levelup-content h2 { font-size: 48px; margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
-        #levelup-message { font-size: 24px; margin-bottom: 30px; }
+        .achievements-row { flex-wrap: wrap; }
+        .achievements-row .stat-value { display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
         @media (max-width: 768px) { .inventory-grid { grid-template-columns: repeat(3, 1fr); } }
         @media (max-width: 600px) {
             .menu-content { padding: 30px; } .menu-content h1 { font-size: 36px; }
@@ -68,7 +68,6 @@
     </style>
 </head>
 <body>
-<!-- Main Menu -->
 <div id="main-menu" class="menu-container">
     <div class="menu-content">
         <h1>⚔️ RPG Battle Arena</h1>
@@ -77,6 +76,7 @@
             <button class="menu-btn shops-btn" id="btn-shops">🏪 Shops & Gamble</button>
             <button class="menu-btn gear-btn" id="btn-gear">⚔️ Equipment Guide</button>
             <button class="menu-btn skill-btn" id="btn-skills">🌟 Skill Tree</button>
+            <button class="menu-btn crafting-btn" id="btn-crafting">🔨 Crafting</button>
             <button class="menu-btn minigames-btn" id="btn-minigames">🎮 Minigames</button>
             <button class="menu-btn" id="btn-inventory">🎒 Inventory</button>
             <button class="menu-btn" id="btn-stats">📊 Stats</button>
@@ -85,7 +85,6 @@
     </div>
 </div>
 
-<!-- Inventory Modal -->
 <div id="inventory-modal" class="modal hidden">
     <div class="modal-content inventory-content">
         <h2>🎒 Inventory</h2>
@@ -106,7 +105,6 @@
     </div>
 </div>
 
-<!-- Stats Modal -->
 <div id="stats-modal" class="modal hidden">
     <div class="modal-content stats-content">
         <h2>📊 Player Stats</h2>
@@ -115,16 +113,6 @@
     </div>
 </div>
 
-<!-- Level Up Modal -->
-<div id="levelup-modal" class="modal hidden">
-    <div class="modal-content levelup-content">
-        <h2>🎉 Level Up!</h2>
-        <div id="levelup-message"></div>
-        <button class="menu-btn" onclick="closeLevelUp()">Continue</button>
-    </div>
-</div>
-
-<!-- Reset Confirmation Modal -->
 <div id="reset-modal" class="modal hidden">
     <div class="modal-content reset-confirm">
         <h2>⚠️ Reset Game?</h2>
@@ -137,7 +125,6 @@
     </div>
 </div>
 
-<!-- Final Reset Warning Modal -->
 <div id="reset-final-modal" class="modal hidden">
     <div class="modal-content reset-confirm">
         <h2>🛑 FINAL WARNING!</h2>
@@ -152,7 +139,6 @@
 
 <script src="gamestate.js"></script>
 <script>
-    // ==================== INVENTORY ====================
     var inventoryMode = 'view';
 
     function showInventory() { document.getElementById('inventory-modal').classList.remove('hidden'); setInventoryMode('view'); }
@@ -166,9 +152,9 @@
         document.getElementById('mode-upgrade-btn').style.opacity = mode === 'upgrade' ? '1' : '0.6';
         var indicator = document.getElementById('inventory-mode-indicator');
         if (mode === 'view') indicator.innerHTML = '<span style="color:#4ecdc4;">👁️ View Mode - Click an item to see details</span>';
-        else if (mode === 'equip') indicator.innerHTML = '<span style="color:#f39c12;">⚔️ Equip Mode - Click a weapon/armor/amulet to equip it</span>';
-        else if (mode === 'sell') indicator.innerHTML = '<span style="color:#e74c3c;">💰 Sell Mode - Click an item to sell it for 50% of its value</span>';
-        else if (mode === 'upgrade') indicator.innerHTML = '<span style="color:#06b6d4;">⬆️ Upgrade Mode - Click to upgrade (gold + materials)</span>';
+        else if (mode === 'equip') indicator.innerHTML = '<span style="color:#f39c12;">⚔️ Equip Mode - Click to equip</span>';
+        else if (mode === 'sell') indicator.innerHTML = '<span style="color:#e74c3c;">💰 Sell Mode - Click to sell for 50%</span>';
+        else if (mode === 'upgrade') indicator.innerHTML = '<span style="color:#06b6d4;">⬆️ Upgrade Mode - Click to upgrade</span>';
         renderInventory();
     }
 
@@ -179,14 +165,15 @@
         if (gameState.player.inventory.length === 0) { container.innerHTML = '<div class="empty-inventory">Your inventory is empty</div>'; return; }
 
         var categories = [
-            { name: '⭐ Equipped', filter: function(i) { return i.id === gameState.player.equippedWeapon || i.id === gameState.player.equippedArmor || i.id === gameState.player.equippedAmulet; }, borderColor: '#f39c12' },
+            { name: '⭐ Equipped', filter: function(i) { return i.id === gameState.player.equippedWeapon || i.id === gameState.player.equippedArmor || i.id === gameState.player.equippedAmulet || i.id === gameState.player.activePet; }, borderColor: '#f39c12' },
             { name: '⚔️ Melee Weapons', filter: function(i) { return i.category === 'melee' && i.id !== gameState.player.equippedWeapon; }, borderColor: '#ff6b6b' },
             { name: '🏹 Ranged Weapons', filter: function(i) { return i.category === 'ranged' && i.id !== gameState.player.equippedWeapon; }, borderColor: '#43e97b' },
             { name: '🔮 Magic Weapons', filter: function(i) { return i.category === 'magic' && i.id !== gameState.player.equippedWeapon; }, borderColor: '#a366ff' },
             { name: '🛡️ Armor', filter: function(i) { return i.type === 'armor' && i.id !== gameState.player.equippedArmor; }, borderColor: '#4ecdc4' },
             { name: '📿 Amulets', filter: function(i) { return i.type === 'amulet' && i.id !== gameState.player.equippedAmulet; }, borderColor: '#ffd93d' },
+            { name: '🐾 Pets', filter: function(i) { return i.type === 'pet' && i.id !== gameState.player.activePet; }, borderColor: '#f59e0b' },
             { name: '🧪 Consumables', filter: function(i) { return i.type === 'consumable'; }, borderColor: '#ffd93d' },
-            { name: '💎 Loot & Other', filter: function(i) { return i.type === 'loot' && i.id !== gameState.player.equippedWeapon && i.id !== gameState.player.equippedArmor && i.id !== gameState.player.equippedAmulet; }, borderColor: '#aaa' }
+            { name: '💎 Loot & Other', filter: function(i) { return i.type === 'loot' && i.id !== gameState.player.equippedWeapon && i.id !== gameState.player.equippedArmor && i.id !== gameState.player.equippedAmulet && i.id !== gameState.player.activePet; }, borderColor: '#aaa' }
         ];
 
         for (var c = 0; c < categories.length; c++) {
@@ -202,9 +189,11 @@
                 if (item.rarity === 'legendary') tierColor = '#ffd700';
                 else if (item.rarity === 'uncommon') tierColor = '#a366ff';
                 if (item.type === 'amulet') tierColor = '#ffd93d';
+                if (item.type === 'pet') tierColor = '#f59e0b';
                 var card = document.createElement('div'); card.className = 'inventory-item'; card.style.borderColor = tierColor;
                 var h = '';
-                if (item.id === gameState.player.equippedWeapon || item.id === gameState.player.equippedArmor || item.id === gameState.player.equippedAmulet) h += '<div class="inventory-item-equipped">E</div>';
+                var isEquipped = item.id === gameState.player.equippedWeapon || item.id === gameState.player.equippedArmor || item.id === gameState.player.equippedAmulet || item.id === gameState.player.activePet;
+                if (isEquipped) h += '<div class="inventory-item-equipped">E</div>';
                 if (item.quantity > 1) h += '<div class="inventory-item-quantity">x' + item.quantity + '</div>';
                 h += '<div class="inventory-item-icon">' + item.icon + '</div><div class="inventory-item-name" style="color:' + tierColor + ';">' + item.name + '</div>';
                 var sd = '';
@@ -218,12 +207,15 @@
                     if (item.stats.manaBoost) sd += '<span style="color:#6ee7de;">💙+' + item.stats.manaBoost + ' </span>';
                     if (item.stats.healBoost) sd += '<span style="color:#43e97b;">💚+' + item.stats.healBoost + '% </span>';
                     if (item.stats.goldBoost) sd += '<span style="color:#ffd93d;">💰+' + item.stats.goldBoost + '% </span>';
+                    if (item.stats.fireDamage) sd += '<span style="color:#ff6b6b;">🔥+' + item.stats.fireDamage + '% </span>';
+                    if (item.stats.manaRegen) sd += '<span style="color:#6ee7de;">💙+' + item.stats.manaRegen + '/turn </span>';
+                    if (item.stats.critChance) sd += '<span style="color:#ffd93d;">💥+' + item.stats.critChance + '% </span>';
                     if (item.stats.heal) sd += '<span style="color:#43e97b;">❤️' + item.stats.heal + ' </span>';
                     if (item.stats.mana) sd += '<span style="color:#6ee7de;">💙' + item.stats.mana + '</span>';
                 }
                 if (item.tier) sd += ' <span style="color:' + tierColor + ';">[' + gameState.getTierName(item.tier) + ']</span>';
                 if (sd) h += '<div class="inventory-item-stats">' + sd + '</div>';
-                if (inventoryMode === 'sell') { var sp = item.price ? Math.floor(item.price / 2) : 1; h += '<div class="inventory-item-price">💰 Sell: ' + sp + ' Gold</div>'; }
+                if (inventoryMode === 'sell' && item.price) { var sp = Math.floor(item.price / 2); h += '<div class="inventory-item-price">💰 Sell: ' + sp + ' Gold</div>'; }
                 else if (inventoryMode === 'upgrade' && item.tier && item.tier < 5) { var cost = gameState.getUpgradeCost(item.tier); h += '<div class="inventory-item-price">⬆️ ' + cost.gold + 'g + ' + cost.amount + 'x T' + cost.materialTier + ' mats</div>'; }
                 card.innerHTML = h;
                 card.addEventListener('click', (function(it) { return function(e) { e.stopPropagation(); handleInventoryClick(it); }; })(item));
@@ -241,6 +233,11 @@
                 else gameState.player.equippedAmulet = item.id;
                 gameState.recalculateStats(); gameState.saveToLocalStorage(); renderInventory();
                 alert('✅ Equipped ' + item.name + '!');
+            } else if (item.type === 'pet') {
+                var r = gameState.equipPet(item.id);
+                alert(r.message);
+                gameState.recalculateStats();
+                renderInventory();
             } else if (item.type === 'consumable') {
                 if (item.stats && item.stats.heal) gameState.player.health = Math.min(gameState.player.maxHealth, gameState.player.health + item.stats.heal);
                 else if (item.stats && item.stats.mana) gameState.player.mana = Math.min(gameState.player.maxMana, gameState.player.mana + item.stats.mana);
@@ -248,7 +245,7 @@
                 gameState.saveToLocalStorage(); renderInventory();
             } else { alert('Cannot equip this!'); }
         } else if (inventoryMode === 'sell') {
-            if (item.id === gameState.player.equippedWeapon || item.id === gameState.player.equippedArmor || item.id === gameState.player.equippedAmulet) { alert('Unequip first!'); return; }
+            if (item.id === gameState.player.equippedWeapon || item.id === gameState.player.equippedArmor || item.id === gameState.player.equippedAmulet || item.id === gameState.player.activePet) { alert('Unequip first!'); return; }
             var sp = item.price ? Math.floor(item.price / 2) : 1;
             gameState.player.gold += sp;
             if (gameState.player.equippedWeapon === item.id) gameState.player.equippedWeapon = null;
@@ -264,53 +261,67 @@
         } else {
             var info = item.icon + ' ' + item.name + '\n' + (item.description || '') + '\n';
             if (item.tier) info += 'Tier: ' + gameState.getTierName(item.tier) + '\n';
-            if (item.stats) { if (item.stats.damage) info += 'Damage: +' + item.stats.damage + '\n'; if (item.stats.defense) info += 'Defense: +' + item.stats.defense + '\n'; if (item.stats.damageBoost) info += 'Dmg+: +' + item.stats.damageBoost + '\n'; if (item.stats.defenseBoost) info += 'Def+: +' + item.stats.defenseBoost + '\n'; if (item.stats.hpBoost) info += 'HP+: +' + item.stats.hpBoost + '\n'; if (item.stats.manaBoost) info += 'Mana+: +' + item.stats.manaBoost + '\n'; if (item.stats.healBoost) info += 'Heal: +' + item.stats.healBoost + '%\n'; if (item.stats.goldBoost) info += 'Gold: +' + item.stats.goldBoost + '%\n'; }
+            if (item.stats) {
+                if (item.stats.damage) info += 'Damage: +' + item.stats.damage + '\n';
+                if (item.stats.defense) info += 'Defense: +' + item.stats.defense + '\n';
+                if (item.stats.fireDamage) info += 'Fire Dmg: +' + item.stats.fireDamage + '%\n';
+                if (item.stats.manaRegen) info += 'Mana Regen: +' + item.stats.manaRegen + '/turn\n';
+                if (item.stats.critChance) info += 'Crit: +' + item.stats.critChance + '%\n';
+            }
             if (item.price) info += 'Value: ' + item.price + 'g\n';
+            if (item.type === 'pet') info += '\n🐾 Equip this pet for passive bonuses!';
             alert(info);
         }
     }
 
-    // ==================== STATS ====================
     function showStats() { document.getElementById('stats-modal').classList.remove('hidden'); renderStats(); }
     function closeStats() { document.getElementById('stats-modal').classList.add('hidden'); }
-    function closeLevelUp() { document.getElementById('levelup-modal').classList.add('hidden'); }
 
     function renderStats() {
         var p = gameState.player; var totals = gameState.getTotalStats();
         var weapon = gameState.getEquippedWeapon(); var armor = gameState.getEquippedArmor(); var amulet = gameState.getEquippedAmulet();
+        var pet = gameState.getPetById(gameState.player.activePet);
+
+        var achHTML = '';
+        for (var i = 0; i < gameState.achievementData.length; i++) {
+            var ach = gameState.achievementData[i];
+            var unlocked = gameState.player.achievements[ach.id];
+            achHTML += '<span style="color:' + (unlocked ? '#ffd93d' : '#555') + ';margin:2px;font-size:18px;" title="' + ach.desc + (unlocked ? ' ✅' : '') + '">' + ach.icon + '</span>';
+        }
+
         document.getElementById('stats-display').innerHTML =
             '<div class="stat-row"><span class="stat-label">Name:</span><span class="stat-value">' + p.name + '</span></div>' +
-            '<div class="stat-row"><span class="stat-label">Level:</span><span class="stat-value">' + p.level + '</span></div>' +
+            '<div class="stat-row"><span class="stat-label">Level:</span><span class="stat-value">' + p.level + (p.prestigeLevel > 0 ? ' <span style="color:#ffd93d;">[P' + p.prestigeLevel + ']</span>' : '') + '</span></div>' +
             '<div class="stat-row"><span class="stat-label">Skill Points:</span><span class="stat-value">⭐ ' + (p.skillPoints || 0) + '</span></div>' +
             '<div class="stat-row"><span class="stat-label">Total Kills:</span><span class="stat-value">💀 ' + p.totalKills + '</span></div>' +
             '<div class="stat-row"><span class="stat-label">Experience:</span><span class="stat-value">' + p.exp + '/' + p.expToNextLevel + '</span></div>' +
             '<div class="stat-row"><span class="stat-label">Gold:</span><span class="stat-value">💰 ' + p.gold + '</span></div>' +
             '<div class="stat-row"><span class="stat-label">Health:</span><span class="stat-value">' + p.health + '/' + p.maxHealth + (totals.hpBoost > 0 ? ' <span style="color:#43e97b;">(+' + totals.hpBoost + ')</span>' : '') + '</span></div>' +
             '<div class="stat-row"><span class="stat-label">Mana:</span><span class="stat-value">' + p.mana + '/' + p.maxMana + (totals.manaBoost > 0 ? ' <span style="color:#6ee7de;">(+' + totals.manaBoost + ')</span>' : '') + '</span></div>' +
-            '<div class="stat-row"><span class="stat-label">Strength:</span><span class="stat-value">⚔️ ' + p.strength + (totals.bonusDamage > 0 ? ' <span style="color:#43e97b;">(+' + totals.bonusDamage + ' gear)</span>' : '') + ' = <strong style="color:#ff6b6b;">' + totals.damage + '</strong></span></div>' +
+            '<div class="stat-row"><span class="stat-label">Strength:</span><span class="stat-value">⚔️ ' + p.strength + (totals.bonusDamage > 0 ? ' <span style="color:#43e97b;">(+' + totals.bonusDamage + ')</span>' : '') + ' = <strong style="color:#ff6b6b;">' + totals.damage + '</strong></span></div>' +
             '<div class="stat-row"><span class="stat-label">Intelligence:</span><span class="stat-value">📚 ' + totals.intelligence + '</span></div>' +
-            '<div class="stat-row"><span class="stat-label">Defense:</span><span class="stat-value">🛡️ ' + p.defense + (totals.bonusDefense > 0 ? ' <span style="color:#43e97b;">(+' + totals.bonusDefense + ' gear)</span>' : '') + ' = <strong style="color:#4ecdc4;">' + totals.defense + '</strong></span></div>' +
+            '<div class="stat-row"><span class="stat-label">Defense:</span><span class="stat-value">🛡️ ' + p.defense + (totals.bonusDefense > 0 ? ' <span style="color:#43e97b;">(+' + totals.bonusDefense + ')</span>' : '') + ' = <strong style="color:#4ecdc4;">' + totals.defense + '</strong></span></div>' +
             '<div class="stat-row"><span class="stat-label">Heal Boost:</span><span class="stat-value">' + (totals.healBoost > 0 ? '<span style="color:#43e97b;">+' + totals.healBoost + '%</span>' : 'None') + '</span></div>' +
             '<div class="stat-row"><span class="stat-label">Gold Boost:</span><span class="stat-value">' + (totals.goldBoost > 0 ? '<span style="color:#ffd93d;">+' + totals.goldBoost + '%</span>' : 'None') + '</span></div>' +
-            '<div class="stat-row"><span class="stat-label">Speed:</span><span class="stat-value">⚡ ' + p.speed + '</span></div>' +
             '<div class="stat-row"><span class="stat-label">Weapon:</span><span class="stat-value">' + (weapon ? weapon.icon + ' ' + weapon.name : 'None') + '</span></div>' +
             '<div class="stat-row"><span class="stat-label">Armor:</span><span class="stat-value">' + (armor ? armor.icon + ' ' + armor.name : 'None') + '</span></div>' +
-            '<div class="stat-row"><span class="stat-label">Amulet:</span><span class="stat-value">' + (amulet ? amulet.icon + ' ' + amulet.name : 'None') + '</span></div>';
+            '<div class="stat-row"><span class="stat-label">Amulet:</span><span class="stat-value">' + (amulet ? amulet.icon + ' ' + amulet.name : 'None') + '</span></div>' +
+            '<div class="stat-row"><span class="stat-label">Pet:</span><span class="stat-value">' + (pet ? pet.icon + ' ' + pet.name : 'None') + '</span></div>' +
+            '<div class="stat-row"><span class="stat-label">Achievements:</span><span class="stat-value" style="display:flex;gap:2px;flex-wrap:wrap;justify-content:flex-end;">' + achHTML + '</span></div>';
     }
 
-    // ==================== RESET ====================
     function showResetConfirmation() { document.getElementById('reset-modal').classList.remove('hidden'); }
     function closeResetConfirmation() { document.getElementById('reset-modal').classList.add('hidden'); }
     function showFinalResetWarning() { closeResetConfirmation(); document.getElementById('reset-final-modal').classList.remove('hidden'); }
     function closeFinalResetWarning() { document.getElementById('reset-final-modal').classList.add('hidden'); }
     function performReset() { gameState.resetGame(); closeFinalResetWarning(); alert('✅ Your game has been completely reset!'); }
 
-    // ==================== INIT ====================
     window.addEventListener('DOMContentLoaded', function() {
         document.getElementById('btn-worlds').onclick = function() { window.location.href = 'worlds.html'; };
         document.getElementById('btn-shops').onclick = function() { window.location.href = 'shops.html'; };
         document.getElementById('btn-gear').onclick = function() { window.location.href = 'gear.html'; };
         document.getElementById('btn-skills').onclick = function() { window.location.href = 'skilltree.html'; };
+        document.getElementById('btn-crafting').onclick = function() { window.location.href = 'crafting.html'; };
         document.getElementById('btn-minigames').onclick = function() { window.location.href = 'minigames.html'; };
         document.getElementById('btn-inventory').onclick = showInventory;
         document.getElementById('btn-stats').onclick = showStats;
