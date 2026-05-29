@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Equipment Guide</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: #fff; font-family: 'Arial', sans-serif; min-height: 100vh; padding: 20px; }
+        .container { max-width: 1100px; margin: 0 auto; }
+        .back-btn { padding: 10px 20px; background: #ff6b6b; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; margin-bottom: 15px; font-size: 14px; }
+        .back-btn:hover { transform: translateY(-2px); }
+        .header { text-align: center; margin-bottom: 20px; }
+        .header h1 { font-size: 38px; color: #ff6b6b; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
+        .tab-bar { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+        .tab-btn { padding: 10px 18px; border: none; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; transition: all 0.3s ease; color: #fff; }
+        .tab-btn.active { transform: translateY(-3px); box-shadow: 0 5px 20px rgba(0,0,0,0.3); }
+        .tab-melee { background: #ff6b6b; } .tab-melee.active { background: #ff4444; }
+        .tab-ranged { background: #43e97b; } .tab-ranged.active { background: #22c55e; color: #1a1a2e; }
+        .tab-magic { background: #a366ff; } .tab-magic.active { background: #8b5cf6; }
+        .tab-armor { background: #4ecdc4; } .tab-armor.active { background: #06b6d4; }
+        .tab-amulets { background: #ffd93d; } .tab-amulets.active { background: #fbbf24; color: #1a1a2e; }
+        .tab-gamble { background: #f59e0b; } .tab-gamble.active { background: #fbbf24; color: #1a1a2e; }
+        .tier-legend { display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; font-size: 12px; }
+        .tier-legend span { padding: 3px 10px; border-radius: 4px; font-weight: bold; }
+        .gear-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
+        .gear-card { background: #1a1a2e; border: 2px solid #333; border-radius: 10px; padding: 15px; text-align: center; transition: all 0.3s ease; position: relative; }
+        .gear-card:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .gear-card.owned { border-color: #43e97b; }
+        .gear-card .icon { font-size: 36px; margin-bottom: 8px; }
+        .gear-card .name { font-weight: bold; font-size: 13px; margin-bottom: 4px; }
+        .gear-card .stats { font-size: 11px; margin-bottom: 4px; }
+        .gear-card .tier { font-size: 10px; font-weight: bold; }
+        .gear-card .price { font-size: 11px; color: #ffd93d; margin-top: 4px; }
+        .gear-card .desc { font-size: 10px; color: #aaa; margin-top: 3px; }
+        .owned-badge { position: absolute; top: 8px; right: 8px; background: #43e97b; color: #1a1a2e; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: bold; }
+        @media (max-width: 600px) { .gear-grid { grid-template-columns: repeat(2, 1fr); } }
+    </style>
+</head>
+<body>
+<div class="container">
+    <button class="back-btn" onclick="window.location.href='index.html'">← Back to Menu</button>
+    <div class="header"><h1>⚔️ Equipment Guide</h1></div>
+
+    <div class="tier-legend">
+        <span style="background:#fff;color:#1a1a2e;">T1 Common</span>
+        <span style="background:#22c55e;color:#1a1a2e;">T2 Uncommon</span>
+        <span style="background:#3b82f6;">T3 Rare</span>
+        <span style="background:#a855f7;">T4 Epic</span>
+        <span style="background:#ffd700;color:#1a1a2e;">T5 Legendary</span>
+    </div>
+
+    <div class="tab-bar">
+        <button class="tab-btn tab-melee active" id="tab-melee" onclick="showTab('melee')">⚔️ Melee</button>
+        <button class="tab-btn tab-ranged" id="tab-ranged" onclick="showTab('ranged')">🏹 Ranged</button>
+        <button class="tab-btn tab-magic" id="tab-magic" onclick="showTab('magic')">🔮 Magic</button>
+        <button class="tab-btn tab-armor" id="tab-armor" onclick="showTab('armor')">🛡️ Armor</button>
+        <button class="tab-btn tab-amulets" id="tab-amulets" onclick="showTab('amulets')">📿 Amulets</button>
+        <button class="tab-btn tab-gamble" id="tab-gamble" onclick="showTab('gamble')">🎰 Gamble</button>
+    </div>
+
+    <div id="gear-content"></div>
+</div>
+
+<script src="gamestate.js"></script>
+<script>
+    var currentTab = 'melee';
+
+    function showTab(tab) {
+        currentTab = tab;
+        document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+        document.getElementById('tab-' + tab).classList.add('active');
+        renderGear();
+    }
+
+    function isOwned(itemId) {
+        for (var i = 0; i < gameState.player.inventory.length; i++) {
+            if (gameState.player.inventory[i].id === itemId) return true;
+        }
+        return false;
+    }
+
+    function getTierColor(tier) {
+        if (tier === 5) return '#ffd700'; if (tier === 4) return '#a855f7';
+        if (tier === 3) return '#3b82f6'; if (tier === 2) return '#22c55e'; return '#ffffff';
+    }
+
+    function getTierName(tier) {
+        if (tier === 5) return 'Legendary'; if (tier === 4) return 'Epic';
+        if (tier === 3) return 'Rare'; if (tier === 2) return 'Uncommon'; return 'Common';
+    }
+
+    function renderGear() {
+        var container = document.getElementById('gear-content'); container.innerHTML = '';
+        var items = [];
+
+        if (currentTab === 'melee') {
+            items = gameState.shops.filter(function(i) { return i.category === 'melee' && !i.requirement; });
+        } else if (currentTab === 'ranged') {
+            items = gameState.shops.filter(function(i) { return i.category === 'ranged' && !i.requirement; });
+        } else if (currentTab === 'magic') {
+            items = gameState.shops.filter(function(i) { return i.category === 'magic' && !i.requirement; });
+        } else if (currentTab === 'armor') {
+            items = gameState.shops.filter(function(i) { return i.type === 'armor' && !i.requirement; });
+        } else if (currentTab === 'amulets') {
+            items = gameState.specialShop;
+        } else if (currentTab === 'gamble') {
+            items = gameState.gambleExclusiveWeapons.concat(gameState.gambleExclusiveAmulets);
+        }
+
+        var grid = document.createElement('div'); grid.className = 'gear-grid';
+
+        for (var i = 0; i < items.length; i++) {
+            var item = items[i];
+            var tier = item.tier || 1;
+            var tc = getTierColor(tier);
+            var tn = getTierName(tier);
+            var owned = isOwned(item.id);
+
+            var card = document.createElement('div'); card.className = 'gear-card';
+            if (owned) card.classList.add('owned');
+            card.style.borderColor = tc;
+
+            var statsHTML = '';
+            if (item.stats) {
+                if (item.stats.damage) statsHTML += '<span style="color:#ff6b6b;">⚔️+' + item.stats.damage + '</span> ';
+                if (item.stats.intelligence) statsHTML += '<span style="color:#a366ff;">📚+' + item.stats.intelligence + '</span> ';
+                if (item.stats.defense) statsHTML += '<span style="color:#4ecdc4;">🛡️+' + item.stats.defense + '</span> ';
+                if (item.stats.damageBoost) statsHTML += '<span style="color:#ff6b6b;">⚔️+' + item.stats.damageBoost + '</span> ';
+                if (item.stats.defenseBoost) statsHTML += '<span style="color:#4ecdc4;">🛡️+' + item.stats.defenseBoost + '</span> ';
+                if (item.stats.hpBoost) statsHTML += '<span style="color:#ff6b6b;">❤️+' + item.stats.hpBoost + '</span> ';
+                if (item.stats.manaBoost) statsHTML += '<span style="color:#6ee7de;">💙+' + item.stats.manaBoost + '</span> ';
+                if (item.stats.healBoost) statsHTML += '<span style="color:#43e97b;">💚+' + item.stats.healBoost + '%</span> ';
+                if (item.stats.goldBoost) statsHTML += '<span style="color:#ffd93d;">💰+' + item.stats.goldBoost + '%</span> ';
+            }
+
+            var html = '<div class="icon">' + item.icon + '</div>' +
+                '<div class="name" style="color:' + tc + ';">' + item.name + '</div>' +
+                '<div class="tier" style="color:' + tc + ';">[' + tn + ']</div>' +
+                (statsHTML ? '<div class="stats">' + statsHTML + '</div>' : '') +
+                '<div class="desc">' + (item.description || '') + '</div>' +
+                '<div class="price">💰 ' + (item.price || 'N/A') + 'g</div>';
+
+            if (owned) html += '<div class="owned-badge">✅ Owned</div>';
+
+            card.innerHTML = html;
+            grid.appendChild(card);
+        }
+
+        container.appendChild(grid);
+    }
+
+    renderGear();
+</script>
+</body>
+</html>

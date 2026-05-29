@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shops & Gamble</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: #fff; font-family: 'Arial', sans-serif; min-height: 100vh; padding: 20px; }
+        .container { max-width: 1100px; margin: 0 auto; }
+        .back-btn { padding: 10px 20px; background: #ff6b6b; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; margin-bottom: 15px; font-size: 14px; }
+        .back-btn:hover { transform: translateY(-2px); }
+        .header { text-align: center; margin-bottom: 20px; }
+        .header h1 { font-size: 38px; color: #ff6b6b; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
+        .tab-bar { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tab-btn { padding: 12px 25px; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; transition: all 0.3s ease; color: #fff; }
+        .tab-btn.active { transform: translateY(-3px); box-shadow: 0 5px 20px rgba(0,0,0,0.3); }
+        .tab-shop { background: #667eea; } .tab-shop.active { background: #4ecdc4; }
+        .tab-amulet { background: #a855f7; } .tab-amulet.active { background: #c084fc; }
+        .tab-gamble { background: #f59e0b; } .tab-gamble.active { background: #fbbf24; color: #1a1a2e; }
+        .shop-info { background: #1a1a2e; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-weight: bold; color: #ffd93d; font-size: 18px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .shop-category-section { margin-bottom: 25px; }
+        .shop-category-header { color: #ff6b6b; font-size: 20px; font-weight: bold; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 2px solid #ff6b6b; }
+        .shop-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+        .shop-item { background: #1a1a2e; border: 2px solid #4ecdc4; border-radius: 10px; padding: 12px; text-align: center; cursor: pointer; transition: all 0.3s ease; position: relative; }
+        .shop-item.locked-item { opacity: 0.4; cursor: not-allowed; border-color: #666; }
+        .shop-item:hover:not(.locked-item) { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .shop-item-icon { font-size: 30px; margin-bottom: 6px; }
+        .shop-item-name { font-weight: bold; margin-bottom: 4px; font-size: 12px; }
+        .shop-item-price { color: #ffd93d; font-weight: bold; font-size: 12px; margin-top: 4px; }
+        .shop-item-desc { font-size: 10px; color: #aaa; margin-top: 2px; }
+        .shop-item-stats { font-size: 10px; margin-top: 3px; }
+        .shop-item-requirement { font-size: 10px; color: #e74c3c; margin-top: 4px; font-weight: bold; }
+        .shop-item-discount { color: #43e97b; font-size: 10px; }
+        .gamble-options { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
+        .gamble-btn-opt { background: #f59e0b; color: #1a1a2e; border: none; padding: 20px 25px; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; }
+        .gamble-btn-opt:hover { transform: scale(1.05); box-shadow: 0 5px 20px rgba(245,158,11,0.5); }
+        #gamble-result { margin-top: 20px; padding: 15px; background: #1a1a2e; border-radius: 8px; min-height: 40px; font-size: 16px; color: #ffd93d; text-align: center; }
+        .empty-inventory { text-align: center; color: #aaa; padding: 40px 20px; }
+        @media (max-width: 768px) { .shop-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 600px) { .shop-grid { grid-template-columns: repeat(2, 1fr); } }
+    </style>
+</head>
+<body>
+<div class="container">
+    <button class="back-btn" onclick="window.location.href='index.html'">← Back to Menu</button>
+    <div class="header"><h1>🏪 Shops & Gamble</h1></div>
+
+    <div class="tab-bar">
+        <button class="tab-btn tab-shop active" id="tab-shop" onclick="switchTab('shop')">⚔️ Weapons & Armor</button>
+        <button class="tab-btn tab-amulet" id="tab-amulet" onclick="switchTab('amulet')">🔮 Amulets</button>
+        <button class="tab-btn tab-gamble" id="tab-gamble" onclick="switchTab('gamble')">🎰 Gamble</button>
+    </div>
+
+    <div class="shop-info">
+        <span>💰 Gold: <span id="player-gold">0</span></span>
+        <span>💀 Kills: <span id="total-kills">0</span></span>
+        <span id="discount-info" style="color:#43e97b;font-size:14px;"></span>
+    </div>
+
+    <div id="shop-content"></div>
+    <div id="amulet-content" style="display:none;"></div>
+    <div id="gamble-content" style="display:none; text-align:center;">
+        <p>Risk your gold for a chance at rare loot!</p>
+        <div class="gamble-options">
+            <button class="gamble-btn-opt" onclick="doGamble(50)">💰 50g<br><small>Low risk</small></button>
+            <button class="gamble-btn-opt" onclick="doGamble(200)">💰 200g<br><small>Medium risk</small></button>
+            <button class="gamble-btn-opt" onclick="doGamble(500)">💰 500g<br><small>High risk</small></button>
+            <button class="gamble-btn-opt" onclick="doGamble(1000)">💰 1000g<br><small>Jackpot!</small></button>
+        </div>
+        <div id="gamble-result"></div>
+    </div>
+</div>
+
+<script src="gamestate.js"></script>
+<script>
+    var currentTab = 'shop';
+
+    function switchTab(tab) {
+        currentTab = tab;
+        document.getElementById('tab-shop').classList.toggle('active', tab === 'shop');
+        document.getElementById('tab-amulet').classList.toggle('active', tab === 'amulet');
+        document.getElementById('tab-gamble').classList.toggle('active', tab === 'gamble');
+        document.getElementById('shop-content').style.display = tab === 'shop' ? 'block' : 'none';
+        document.getElementById('amulet-content').style.display = tab === 'amulet' ? 'block' : 'none';
+        document.getElementById('gamble-content').style.display = tab === 'gamble' ? 'block' : 'none';
+        if (tab === 'shop') renderShop();
+        else if (tab === 'amulet') renderAmuletShop();
+        updateDisplay();
+    }
+
+    function updateDisplay() {
+        document.getElementById('player-gold').textContent = gameState.player.gold;
+        document.getElementById('total-kills').textContent = gameState.player.totalKills;
+        var hagglerRank = gameState.getSkillRank('haggler');
+        if (hagglerRank > 0) {
+            document.getElementById('discount-info').textContent = '🛡️ Haggler discount: ' + (hagglerRank * 3) + '%';
+        } else {
+            document.getElementById('discount-info').textContent = '';
+        }
+    }
+
+    function renderShop() {
+        var container = document.getElementById('shop-content');
+        var shopList = gameState.shops;
+        container.innerHTML = '';
+        if (shopList.length === 0) { container.innerHTML = '<div class="empty-inventory">🏪 Sold out!</div>'; return; }
+
+        var categories = [
+            { name: '⚔️ Melee Weapons', filter: function(i) { return i.category === 'melee' && !i.requirement; }, borderColor: '#ff6b6b' },
+            { name: '🏹 Ranged Weapons', filter: function(i) { return i.category === 'ranged' && !i.requirement; }, borderColor: '#43e97b' },
+            { name: '🔮 Magic Weapons', filter: function(i) { return i.category === 'magic' && !i.requirement; }, borderColor: '#a366ff' },
+            { name: '🛡️ Armor', filter: function(i) { return i.type === 'armor' && !i.requirement; }, borderColor: '#4ecdc4' },
+            { name: '🧪 Consumables', filter: function(i) { return i.type === 'consumable'; }, borderColor: '#ffd93d' },
+            { name: '🌟 Special Items', filter: function(i) { return i.requirement; }, borderColor: '#a855f7' }
+        ];
+
+        for (var c = 0; c < categories.length; c++) {
+            var cat = categories[c]; var items = [];
+            for (var k = 0; k < shopList.length; k++) { if (cat.filter(shopList[k])) items.push(shopList[k]); }
+            if (items.length === 0) continue;
+
+            var section = document.createElement('div'); section.className = 'shop-category-section';
+            var header = document.createElement('div'); header.className = 'shop-category-header'; header.textContent = cat.name; section.appendChild(header);
+            var grid = document.createElement('div'); grid.className = 'shop-grid';
+
+            for (var j = 0; j < items.length; j++) {
+                var item = items[j];
+                var unlocked = item.requirement ? gameState.isSpecialItemUnlocked(item) : true;
+                var tierColor = item.tier ? gameState.getTierColor(item.tier) : cat.borderColor;
+                var displayPrice = gameState.getDiscountedPrice(item.price);
+
+                var sd = '';
+                if (item.stats) {
+                    if (item.stats.damage) sd += '<span style="color:#ff6b6b;">⚔️+' + item.stats.damage + ' </span>';
+                    if (item.stats.intelligence) sd += '<span style="color:#a366ff;">📚+' + item.stats.intelligence + ' </span>';
+                    if (item.stats.defense) sd += '<span style="color:#4ecdc4;">🛡️+' + item.stats.defense + ' </span>';
+                    if (item.stats.damageBoost) sd += '<span style="color:#ff6b6b;">⚔️+' + item.stats.damageBoost + ' </span>';
+                    if (item.stats.defenseBoost) sd += '<span style="color:#4ecdc4;">🛡️+' + item.stats.defenseBoost + ' </span>';
+                    if (item.stats.hpBoost) sd += '<span style="color:#ff6b6b;">❤️+' + item.stats.hpBoost + ' </span>';
+                    if (item.stats.manaBoost) sd += '<span style="color:#6ee7de;">💙+' + item.stats.manaBoost + ' </span>';
+                    if (item.stats.healBoost) sd += '<span style="color:#43e97b;">💚+' + item.stats.healBoost + '% </span>';
+                    if (item.stats.goldBoost) sd += '<span style="color:#ffd93d;">💰+' + item.stats.goldBoost + '% </span>';
+                    if (item.stats.heal) sd += '<span style="color:#43e97b;">❤️' + item.stats.heal + ' </span>';
+                    if (item.stats.mana) sd += '<span style="color:#6ee7de;">💙' + item.stats.mana + '</span>';
+                }
+                if (item.tier) sd += ' <span style="color:' + tierColor + ';">[' + gameState.getTierName(item.tier) + ']</span>';
+
+                var rt = '';
+                if (item.requirement) {
+                    if (item.requirement.type === 'kills') rt = '🔒 ' + item.requirement.amount + ' kills required';
+                    else rt = '🔒 Defeat Lvl ' + item.requirement.worldLevel + ' boss';
+                }
+
+                var priceHTML = '💰 ' + displayPrice + ' Gold';
+                if (displayPrice < item.price) priceHTML += ' <span class="shop-item-discount">(-' + (item.price - displayPrice) + ')</span>';
+
+                var card = document.createElement('div'); card.className = 'shop-item';
+                if (!unlocked) card.classList.add('locked-item');
+                card.style.borderColor = unlocked ? tierColor : '#666';
+                card.innerHTML = '<div class="shop-item-icon">' + item.icon + '</div><div class="shop-item-name">' + item.name + '</div><div class="shop-item-desc">' + item.description + '</div>' + (sd ? '<div class="shop-item-stats">' + sd + '</div>' : '') + (rt ? '<div class="shop-item-requirement">' + rt + '</div>' : '') + '<div class="shop-item-price">' + priceHTML + '</div>';
+                card.addEventListener('click', (function(id, unl) { return function() { if (unl) purchaseItem(id, false); else alert('Requirements not met!'); }; })(item.id, unlocked));
+                grid.appendChild(card);
+            }
+            section.appendChild(grid); container.appendChild(section);
+        }
+    }
+
+    function renderAmuletShop() {
+        var container = document.getElementById('amulet-content');
+        var shopList = gameState.specialShop;
+        container.innerHTML = '';
+        if (shopList.length === 0) { container.innerHTML = '<div class="empty-inventory">🏪 Sold out!</div>'; return; }
+
+        var section = document.createElement('div'); section.className = 'shop-category-section';
+        var header = document.createElement('div'); header.className = 'shop-category-header'; header.textContent = '📿 Amulets'; section.appendChild(header);
+        var grid = document.createElement('div'); grid.className = 'shop-grid';
+
+        for (var j = 0; j < shopList.length; j++) {
+            var item = shopList[j];
+            var sd = '';
+            if (item.stats) {
+                if (item.stats.damageBoost) sd += '<span style="color:#ff6b6b;">⚔️+' + item.stats.damageBoost + ' </span>';
+                if (item.stats.defenseBoost) sd += '<span style="color:#4ecdc4;">🛡️+' + item.stats.defenseBoost + ' </span>';
+                if (item.stats.hpBoost) sd += '<span style="color:#ff6b6b;">❤️+' + item.stats.hpBoost + ' </span>';
+                if (item.stats.manaBoost) sd += '<span style="color:#6ee7de;">💙+' + item.stats.manaBoost + ' </span>';
+                if (item.stats.healBoost) sd += '<span style="color:#43e97b;">💚+' + item.stats.healBoost + '% </span>';
+                if (item.stats.goldBoost) sd += '<span style="color:#ffd93d;">💰+' + item.stats.goldBoost + '% </span>';
+            }
+            var card = document.createElement('div'); card.className = 'shop-item'; card.style.borderColor = '#ffd93d';
+            card.innerHTML = '<div class="shop-item-icon">' + item.icon + '</div><div class="shop-item-name">' + item.name + '</div><div class="shop-item-desc">' + item.description + '</div>' + (sd ? '<div class="shop-item-stats">' + sd + '</div>' : '') + '<div class="shop-item-price">💰 ' + item.price + ' Gold</div>';
+            card.addEventListener('click', (function(id) { return function() { purchaseItem(id, true); }; })(item.id));
+            grid.appendChild(card);
+        }
+        section.appendChild(grid); container.appendChild(section);
+    }
+
+    function purchaseItem(itemId, isSpecial) {
+        isSpecial = isSpecial || false;
+        var result = gameState.buyItem(itemId, isSpecial);
+        alert(result.message);
+        if (result.success) {
+            if (isSpecial) renderAmuletShop(); else renderShop();
+            updateDisplay();
+        }
+    }
+
+    function doGamble(amount) {
+        var result = gameState.gamble(amount);
+        updateDisplay();
+        var resultDiv = document.getElementById('gamble-result');
+        resultDiv.textContent = result.message;
+        resultDiv.style.opacity = '0';
+        setTimeout(function() { resultDiv.style.opacity = '1'; }, 100);
+    }
+
+    updateDisplay();
+    renderShop();
+</script>
+</body>
+</html>

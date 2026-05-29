@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Worlds & Bestiary</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: #fff; font-family: 'Arial', sans-serif; min-height: 100vh; padding: 20px; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .back-btn { padding: 10px 20px; background: #ff6b6b; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; margin-bottom: 15px; font-size: 14px; }
+        .back-btn:hover { transform: translateY(-2px); }
+        .header { text-align: center; margin-bottom: 20px; }
+        .header h1 { font-size: 38px; color: #ff6b6b; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
+        .tab-bar { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tab-btn { padding: 12px 25px; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; transition: all 0.3s ease; color: #fff; }
+        .tab-btn.active { transform: translateY(-3px); box-shadow: 0 5px 20px rgba(0,0,0,0.3); }
+        .tab-worlds { background: #667eea; } .tab-worlds.active { background: #4ecdc4; }
+        .tab-bosses { background: #f39c12; } .tab-bosses.active { background: #fbbf24; color: #1a1a2e; }
+        .tab-enemies { background: #e74c3c; } .tab-enemies.active { background: #ef4444; }
+        .world-grid, .boss-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .world-btn, .boss-btn-card { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; border: 2px solid #4ecdc4; border-radius: 10px; padding: 20px; cursor: pointer; transition: all 0.3s ease; text-align: center; font-weight: bold; }
+        .boss-btn-card { background: linear-gradient(135deg, #f39c12 0%, #e74c3c 100%); border-color: #ffd93d; }
+        .world-btn:hover, .boss-btn-card:hover:not(.locked) { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.3); border-color: #ff6b6b; }
+        .boss-btn-card.locked { opacity: 0.5; cursor: not-allowed; background: #444; border-color: #666; }
+        .world-btn .level, .boss-btn-card .level { display: block; font-size: 24px; margin-bottom: 10px; }
+        .world-btn .world-name { display: block; font-size: 14px; color: #4ecdc4; margin-bottom: 5px; }
+        .world-btn .difficulty { display: block; font-size: 12px; color: #aaa; }
+        .boss-btn-card .boss-name { display: block; font-size: 14px; color: #ffd93d; }
+        .boss-btn-card .amulet-info { display: block; font-size: 10px; color: #43e97b; margin-top: 5px; }
+        .boss-btn-card .defeated-badge { display: inline-block; background: #43e97b; color: #1a1a2e; padding: 2px 8px; border-radius: 4px; font-size: 10px; margin-top: 5px; }
+        .boss-btn-card .kills-needed { display: block; font-size: 10px; color: #e74c3c; margin-top: 5px; }
+        .enemy-section { margin-bottom: 20px; }
+        .enemy-section h3 { color: #e74c3c; margin-bottom: 8px; font-size: 18px; border-bottom: 1px solid #444; padding-bottom: 5px; }
+        .enemy-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+        .enemy-card { background: #1a1a2e; border: 1px solid #444; border-radius: 8px; padding: 10px; text-align: center; font-size: 12px; }
+        .enemy-card .e-icon { font-size: 28px; }
+        .enemy-card .e-name { font-weight: bold; color: #e74c3c; }
+        .enemy-card .e-gold { color: #ffd93d; font-size: 10px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <button class="back-btn" onclick="window.location.href='index.html'">← Back to Menu</button>
+    <div class="header"><h1>🌍 Worlds & Bestiary</h1></div>
+
+    <div class="tab-bar">
+        <button class="tab-btn tab-worlds active" id="tab-worlds" onclick="switchTab('worlds')">🌍 Worlds</button>
+        <button class="tab-btn tab-bosses" id="tab-bosses" onclick="switchTab('bosses')">👑 Bosses</button>
+        <button class="tab-btn tab-enemies" id="tab-enemies" onclick="switchTab('enemies')">👹 Enemies</button>
+    </div>
+
+    <p style="color:#aaa;margin-bottom:15px;">💀 Total Kills: <strong id="total-kills" style="color:#ffd93d;">0</strong></p>
+
+    <div id="worlds-content"></div>
+    <div id="bosses-content" style="display:none;"></div>
+    <div id="enemies-content" style="display:none;"></div>
+</div>
+
+<script src="gamestate.js"></script>
+<script>
+    var currentTab = 'worlds';
+
+    function switchTab(tab) {
+        currentTab = tab;
+        document.getElementById('tab-worlds').classList.toggle('active', tab === 'worlds');
+        document.getElementById('tab-bosses').classList.toggle('active', tab === 'bosses');
+        document.getElementById('tab-enemies').classList.toggle('active', tab === 'enemies');
+        document.getElementById('worlds-content').style.display = tab === 'worlds' ? 'block' : 'none';
+        document.getElementById('bosses-content').style.display = tab === 'bosses' ? 'block' : 'none';
+        document.getElementById('enemies-content').style.display = tab === 'enemies' ? 'block' : 'none';
+        if (tab === 'worlds') renderWorlds();
+        else if (tab === 'bosses') renderBosses();
+        else renderEnemies();
+    }
+
+    function renderWorlds() {
+        var container = document.getElementById('worlds-content'); container.innerHTML = '';
+        document.getElementById('total-kills').textContent = gameState.player.totalKills;
+        var grid = document.createElement('div'); grid.className = 'world-grid';
+        for (var i = 0; i < gameState.worlds.length; i++) {
+            var world = gameState.worlds[i];
+            var btn = document.createElement('button'); btn.className = 'world-btn';
+            btn.innerHTML = '<span class="level">Lvl ' + world.level + '</span><span class="world-name">' + world.name + '</span><span class="difficulty">' + world.difficulty + '</span><span style="display:block;font-size:10px;color:#ffd93d;margin-top:5px;">EXP: ' + world.baseExp + '</span>';
+            btn.onclick = (function(idx) { return function() { gameState.saveToLocalStorage(); window.location.href = 'index2.html?world=' + idx; }; })(i);
+            grid.appendChild(btn);
+        }
+        container.appendChild(grid);
+    }
+
+    function renderBosses() {
+        var container = document.getElementById('bosses-content'); container.innerHTML = '';
+        document.getElementById('total-kills').textContent = gameState.player.totalKills;
+        var grid = document.createElement('div'); grid.className = 'boss-grid';
+        for (var i = 0; i < gameState.bosses.length; i++) {
+            var boss = gameState.bosses[i];
+            var btn = document.createElement('button'); btn.className = 'boss-btn-card';
+            var defeated = gameState.player.bossDefeats && gameState.player.bossDefeats[boss.worldLevel];
+            var unlocked = gameState.player.totalKills >= boss.killsRequired;
+            if (!unlocked && !defeated) btn.classList.add('locked');
+            var html = '<span class="level">Lvl ' + boss.worldLevel + '</span><span class="boss-name">' + boss.icon + ' ' + boss.name + '</span><span class="amulet-info">🏆 ' + boss.amulet.name + '</span>';
+            if (defeated) html += '<span class="defeated-badge">✅ Defeated</span>';
+            if (!unlocked && !defeated) html += '<span class="kills-needed">🔒 ' + boss.killsRequired + ' kills needed</span>';
+            html += '<span style="display:block;font-size:10px;color:#ffd93d;margin-top:5px;">💰 ' + boss.goldMin + '-' + boss.goldMax + ' Gold | EXP: ' + boss.expReward + '</span>';
+            btn.innerHTML = html;
+            if (unlocked || defeated) {
+                btn.onclick = (function(idx) { return function() { gameState.saveToLocalStorage(); window.location.href = 'index2.html?boss=' + idx; }; })(i);
+            }
+            grid.appendChild(btn);
+        }
+        container.appendChild(grid);
+    }
+
+    function renderEnemies() {
+        var container = document.getElementById('enemies-content'); container.innerHTML = '';
+        document.getElementById('total-kills').textContent = gameState.player.totalKills;
+
+        var enemyDB = {
+            1:[{name:'Goblin',icon:'👹',gold:'10-15'},{name:'Goblin Archer',icon:'🏹',gold:'12-18'},{name:'Wild Boar',icon:'🐗',gold:'15-20'},{name:'Dire Wolf',icon:'🐺',gold:'18-22'},{name:'Troll',icon:'👹',gold:'20-25'}],
+            5:[{name:'Orc Warrior',icon:'⚔️',gold:'25-35'},{name:'Shadow Beast',icon:'👾',gold:'28-38'},{name:'Giant Spider',icon:'🕷️',gold:'22-30'},{name:'Stone Golem',icon:'🪨',gold:'30-40'},{name:'Orc Shaman',icon:'🧙‍♂️',gold:'35-45'}],
+            10:[{name:'Dark Knight',icon:'⚔️',gold:'40-55'},{name:'Demon',icon:'👿',gold:'45-60'},{name:'Wraith',icon:'😈',gold:'50-65'},{name:'Void Beast',icon:'⬛',gold:'42-58'},{name:'Skeleton Warrior',icon:'💀',gold:'38-50'}],
+            20:[{name:'Wyvern',icon:'🐉',gold:'60-80'},{name:'Lich Knight',icon:'💀',gold:'65-85'},{name:'Nightmare Beast',icon:'😱',gold:'70-90'},{name:'Infernal Guard',icon:'🔥',gold:'55-75'},{name:'Shadow Lord',icon:'🖤',gold:'75-95'}],
+            30:[{name:'Greater Demon',icon:'👿',gold:'90-120'},{name:'Ancient Dragon',icon:'🐉',gold:'100-130'},{name:'Reality Ripper',icon:'⚡',gold:'95-125'},{name:'Arch Lich',icon:'💀',gold:'110-140'},{name:'Void Lord',icon:'⬛',gold:'105-135'}],
+            50:[{name:'Eldritch Abomination',icon:'👾',gold:'150-200'},{name:'Void Emperor',icon:'⬛',gold:'160-210'},{name:'Cosmic Horror',icon:'🌌',gold:'145-195'},{name:'Apocalypse Herald',icon:'📯',gold:'170-220'}],
+            75:[{name:'Transcendent Being',icon:'✨',gold:'220-300'},{name:'Beyond Existence',icon:'🌌',gold:'250-330'},{name:'Celestial Tyrant',icon:'⭐',gold:'230-310'},{name:'God of Ruin',icon:'⚡',gold:'260-340'}],
+            100:[{name:'The Eternal One',icon:'👑',gold:'350-500'},{name:'The Infinite Terror',icon:'👻',gold:'380-530'},{name:'Absolute Sovereign',icon:'⭐',gold:'400-550'},{name:'Chaos Unbound',icon:'🌀',gold:'420-580'}]
+        };
+
+        var worldLevels = [1, 5, 10, 20, 30, 50, 75, 100];
+        for (var w = 0; w < worldLevels.length; w++) {
+            var lvl = worldLevels[w];
+            var worldName = '';
+            for (var i = 0; i < gameState.worlds.length; i++) {
+                if (gameState.worlds[i].level === lvl) { worldName = gameState.worlds[i].name; break; }
+            }
+            var section = document.createElement('div'); section.className = 'enemy-section';
+            section.innerHTML = '<h3>Lvl ' + lvl + ' - ' + worldName + '</h3>';
+            var grid = document.createElement('div'); grid.className = 'enemy-grid';
+            var enemies = enemyDB[lvl] || [];
+            for (var e = 0; e < enemies.length; e++) {
+                var card = document.createElement('div'); card.className = 'enemy-card';
+                card.innerHTML = '<div class="e-icon">' + enemies[e].icon + '</div><div class="e-name">' + enemies[e].name + '</div><div class="e-gold">💰 ' + enemies[e].gold + 'g</div>';
+                grid.appendChild(card);
+            }
+            section.appendChild(grid);
+            container.appendChild(section);
+        }
+    }
+
+    renderWorlds();
+</script>
+</body>
+</html>

@@ -5,13 +5,16 @@ class GameState {
             health: 203, maxHealth: 203, mana: 125, maxMana: 125,
             gold: 500, strength: 10, intelligence: 10, defense: 5, speed: 5,
             inventory: [], equippedWeapon: null, equippedArmor: null, equippedAmulet: null,
-            bossDefeats: {}, totalKills: 0, materials: {}
+            bossDefeats: {}, totalKills: 0, materials: {},
+            skillPoints: 0, skills: {}
         };
         this.player = JSON.parse(JSON.stringify(this.defaultPlayer));
         this.player.inventory = [];
         this.player.bossDefeats = {};
         this.player.totalKills = 0;
         this.player.materials = {};
+        this.player.skills = {};
+        this.player.skillPoints = 0;
         this.shops = this.buildShopInventory();
         this.specialShop = this.buildAmuletShopInventory();
         this.dropTables = {
@@ -137,6 +140,8 @@ class GameState {
     getTierColor(t) { if (t === 5) return '#ffd700'; if (t === 4) return '#a855f7'; if (t === 3) return '#3b82f6'; if (t === 2) return '#22c55e'; return '#ffffff'; }
     getTierName(t) { if (t === 5) return 'Legendary'; if (t === 4) return 'Epic'; if (t === 3) return 'Rare'; if (t === 2) return 'Uncommon'; return 'Common'; }
 
+    getSkillRank(skillId) { return (this.player.skills && this.player.skills[skillId]) ? this.player.skills[skillId] : 0; }
+
     getSetBonus() {
         var weapon = this.getEquippedWeapon();
         var armor = this.getEquippedArmor();
@@ -162,9 +167,21 @@ class GameState {
             goldBoost += (amulet.stats.goldBoost || 0);
             hpBoost += (amulet.stats.hpBoost || 0);
         }
+        // Skill bonuses
+        var bruteRank = this.getSkillRank('brute_force');
+        var toughnessRank = this.getSkillRank('toughness');
+        var arcaneRank = this.getSkillRank('arcane_power');
+        var manaPoolRank = this.getSkillRank('mana_pool');
+        var goldRushRank = this.getSkillRank('gold_rush');
+        var hagglerRank = this.getSkillRank('haggler');
+        if (bruteRank > 0) bonusDamage += Math.floor(this.player.strength * (bruteRank * 0.02));
+        if (arcaneRank > 0) bonusIntelligence += Math.floor(this.player.intelligence * (arcaneRank * 0.02));
+        if (toughnessRank > 0) hpBoost += Math.floor(this.player.maxHealth * (toughnessRank * 0.01));
+        if (manaPoolRank > 0) manaBoost += manaPoolRank * 10;
+        if (goldRushRank > 0) goldBoost += goldRushRank * 4;
         var setBonus = this.getSetBonus();
         if (setBonus > 0) { bonusDamage += setBonus * 2; bonusDefense += setBonus * 2; }
-        return { damage: this.player.strength + bonusDamage, intelligence: this.player.intelligence + bonusIntelligence, defense: this.player.defense + bonusDefense, bonusDamage: bonusDamage, bonusIntelligence: bonusIntelligence, bonusDefense: bonusDefense, healBoost: healBoost, manaBoost: manaBoost, goldBoost: goldBoost, hpBoost: hpBoost, setBonus: setBonus };
+        return { damage: this.player.strength + bonusDamage, intelligence: this.player.intelligence + bonusIntelligence, defense: this.player.defense + bonusDefense, bonusDamage: bonusDamage, bonusIntelligence: bonusIntelligence, bonusDefense: bonusDefense, healBoost: healBoost, manaBoost: manaBoost, goldBoost: goldBoost, hpBoost: hpBoost, setBonus: setBonus, hagglerRank: hagglerRank };
     }
 
     recalculateStats() {
@@ -176,139 +193,85 @@ class GameState {
     }
 
     getUpgradeCost(tier) {
-        var costs = {
-            1: { gold: 200, materialTier: 1, amount: 3 },
-            2: { gold: 500, materialTier: 2, amount: 4 },
-            3: { gold: 1000, materialTier: 3, amount: 5 },
-            4: { gold: 2500, materialTier: 4, amount: 6 },
-            5: { gold: 5000, materialTier: 5, amount: 8 }
-        };
+        var costs = { 1: { gold: 200, materialTier: 1, amount: 3 }, 2: { gold: 500, materialTier: 2, amount: 4 }, 3: { gold: 1000, materialTier: 3, amount: 5 }, 4: { gold: 2500, materialTier: 4, amount: 6 }, 5: { gold: 5000, materialTier: 5, amount: 8 } };
         return costs[tier] || costs[1];
     }
 
     hasRequiredMaterials(item) {
-        var cost = this.getUpgradeCost(item.tier || 1);
-        var count = 0;
-        for (var key in this.player.materials) {
-            if (!this.player.materials.hasOwnProperty(key)) continue;
-            var mat = this.findMaterialById(key);
-            if (mat && mat.tier >= cost.materialTier) count += this.player.materials[key];
-        }
+        var cost = this.getUpgradeCost(item.tier || 1); var count = 0;
+        for (var key in this.player.materials) { if (!this.player.materials.hasOwnProperty(key)) continue; var mat = this.findMaterialById(key); if (mat && mat.tier >= cost.materialTier) count += this.player.materials[key]; }
         return count >= cost.amount;
     }
 
     findMaterialById(id) {
-        for (var level in this.dropTables) {
-            if (!this.dropTables.hasOwnProperty(level)) continue;
-            for (var i = 0; i < this.dropTables[level].length; i++) {
-                if (this.dropTables[level][i].id === id && this.dropTables[level][i].material) return this.dropTables[level][i];
-            }
-        }
+        for (var level in this.dropTables) { if (!this.dropTables.hasOwnProperty(level)) continue; for (var i = 0; i < this.dropTables[level].length; i++) { if (this.dropTables[level][i].id === id && this.dropTables[level][i].material) return this.dropTables[level][i]; } }
         return null;
     }
 
     consumeUpgradeMaterials(itemTier, amount) {
-        var consumed = 0;
-        var mats = [];
-        for (var key in this.player.materials) {
-            if (!this.player.materials.hasOwnProperty(key)) continue;
-            if (this.player.materials[key] <= 0) continue;
-            var mat = this.findMaterialById(key);
-            if (mat && mat.tier >= itemTier) mats.push({ id: key, count: this.player.materials[key], tier: mat.tier });
-        }
+        var consumed = 0; var mats = [];
+        for (var key in this.player.materials) { if (!this.player.materials.hasOwnProperty(key)) continue; if (this.player.materials[key] <= 0) continue; var mat = this.findMaterialById(key); if (mat && mat.tier >= itemTier) mats.push({ id: key, count: this.player.materials[key], tier: mat.tier }); }
         mats.sort(function(a, b) { return a.tier - b.tier; });
-        for (var i = 0; i < mats.length && consumed < amount; i++) {
-            var need = amount - consumed;
-            var take = Math.min(need, mats[i].count);
-            this.player.materials[mats[i].id] -= take;
-            consumed += take;
-        }
+        for (var i = 0; i < mats.length && consumed < amount; i++) { var need = amount - consumed; var take = Math.min(need, mats[i].count); this.player.materials[mats[i].id] -= take; consumed += take; }
         return consumed >= amount;
     }
 
     upgradeItem(itemId) {
-        var item = null;
-        for (var i = 0; i < this.player.inventory.length; i++) { if (this.player.inventory[i].id === itemId) { item = this.player.inventory[i]; break; } }
+        var item = null; for (var i = 0; i < this.player.inventory.length; i++) { if (this.player.inventory[i].id === itemId) { item = this.player.inventory[i]; break; } }
         if (!item) return { success: false, message: 'Item not found!' };
         if (!item.tier || item.tier >= 5) return { success: false, message: 'Already max tier!' };
         var cost = this.getUpgradeCost(item.tier);
         if (this.player.gold < cost.gold) return { success: false, message: 'Need ' + cost.gold + ' gold and ' + cost.amount + ' Tier ' + cost.materialTier + '+ materials!' };
-        if (!this.hasRequiredMaterials(item)) return { success: false, message: 'Need ' + cost.amount + ' Tier ' + cost.materialTier + '+ materials! You don\'t have enough.' };
+        if (!this.hasRequiredMaterials(item)) return { success: false, message: 'Need ' + cost.amount + ' Tier ' + cost.materialTier + '+ materials!' };
         this.player.gold -= cost.gold;
         if (!this.consumeUpgradeMaterials(cost.materialTier, cost.amount)) return { success: false, message: 'Material consumption failed!' };
         if (item.stats) { if (item.stats.damage) item.stats.damage = Math.floor(item.stats.damage * 1.3); if (item.stats.defense) item.stats.defense = Math.floor(item.stats.defense * 1.3); if (item.stats.intelligence) item.stats.intelligence = Math.floor(item.stats.intelligence * 1.3); }
         if (item.damage) item.damage = Math.floor(item.damage * 1.3); if (item.defense) item.defense = Math.floor(item.defense * 1.3);
-        item.tier = Math.min(5, (item.tier || 1) + 1);
-        item.name = item.name.replace(/ \+/g, '') + ' +';
-        this.saveToLocalStorage();
-        return { success: true, message: 'Upgraded to tier ' + item.tier + '! (Used ' + cost.amount + ' materials)' };
+        item.tier = Math.min(5, (item.tier || 1) + 1); item.name = item.name.replace(/ \+/g, '') + ' +';
+        this.saveToLocalStorage(); return { success: true, message: 'Upgraded to tier ' + item.tier + '!' };
     }
 
     gamble(amount) {
         if (this.player.gold < amount) return { success: false, message: 'Not enough gold!' };
-        this.player.gold -= amount;
-        var roll = Math.random();
-        var reward = null;
-        var message = '';
+        this.player.gold -= amount; var roll = Math.random(); var reward = null; var message = '';
+        var luckyRank = this.getSkillRank('lucky_gambler');
+        var luckBonus = luckyRank * 0.02;
         var tier = amount >= 1000 ? 'high' : amount >= 500 ? 'medium' : amount >= 200 ? 'low' : 'tiny';
-        if (roll < 0.03) {
+        if (roll < 0.03 + luckBonus) {
             if (tier === 'high') { var pool = this.gambleExclusiveWeapons.concat(this.gambleExclusiveAmulets.slice(4)); reward = pool[Math.floor(Math.random() * pool.length)]; }
             else if (tier === 'medium') { var pool = this.gambleExclusiveAmulets.slice(2, 6).concat(this.gambleExclusiveWeapons.slice(0, 3)); reward = pool[Math.floor(Math.random() * pool.length)]; }
             else if (tier === 'low') { var pool = this.gambleExclusiveAmulets.slice(0, 4).concat(this.gambleExclusiveWeapons.slice(0, 1)); reward = pool[Math.floor(Math.random() * pool.length)]; }
             else { var pool = this.gambleExclusiveAmulets.slice(0, 2); reward = pool[Math.floor(Math.random() * pool.length)]; }
             message = '🎉 JACKPOT! You won: ' + reward.icon + ' ' + reward.name + '!';
-        } else if (roll < 0.10) {
+        } else if (roll < 0.10 + luckBonus) {
             if (tier === 'high' || tier === 'medium') { reward = this.gambleExclusiveAmulets[Math.floor(Math.random() * this.gambleExclusiveAmulets.length)]; }
             else if (tier === 'low') { reward = this.gambleExclusiveAmulets[Math.floor(Math.random() * 4)]; }
             else { reward = this.gambleMaterials[Math.floor(Math.random() * 3)]; }
             message = '🎊 Amazing! You won: ' + reward.icon + ' ' + reward.name + '!';
-        } else if (roll < 0.25) {
+        } else if (roll < 0.25 + luckBonus) {
             reward = this.gambleMaterials[Math.floor(Math.random() * this.gambleMaterials.length)];
             message = '👍 Nice! You found: ' + reward.icon + ' ' + reward.name + '!';
-        } else if (roll < 0.50) {
-            var refund = Math.floor(amount * 0.75);
-            this.player.gold += refund;
-            this.saveToLocalStorage();
-            return { success: true, message: '😐 Close one! Got back ' + refund + ' gold (75%).' };
-        } else {
-            this.saveToLocalStorage();
-            return { success: true, message: '😢 Nothing! Lost ' + amount + ' gold.' };
-        }
-        if (reward) {
-            var existing = this.player.inventory.find(function(i) { return i.id === reward.id; });
-            if (existing && reward.unique) {
-                var altRefund = Math.floor(amount * 1.5);
-                this.player.gold += altRefund;
-                this.saveToLocalStorage();
-                return { success: true, message: '🎰 Already own ' + reward.name + '! Refunded ' + altRefund + ' gold.' };
-            }
-            this.addToInventory(reward);
-        }
-        this.saveToLocalStorage();
-        return { success: true, message: message };
+        } else if (roll < 0.50 + luckBonus) {
+            var refund = Math.floor(amount * 0.75); this.player.gold += refund; this.saveToLocalStorage();
+            return { success: true, message: '😐 Got back ' + refund + ' gold (75%).' };
+        } else { this.saveToLocalStorage(); return { success: true, message: '😢 Nothing! Lost ' + amount + ' gold.' }; }
+        if (reward) { var existing = this.player.inventory.find(function(i) { return i.id === reward.id; }); if (existing && reward.unique) { var altRefund = Math.floor(amount * 1.5); this.player.gold += altRefund; this.saveToLocalStorage(); return { success: true, message: '🎰 Already own ' + reward.name + '! Refunded ' + altRefund + ' gold.' }; } this.addToInventory(reward); }
+        this.saveToLocalStorage(); return { success: true, message: message };
     }
 
     fish() {
-        var totalWeight = 0;
-        for (var i = 0; i < this.fishingRewards.length; i++) totalWeight += this.fishingRewards[i].weight;
-        var roll = Math.floor(Math.random() * totalWeight);
-        var cumulative = 0;
-        var reward = this.fishingRewards[0];
+        var totalWeight = 0; for (var i = 0; i < this.fishingRewards.length; i++) totalWeight += this.fishingRewards[i].weight;
+        var roll = Math.floor(Math.random() * totalWeight); var cumulative = 0; var reward = this.fishingRewards[0];
         for (var i = 0; i < this.fishingRewards.length; i++) { cumulative += this.fishingRewards[i].weight; if (roll < cumulative) { reward = this.fishingRewards[i]; break; } }
-        this.addDropToInventory(reward);
-        this.saveToLocalStorage();
+        this.addDropToInventory(reward); this.saveToLocalStorage();
         return { success: true, message: '🎣 You caught: ' + reward.icon + ' ' + reward.name + '!', reward: reward };
     }
 
     mine() {
-        var totalWeight = 0;
-        for (var i = 0; i < this.miningRewards.length; i++) totalWeight += this.miningRewards[i].weight;
-        var roll = Math.floor(Math.random() * totalWeight);
-        var cumulative = 0;
-        var reward = this.miningRewards[0];
+        var totalWeight = 0; for (var i = 0; i < this.miningRewards.length; i++) totalWeight += this.miningRewards[i].weight;
+        var roll = Math.floor(Math.random() * totalWeight); var cumulative = 0; var reward = this.miningRewards[0];
         for (var i = 0; i < this.miningRewards.length; i++) { cumulative += this.miningRewards[i].weight; if (roll < cumulative) { reward = this.miningRewards[i]; break; } }
-        this.addDropToInventory(reward);
-        this.saveToLocalStorage();
+        this.addDropToInventory(reward); this.saveToLocalStorage();
         return { success: true, message: '⛏️ You mined: ' + reward.icon + ' ' + reward.name + '!', reward: reward };
     }
 
@@ -396,6 +359,13 @@ class GameState {
         ];
     }
 
+    getDiscountedPrice(originalPrice) {
+        var hagglerRank = this.getSkillRank('haggler');
+        if (hagglerRank <= 0) return originalPrice;
+        var discount = hagglerRank * 0.03;
+        return Math.floor(originalPrice * (1 - discount));
+    }
+
     isSpecialItemUnlocked(item) { if (!item.requirement) return true; if (item.requirement.type === 'kills') return this.player.totalKills >= item.requirement.amount; if (item.requirement.type === 'boss') return this.player.bossDefeats && this.player.bossDefeats[item.requirement.worldLevel]; return false; }
     addMaterial(item) { if (!item.material) return; if (!this.player.materials[item.id]) this.player.materials[item.id] = 0; this.player.materials[item.id]++; }
 
@@ -424,6 +394,8 @@ class GameState {
                 this.player.totalKills = data.player.totalKills || 0;
                 this.player.materials = data.player.materials || {};
                 this.player.name = data.player.name || this.defaultPlayer.name;
+                this.player.skillPoints = data.player.skillPoints || 0;
+                this.player.skills = data.player.skills || {};
                 while (this.player.exp >= this.player.expToNextLevel) {
                     this.player.level++;
                     this.player.exp -= this.player.expToNextLevel;
@@ -431,6 +403,7 @@ class GameState {
                     this.player.strength += 1;
                     this.player.intelligence += 1;
                     this.player.defense += 1;
+                    this.player.skillPoints++;
                 }
             }
         }
@@ -445,6 +418,8 @@ class GameState {
         this.player.bossDefeats = {};
         this.player.totalKills = 0;
         this.player.materials = {};
+        this.player.skills = {};
+        this.player.skillPoints = 0;
         this.shops = this.buildShopInventory();
         this.specialShop = this.buildAmuletShopInventory();
         this.recalculateStats();
@@ -456,14 +431,15 @@ class GameState {
         var item = null;
         for (var i = 0; i < shopList.length; i++) { if (shopList[i].id === itemId) { item = shopList[i]; break; } }
         if (!item) return { success: false, message: 'Item not found!' };
-        if (this.player.gold < item.price) return { success: false, message: 'Not enough gold!' };
+        var price = this.getDiscountedPrice(item.price);
+        if (this.player.gold < price) return { success: false, message: 'Not enough gold! Need ' + price + 'g.' };
         if (item.requirement && !this.isSpecialItemUnlocked(item)) return { success: false, message: 'Requirements not met!' };
         if (item.unique) { for (var j = 0; j < this.player.inventory.length; j++) { if (this.player.inventory[j].id === itemId) return { success: false, message: 'Already owned!' }; } }
-        this.player.gold -= item.price;
+        this.player.gold -= price;
         this.addToInventory(item);
         if (item.unique) { if (isSpecial) { this.specialShop = this.specialShop.filter(function(i) { return i.id !== itemId; }); } else { this.shops = this.shops.filter(function(i) { return i.id !== itemId; }); } }
         this.saveToLocalStorage();
-        return { success: true, message: item.name + ' purchased!' };
+        return { success: true, message: item.name + ' purchased for ' + price + 'g!' };
     }
 
     addToInventory(item) {
@@ -479,7 +455,10 @@ class GameState {
     addKill() { this.player.totalKills++; this.saveToLocalStorage(); }
 
     gainExp(amount) {
-        this.player.exp += amount;
+        var quickLearnerRank = this.getSkillRank('quick_learner');
+        var expBonus = quickLearnerRank * 0.04;
+        var totalExp = Math.floor(amount * (1 + expBonus));
+        this.player.exp += totalExp;
         while (this.player.exp >= this.player.expToNextLevel) {
             this.player.level++;
             this.player.exp -= this.player.expToNextLevel;
@@ -487,6 +466,7 @@ class GameState {
             this.player.strength += 1;
             this.player.intelligence += 1;
             this.player.defense += 1;
+            this.player.skillPoints++;
         }
         this.recalculateStats();
         this.player.health = this.player.maxHealth;
@@ -496,7 +476,10 @@ class GameState {
 
     gainGold(amount) {
         var t = this.getTotalStats();
-        var b = Math.floor(amount * (t.goldBoost / 100));
+        var treasureRank = this.getSkillRank('treasure_hunter');
+        var bossBonus = treasureRank * 0.30;
+        var totalBonus = (t.goldBoost / 100) + bossBonus;
+        var b = Math.floor(amount * totalBonus);
         this.player.gold += amount + b;
         this.saveToLocalStorage();
         return b;
