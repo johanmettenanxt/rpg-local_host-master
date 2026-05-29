@@ -127,14 +127,86 @@
 <script src="gamestate.js"></script>
 <script>
     var enemyDatabase = {
-        1:[{name:'Goblin',icon:'👹',healthMult:0.6,damageMult:0.6,goldMin:10,goldMax:15},{name:'Goblin Archer',icon:'🏹',healthMult:0.5,damageMult:0.7,goldMin:12,goldMax:18},{name:'Wild Boar',icon:'🐗',healthMult:0.8,damageMult:0.6,goldMin:15,goldMax:20},{name:'Dire Wolf',icon:'🐺',healthMult:0.7,damageMult:0.8,goldMin:18,goldMax:22},{name:'Troll',icon:'👹',healthMult:1.0,damageMult:0.8,goldMin:20,goldMax:25}],
-        5:[{name:'Orc Warrior',icon:'⚔️',healthMult:0.8,damageMult:0.9,goldMin:25,goldMax:35},{name:'Shadow Beast',icon:'👾',healthMult:0.9,damageMult:0.9,goldMin:28,goldMax:38},{name:'Giant Spider',icon:'🕷️',healthMult:0.7,damageMult:0.8,goldMin:22,goldMax:30},{name:'Stone Golem',icon:'🪨',healthMult:1.3,damageMult:0.7,goldMin:30,goldMax:40},{name:'Orc Shaman',icon:'🧙‍♂️',healthMult:0.6,damageMult:1.1,goldMin:35,goldMax:45}],
-        10:[{name:'Dark Knight',icon:'⚔️',healthMult:1.0,damageMult:1.0,goldMin:40,goldMax:55},{name:'Demon',icon:'👿',healthMult:1.0,damageMult:1.2,goldMin:45,goldMax:60},{name:'Wraith',icon:'😈',healthMult:0.8,damageMult:1.3,goldMin:50,goldMax:65},{name:'Void Beast',icon:'⬛',healthMult:1.2,damageMult:1.1,goldMin:42,goldMax:58},{name:'Skeleton Warrior',icon:'💀',healthMult:0.9,damageMult:1.0,goldMin:38,goldMax:50}],
-        20:[{name:'Wyvern',icon:'🐉',healthMult:1.2,damageMult:1.3,goldMin:60,goldMax:80},{name:'Lich Knight',icon:'💀',healthMult:1.1,damageMult:1.4,goldMin:65,goldMax:85},{name:'Nightmare Beast',icon:'😱',healthMult:1.4,damageMult:1.4,goldMin:70,goldMax:90},{name:'Infernal Guard',icon:'🔥',healthMult:1.3,damageMult:1.3,goldMin:55,goldMax:75},{name:'Shadow Lord',icon:'🖤',healthMult:1.3,damageMult:1.4,goldMin:75,goldMax:95}],
-        30:[{name:'Greater Demon',icon:'👿',healthMult:1.5,damageMult:1.7,goldMin:90,goldMax:120},{name:'Ancient Dragon',icon:'🐉',healthMult:1.7,damageMult:1.5,goldMin:100,goldMax:130},{name:'Reality Ripper',icon:'⚡',healthMult:1.4,damageMult:1.8,goldMin:95,goldMax:125},{name:'Arch Lich',icon:'💀',healthMult:1.3,damageMult:1.9,goldMin:110,goldMax:140},{name:'Void Lord',icon:'⬛',healthMult:1.6,damageMult:1.6,goldMin:105,goldMax:135}],
-        50:[{name:'Eldritch Abomination',icon:'👾',healthMult:2.0,damageMult:2.1,goldMin:150,goldMax:200},{name:'Void Emperor',icon:'⬛',healthMult:2.1,damageMult:2.1,goldMin:160,goldMax:210},{name:'Cosmic Horror',icon:'🌌',healthMult:2.0,damageMult:2.0,goldMin:145,goldMax:195},{name:'Apocalypse Herald',icon:'📯',healthMult:2.0,damageMult:2.2,goldMin:170,goldMax:220}],
-        75:[{name:'Transcendent Being',icon:'✨',healthMult:2.5,damageMult:2.5,goldMin:220,goldMax:300},{name:'Beyond Existence',icon:'🌌',healthMult:2.7,damageMult:2.7,goldMin:250,goldMax:330},{name:'Celestial Tyrant',icon:'⭐',healthMult:2.6,damageMult:2.6,goldMin:230,goldMax:310},{name:'God of Ruin',icon:'⚡',healthMult:2.8,damageMult:2.6,goldMin:260,goldMax:340}],
-        100:[{name:'The Eternal One',icon:'👑',healthMult:3.5,damageMult:3.5,goldMin:350,goldMax:500},{name:'The Infinite Terror',icon:'👻',healthMult:3.7,damageMult:3.7,goldMin:380,goldMax:530},{name:'Absolute Sovereign',icon:'⭐',healthMult:3.5,damageMult:3.8,goldMin:400,goldMax:550},{name:'Chaos Unbound',icon:'🌀',healthMult:3.8,damageMult:3.5,goldMin:420,goldMax:580}]
+        1: [
+            {name:'Goblin',icon:'👹',healthMult:0.6,damageMult:0.6,goldMin:10,goldMax:15},
+            {name:'Goblin Archer',icon:'🏹',healthMult:0.5,damageMult:0.7,goldMin:12,goldMax:18},
+            {name:'Wild Boar',icon:'🐗',healthMult:0.8,damageMult:0.6,goldMin:15,goldMax:20},
+            {name:'Dire Wolf',icon:'🐺',healthMult:0.7,damageMult:0.8,goldMin:18,goldMax:22},
+            {name:'Troll',icon:'👹',healthMult:1.0,damageMult:0.8,goldMin:20,goldMax:25},
+            {name:'Forest Sprite',icon:'🧚',healthMult:0.4,damageMult:0.9,goldMin:14,goldMax:19}
+        ],
+        10: [
+            {name:'Orc Warrior',icon:'⚔️',healthMult:0.8,damageMult:0.9,goldMin:25,goldMax:35},
+            {name:'Shadow Beast',icon:'👾',healthMult:0.9,damageMult:0.9,goldMin:28,goldMax:38},
+            {name:'Giant Spider',icon:'🕷️',healthMult:0.7,damageMult:0.8,goldMin:22,goldMax:30},
+            {name:'Stone Golem',icon:'🪨',healthMult:1.3,damageMult:0.7,goldMin:30,goldMax:40},
+            {name:'Orc Shaman',icon:'🧙‍♂️',healthMult:0.6,damageMult:1.1,goldMin:35,goldMax:45},
+            {name:'War Troll',icon:'👺',healthMult:1.1,damageMult:1.0,goldMin:32,goldMax:42}
+        ],
+        25: [
+            {name:'Dark Knight',icon:'⚔️',healthMult:1.0,damageMult:1.0,goldMin:40,goldMax:55},
+            {name:'Demon',icon:'👿',healthMult:1.0,damageMult:1.2,goldMin:45,goldMax:60},
+            {name:'Wraith',icon:'😈',healthMult:0.8,damageMult:1.3,goldMin:50,goldMax:65},
+            {name:'Void Beast',icon:'⬛',healthMult:1.2,damageMult:1.1,goldMin:42,goldMax:58},
+            {name:'Skeleton Warrior',icon:'💀',healthMult:0.9,damageMult:1.0,goldMin:38,goldMax:50},
+            {name:'Crypt Stalker',icon:'👣',healthMult:0.7,damageMult:1.4,goldMin:48,goldMax:62}
+        ],
+        45: [
+            {name:'Wyvern',icon:'🐉',healthMult:1.2,damageMult:1.3,goldMin:60,goldMax:80},
+            {name:'Lich Knight',icon:'💀',healthMult:1.1,damageMult:1.4,goldMin:65,goldMax:85},
+            {name:'Nightmare Beast',icon:'😱',healthMult:1.4,damageMult:1.4,goldMin:70,goldMax:90},
+            {name:'Infernal Guard',icon:'🔥',healthMult:1.3,damageMult:1.3,goldMin:55,goldMax:75},
+            {name:'Shadow Lord',icon:'🖤',healthMult:1.3,damageMult:1.4,goldMin:75,goldMax:95},
+            {name:'Fire Drake',icon:'🐲',healthMult:1.5,damageMult:1.2,goldMin:68,goldMax:88}
+        ],
+        70: [
+            {name:'Greater Demon',icon:'👿',healthMult:1.5,damageMult:1.7,goldMin:90,goldMax:120},
+            {name:'Ancient Dragon',icon:'🐉',healthMult:1.7,damageMult:1.5,goldMin:100,goldMax:130},
+            {name:'Reality Ripper',icon:'⚡',healthMult:1.4,damageMult:1.8,goldMin:95,goldMax:125},
+            {name:'Arch Lich',icon:'💀',healthMult:1.3,damageMult:1.9,goldMin:110,goldMax:140},
+            {name:'Void Lord',icon:'⬛',healthMult:1.6,damageMult:1.6,goldMin:105,goldMax:135},
+            {name:'Rift Walker',icon:'🚶',healthMult:1.2,damageMult:2.0,goldMin:115,goldMax:145}
+        ],
+        100: [
+            {name:'Eldritch Abomination',icon:'👾',healthMult:2.0,damageMult:2.1,goldMin:150,goldMax:200},
+            {name:'Void Emperor',icon:'⬛',healthMult:2.1,damageMult:2.1,goldMin:160,goldMax:210},
+            {name:'Cosmic Horror',icon:'🌌',healthMult:2.0,damageMult:2.0,goldMin:145,goldMax:195},
+            {name:'Apocalypse Herald',icon:'📯',healthMult:2.0,damageMult:2.2,goldMin:170,goldMax:220},
+            {name:'Eldritch Watcher',icon:'👁️',healthMult:1.8,damageMult:2.3,goldMin:155,goldMax:205},
+            {name:'Void Warden',icon:'🔒',healthMult:2.3,damageMult:1.9,goldMin:165,goldMax:215}
+        ],
+        135: [
+            {name:'Transcendent Being',icon:'✨',healthMult:2.5,damageMult:2.5,goldMin:220,goldMax:300},
+            {name:'Beyond Existence',icon:'🌌',healthMult:2.7,damageMult:2.7,goldMin:250,goldMax:330},
+            {name:'Celestial Tyrant',icon:'⭐',healthMult:2.6,damageMult:2.6,goldMin:230,goldMax:310},
+            {name:'God of Ruin',icon:'⚡',healthMult:2.8,damageMult:2.6,goldMin:260,goldMax:340},
+            {name:'Star Weaver',icon:'🌟',healthMult:2.4,damageMult:2.8,goldMin:240,goldMax:320},
+            {name:'Lightbane',icon:'☀️',healthMult:2.9,damageMult:2.4,goldMin:270,goldMax:350}
+        ],
+        175: [
+            {name:'Abyssal Horror',icon:'🦑',healthMult:3.2,damageMult:3.2,goldMin:350,goldMax:480},
+            {name:'Deep One',icon:'🐙',healthMult:3.0,damageMult:3.4,goldMin:330,goldMax:460},
+            {name:'Leviathan Spawn',icon:'🐋',healthMult:3.5,damageMult:3.0,goldMin:370,goldMax:500},
+            {name:'Trench Walker',icon:'🚶',healthMult:3.1,damageMult:3.3,goldMin:340,goldMax:470},
+            {name:'Abyssal Mage',icon:'🧙',healthMult:2.8,damageMult:3.6,goldMin:360,goldMax:490},
+            {name:'Void Kraken',icon:'🐙',healthMult:3.4,damageMult:3.1,goldMin:380,goldMax:510}
+        ],
+        210: [
+            {name:'Phoenix Knight',icon:'🔥',healthMult:3.8,damageMult:3.8,goldMin:500,goldMax:700},
+            {name:'Eternal Flame',icon:'💥',healthMult:3.6,damageMult:4.0,goldMin:480,goldMax:680},
+            {name:'Ash Warden',icon:'🛡️',healthMult:4.0,damageMult:3.6,goldMin:520,goldMax:720},
+            {name:'Inferno Lord',icon:'👑',healthMult:3.9,damageMult:3.9,goldMin:510,goldMax:710},
+            {name:'Cinder Beast',icon:'🐗',healthMult:4.2,damageMult:3.5,goldMin:490,goldMax:690},
+            {name:'Blaze Spirit',icon:'👻',healthMult:3.5,damageMult:4.2,goldMin:530,goldMax:730}
+        ],
+        250: [
+            {name:'The Eternal One',icon:'👑',healthMult:4.5,damageMult:4.5,goldMin:800,goldMax:1100},
+            {name:'The Infinite Terror',icon:'👻',healthMult:4.7,damageMult:4.7,goldMin:850,goldMax:1150},
+            {name:'Absolute Sovereign',icon:'⭐',healthMult:4.5,damageMult:4.8,goldMin:820,goldMax:1120},
+            {name:'Chaos Unbound',icon:'🌀',healthMult:4.8,damageMult:4.5,goldMin:880,goldMax:1180},
+            {name:'Void Incarnate',icon:'⬛',healthMult:5.0,damageMult:4.4,goldMin:900,goldMax:1200},
+            {name:'Infinity Golem',icon:'♾️',healthMult:5.2,damageMult:4.3,goldMin:920,goldMax:1250}
+        ]
     };
 
     var currentBattle = null;

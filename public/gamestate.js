@@ -6,7 +6,7 @@ class GameState {
             gold: 500, strength: 10, intelligence: 10, defense: 5, speed: 5,
             inventory: [], equippedWeapon: null, equippedArmor: null, equippedAmulet: null,
             bossDefeats: {}, totalKills: 0, materials: {},
-            skillPoints: 0, skills: {}
+            skillPoints: 0, skills: {}, gambleStreak: 0, jackpotPool: 0
         };
         this.player = JSON.parse(JSON.stringify(this.defaultPlayer));
         this.player.inventory = [];
@@ -24,68 +24,84 @@ class GameState {
                 { id: 'forest_herb', name: 'Forest Herb', icon: '🍃', price: 75, rarity: 'uncommon', dropRate: 0.20, material: true, tier: 1 },
                 { id: 'wooden_ring', name: 'Wooden Ring', icon: '💍', price: 250, rarity: 'legendary', dropRate: 0.05 }
             ],
-            5: [
-                { id: 'orc_fang', name: 'Orc Fang', icon: '🦷', price: 40, rarity: 'common', dropRate: 0.45, material: true, tier: 2 },
-                { id: 'silver_dust', name: 'Silver Dust', icon: '✨', price: 60, rarity: 'common', dropRate: 0.40, material: true, tier: 2 },
-                { id: 'shadow_essence', name: 'Shadow Essence', icon: '🌑', price: 125, rarity: 'uncommon', dropRate: 0.25, material: true, tier: 2 },
-                { id: 'cursed_amulet_loot', name: 'Cursed Amulet', icon: '🔮', price: 400, rarity: 'legendary', dropRate: 0.06 }
-            ],
             10: [
-                { id: 'dark_crystal', name: 'Dark Crystal', icon: '⚫', price: 75, rarity: 'common', dropRate: 0.50, material: true, tier: 3 },
-                { id: 'bone_fragment', name: 'Bone Fragment', icon: '🦴', price: 50, rarity: 'common', dropRate: 0.45, material: true, tier: 3 },
-                { id: 'soul_stone', name: 'Soul Stone', icon: '💀', price: 175, rarity: 'uncommon', dropRate: 0.22, material: true, tier: 3 },
-                { id: 'demonic_seal', name: 'Demonic Seal', icon: '👿', price: 600, rarity: 'legendary', dropRate: 0.08 }
+                { id: 'orc_fang', name: 'Orc Fang', icon: '🦷', price: 60, rarity: 'common', dropRate: 0.45, material: true, tier: 2 },
+                { id: 'silver_dust', name: 'Silver Dust', icon: '✨', price: 90, rarity: 'common', dropRate: 0.40, material: true, tier: 2 },
+                { id: 'shadow_essence', name: 'Shadow Essence', icon: '🌑', price: 180, rarity: 'uncommon', dropRate: 0.25, material: true, tier: 2 },
+                { id: 'cursed_amulet_loot', name: 'Cursed Amulet', icon: '🔮', price: 500, rarity: 'legendary', dropRate: 0.06 }
             ],
-            20: [
-                { id: 'dragon_scale', name: 'Dragon Scale', icon: '🐲', price: 125, rarity: 'common', dropRate: 0.48, material: true, tier: 4 },
-                { id: 'infernal_ash', name: 'Infernal Ash', icon: '🔥', price: 100, rarity: 'common', dropRate: 0.42, material: true, tier: 4 },
-                { id: 'ancient_rune', name: 'Ancient Rune', icon: '📿', price: 250, rarity: 'uncommon', dropRate: 0.28, material: true, tier: 4 },
-                { id: 'nightbringer_gem', name: 'Nightbringer Gem', icon: '🌙', price: 750, rarity: 'legendary', dropRate: 0.10 }
+            25: [
+                { id: 'dark_crystal', name: 'Dark Crystal', icon: '⚫', price: 100, rarity: 'common', dropRate: 0.50, material: true, tier: 3 },
+                { id: 'bone_fragment', name: 'Bone Fragment', icon: '🦴', price: 80, rarity: 'common', dropRate: 0.45, material: true, tier: 3 },
+                { id: 'soul_stone', name: 'Soul Stone', icon: '💀', price: 250, rarity: 'uncommon', dropRate: 0.22, material: true, tier: 3 },
+                { id: 'demonic_seal', name: 'Demonic Seal', icon: '👿', price: 800, rarity: 'legendary', dropRate: 0.08 }
             ],
-            30: [
-                { id: 'abyssal_pearl', name: 'Abyssal Pearl', icon: '🪨', price: 175, rarity: 'common', dropRate: 0.50, material: true, tier: 5 },
-                { id: 'void_shard', name: 'Void Shard', icon: '⬛', price: 150, rarity: 'common', dropRate: 0.45, material: true, tier: 5 },
-                { id: 'eternity_stone', name: 'Eternity Stone', icon: '⭐', price: 375, rarity: 'uncommon', dropRate: 0.30, material: true, tier: 5 },
-                { id: 'eternal_flame', name: 'Eternal Flame', icon: '🔥', price: 1000, rarity: 'legendary', dropRate: 0.12 }
+            45: [
+                { id: 'dragon_scale', name: 'Dragon Scale', icon: '🐲', price: 180, rarity: 'common', dropRate: 0.48, material: true, tier: 4 },
+                { id: 'infernal_ash', name: 'Infernal Ash', icon: '🔥', price: 150, rarity: 'common', dropRate: 0.42, material: true, tier: 4 },
+                { id: 'ancient_rune', name: 'Ancient Rune', icon: '📿', price: 400, rarity: 'uncommon', dropRate: 0.28, material: true, tier: 4 },
+                { id: 'nightbringer_gem', name: 'Nightbringer Gem', icon: '🌙', price: 1200, rarity: 'legendary', dropRate: 0.10 }
             ],
-            50: [
-                { id: 'primordial_essence', name: 'Primordial Essence', icon: '🌀', price: 250, rarity: 'common', dropRate: 0.50, material: true, tier: 6 },
-                { id: 'cosmic_dust', name: 'Cosmic Dust', icon: '🌌', price: 225, rarity: 'common', dropRate: 0.48, material: true, tier: 6 },
-                { id: 'eldritch_core', name: 'Eldritch Core', icon: '👾', price: 500, rarity: 'uncommon', dropRate: 0.32, material: true, tier: 6 },
-                { id: 'infinite_crystal', name: 'Infinite Crystal', icon: '💎', price: 1500, rarity: 'legendary', dropRate: 0.15 }
-            ],
-            75: [
-                { id: 'transcendent_shard', name: 'Transcendent Shard', icon: '✨', price: 375, rarity: 'common', dropRate: 0.52, material: true, tier: 7 },
-                { id: 'celestial_core', name: 'Celestial Core', icon: '⭐', price: 325, rarity: 'common', dropRate: 0.48, material: true, tier: 7 },
-                { id: 'omnipotent_essence', name: 'Omnipotent Essence', icon: '👁️', price: 750, rarity: 'uncommon', dropRate: 0.35, material: true, tier: 7 },
-                { id: 'divine_crown', name: 'Divine Crown', icon: '👑', price: 2500, rarity: 'legendary', dropRate: 0.18 }
+            70: [
+                { id: 'abyssal_pearl', name: 'Abyssal Pearl', icon: '🪨', price: 300, rarity: 'common', dropRate: 0.50, material: true, tier: 5 },
+                { id: 'void_shard', name: 'Void Shard', icon: '⬛', price: 250, rarity: 'common', dropRate: 0.45, material: true, tier: 5 },
+                { id: 'eternity_stone', name: 'Eternity Stone', icon: '⭐', price: 600, rarity: 'uncommon', dropRate: 0.30, material: true, tier: 5 },
+                { id: 'eternal_flame', name: 'Eternal Flame', icon: '🔥', price: 1800, rarity: 'legendary', dropRate: 0.12 }
             ],
             100: [
-                { id: 'eternal_fragment', name: 'Eternal Fragment', icon: '⏮️', price: 500, rarity: 'common', dropRate: 0.50, material: true, tier: 8 },
-                { id: 'absolute_essence', name: 'Absolute Essence', icon: '🌟', price: 450, rarity: 'common', dropRate: 0.48, material: true, tier: 8 },
-                { id: 'ultimate_treasure', name: 'Ultimate Treasure', icon: '💰', price: 1250, rarity: 'uncommon', dropRate: 0.38, material: true, tier: 8 },
-                { id: 'infinity_crown', name: 'Infinity Crown', icon: '♾️', price: 5000, rarity: 'legendary', dropRate: 0.20 }
+                { id: 'primordial_essence', name: 'Primordial Essence', icon: '🌀', price: 500, rarity: 'common', dropRate: 0.50, material: true, tier: 6 },
+                { id: 'cosmic_dust', name: 'Cosmic Dust', icon: '🌌', price: 400, rarity: 'common', dropRate: 0.48, material: true, tier: 6 },
+                { id: 'eldritch_core', name: 'Eldritch Core', icon: '👾', price: 900, rarity: 'uncommon', dropRate: 0.32, material: true, tier: 6 },
+                { id: 'infinite_crystal', name: 'Infinite Crystal', icon: '💎', price: 2800, rarity: 'legendary', dropRate: 0.15 }
+            ],
+            135: [
+                { id: 'transcendent_shard', name: 'Transcendent Shard', icon: '✨', price: 750, rarity: 'common', dropRate: 0.52, material: true, tier: 7 },
+                { id: 'celestial_core', name: 'Celestial Core', icon: '⭐', price: 600, rarity: 'common', dropRate: 0.48, material: true, tier: 7 },
+                { id: 'omnipotent_essence', name: 'Omnipotent Essence', icon: '👁️', price: 1400, rarity: 'uncommon', dropRate: 0.35, material: true, tier: 7 },
+                { id: 'divine_crown', name: 'Divine Crown', icon: '👑', price: 4500, rarity: 'legendary', dropRate: 0.18 }
+            ],
+            175: [
+                { id: 'abyssal_heart', name: 'Abyssal Heart', icon: '🖤', price: 1100, rarity: 'common', dropRate: 0.50, material: true, tier: 8 },
+                { id: 'leviathan_scale', name: 'Leviathan Scale', icon: '🐋', price: 950, rarity: 'common', dropRate: 0.48, material: true, tier: 8 },
+                { id: 'deep_pearl', name: 'Deep Pearl', icon: '🫧', price: 2000, rarity: 'uncommon', dropRate: 0.32, material: true, tier: 8 },
+                { id: 'ocean_crown', name: 'Ocean Crown', icon: '👑', price: 7000, rarity: 'legendary', dropRate: 0.15 }
+            ],
+            210: [
+                { id: 'phoenix_feather', name: 'Phoenix Feather', icon: '🔥', price: 1600, rarity: 'common', dropRate: 0.50, material: true, tier: 9 },
+                { id: 'eternal_ember', name: 'Eternal Ember', icon: '✨', price: 1400, rarity: 'common', dropRate: 0.48, material: true, tier: 9 },
+                { id: 'rebirth_crystal', name: 'Rebirth Crystal', icon: '💎', price: 3000, rarity: 'uncommon', dropRate: 0.32, material: true, tier: 9 },
+                { id: 'phoenix_crown', name: 'Phoenix Crown', icon: '👑', price: 10000, rarity: 'legendary', dropRate: 0.15 }
+            ],
+            250: [
+                { id: 'eternal_fragment', name: 'Eternal Fragment', icon: '⏮️', price: 2500, rarity: 'common', dropRate: 0.50, material: true, tier: 10 },
+                { id: 'absolute_essence', name: 'Absolute Essence', icon: '🌟', price: 2200, rarity: 'common', dropRate: 0.48, material: true, tier: 10 },
+                { id: 'infinity_shard', name: 'Infinity Shard', icon: '♾️', price: 5000, rarity: 'uncommon', dropRate: 0.32, material: true, tier: 10 },
+                { id: 'infinity_crown', name: 'Infinity Crown', icon: '♾️', price: 15000, rarity: 'legendary', dropRate: 0.15 }
             ]
         };
         this.worlds = [
-            { level: 1, name: 'Goblin Forest', enemyLevel: 1, difficulty: 'Easy', baseExp: 50 },
-            { level: 5, name: 'Orc Stronghold', enemyLevel: 5, difficulty: 'Easy', baseExp: 100 },
-            { level: 10, name: 'Shadow Crypt', enemyLevel: 10, difficulty: 'Medium', baseExp: 200 },
-            { level: 20, name: "Dragon's Peak", enemyLevel: 20, difficulty: 'Medium', baseExp: 400 },
-            { level: 30, name: 'Void Rift', enemyLevel: 30, difficulty: 'Hard', baseExp: 600 },
-            { level: 50, name: 'Eldritch Realm', enemyLevel: 50, difficulty: 'Hard', baseExp: 1000 },
-            { level: 75, name: 'Celestial Spire', enemyLevel: 75, difficulty: 'Very Hard', baseExp: 1500 },
-            { level: 100, name: 'The Infinite Void', enemyLevel: 100, difficulty: 'Insane', baseExp: 2000 }
+            { level: 1, name: 'Goblin Forest', difficulty: 'Easy', baseExp: 50 },
+            { level: 10, name: 'Orc Stronghold', difficulty: 'Easy', baseExp: 120 },
+            { level: 25, name: 'Shadow Crypt', difficulty: 'Medium', baseExp: 250 },
+            { level: 45, name: "Dragon's Peak", difficulty: 'Medium', baseExp: 450 },
+            { level: 70, name: 'Void Rift', difficulty: 'Hard', baseExp: 700 },
+            { level: 100, name: 'Eldritch Realm', difficulty: 'Hard', baseExp: 1000 },
+            { level: 135, name: 'Celestial Spire', difficulty: 'Very Hard', baseExp: 1400 },
+            { level: 175, name: 'Abyssal Depths', difficulty: 'Very Hard', baseExp: 1900 },
+            { level: 210, name: 'Eternal Nexus', difficulty: 'Insane', baseExp: 2500 },
+            { level: 250, name: 'The Infinite Void', difficulty: 'Insane', baseExp: 3200 }
         ];
         this.bosses = [
             { worldLevel: 1, name: 'Forest Guardian', icon: '🌳', healthMult: 1.5, damageMult: 1.2, goldMin: 50, goldMax: 80, expReward: 150, killsRequired: 10, amulet: { id: 'amulet_forest', name: "Forest Amulet", icon: '🍃', description: "Nature's blessing enhances your healing", stats: { healBoost: 15 }, unique: true } },
-            { worldLevel: 5, name: 'Orc Warlord', icon: '👹', healthMult: 1.8, damageMult: 1.5, goldMin: 120, goldMax: 180, expReward: 300, killsRequired: 25, amulet: { id: 'amulet_orc', name: "Warlord's Amulet", icon: '💀', description: 'Brutal strength flows through you', stats: { damageBoost: 5 }, unique: true } },
-            { worldLevel: 10, name: 'Shadow Demon', icon: '👿', healthMult: 2.0, damageMult: 1.8, goldMin: 250, goldMax: 350, expReward: 500, killsRequired: 50, amulet: { id: 'amulet_shadow', name: "Shadow Amulet", icon: '🌑', description: 'Dark energy increases your mana', stats: { manaBoost: 25 }, unique: true } },
-            { worldLevel: 20, name: 'Ancient Wyrm', icon: '🐉', healthMult: 2.5, damageMult: 2.2, goldMin: 500, goldMax: 700, expReward: 800, killsRequired: 100, amulet: { id: 'amulet_dragon', name: "Dragon Amulet", icon: '🐲', description: 'Dragon fire empowers your attacks', stats: { damageBoost: 10 }, unique: true } },
-            { worldLevel: 30, name: 'Void Titan', icon: '⬛', healthMult: 3.0, damageMult: 2.8, goldMin: 900, goldMax: 1200, expReward: 1200, killsRequired: 200, amulet: { id: 'amulet_void', name: "Void Amulet", icon: '🌀', description: 'The void strengthens your defense', stats: { defenseBoost: 8 }, unique: true } },
-            { worldLevel: 50, name: 'Eldritch Horror', icon: '👾', healthMult: 3.5, damageMult: 3.2, goldMin: 1500, goldMax: 2000, expReward: 1800, killsRequired: 350, amulet: { id: 'amulet_eldritch', name: "Eldritch Amulet", icon: '👁️', description: 'Ancient power boosts all healing', stats: { healBoost: 30 }, unique: true } },
-            { worldLevel: 75, name: 'Celestial Overlord', icon: '⭐', healthMult: 4.0, damageMult: 3.8, goldMin: 2500, goldMax: 3200, expReward: 2500, killsRequired: 500, amulet: { id: 'amulet_celestial', name: "Celestial Amulet", icon: '✨', description: 'Divine light enhances your mana pool', stats: { manaBoost: 50 }, unique: true } },
-            { worldLevel: 100, name: 'The Absolute', icon: '♾️', healthMult: 5.0, damageMult: 4.5, goldMin: 4000, goldMax: 5500, expReward: 3500, killsRequired: 750, amulet: { id: 'amulet_absolute', name: "Absolute Amulet", icon: '👑', description: 'Ultimate power surges through you', stats: { damageBoost: 15, defenseBoost: 10 }, unique: true } }
+            { worldLevel: 10, name: 'Orc Warlord', icon: '👹', healthMult: 1.8, damageMult: 1.5, goldMin: 200, goldMax: 300, expReward: 400, killsRequired: 50, amulet: { id: 'amulet_orc', name: "Warlord's Amulet", icon: '💀', description: 'Brutal strength flows through you', stats: { damageBoost: 5 }, unique: true } },
+            { worldLevel: 25, name: 'Shadow Demon', icon: '👿', healthMult: 2.0, damageMult: 1.8, goldMin: 500, goldMax: 750, expReward: 700, killsRequired: 100, amulet: { id: 'amulet_shadow', name: "Shadow Amulet", icon: '🌑', description: 'Dark energy increases your mana', stats: { manaBoost: 25 }, unique: true } },
+            { worldLevel: 45, name: 'Ancient Wyrm', icon: '🐉', healthMult: 2.5, damageMult: 2.2, goldMin: 1000, goldMax: 1500, expReward: 1200, killsRequired: 200, amulet: { id: 'amulet_dragon', name: "Dragon Amulet", icon: '🐲', description: 'Dragon fire empowers your attacks', stats: { damageBoost: 10 }, unique: true } },
+            { worldLevel: 70, name: 'Void Titan', icon: '⬛', healthMult: 3.0, damageMult: 2.8, goldMin: 2000, goldMax: 3000, expReward: 2000, killsRequired: 350, amulet: { id: 'amulet_void', name: "Void Amulet", icon: '🌀', description: 'The void strengthens your defense', stats: { defenseBoost: 8 }, unique: true } },
+            { worldLevel: 100, name: 'Eldritch Horror', icon: '👾', healthMult: 3.5, damageMult: 3.2, goldMin: 4000, goldMax: 5500, expReward: 3000, killsRequired: 500, amulet: { id: 'amulet_eldritch', name: "Eldritch Amulet", icon: '👁️', description: 'Ancient power boosts all healing', stats: { healBoost: 30 }, unique: true } },
+            { worldLevel: 135, name: 'Celestial Overlord', icon: '⭐', healthMult: 4.0, damageMult: 3.8, goldMin: 7000, goldMax: 9000, expReward: 4500, killsRequired: 700, amulet: { id: 'amulet_celestial', name: "Celestial Amulet", icon: '✨', description: 'Divine light enhances your mana pool', stats: { manaBoost: 50 }, unique: true } },
+            { worldLevel: 175, name: 'Abyssal Leviathan', icon: '🐋', healthMult: 4.5, damageMult: 4.2, goldMin: 12000, goldMax: 16000, expReward: 6500, killsRequired: 1000, amulet: { id: 'amulet_abyssal', name: "Abyssal Amulet", icon: '🌊', description: 'Deep power: +20 Dmg, +15 Def, +100 HP', stats: { damageBoost: 20, defenseBoost: 15, hpBoost: 100 }, unique: true } },
+            { worldLevel: 210, name: 'Eternal Phoenix', icon: '🔥', healthMult: 5.0, damageMult: 4.8, goldMin: 20000, goldMax: 28000, expReward: 9000, killsRequired: 1500, amulet: { id: 'amulet_phoenix_boss', name: "Phoenix Amulet", icon: '🐦', description: 'Rebirth: +25 Dmg, +200 HP, +30% Heal', stats: { damageBoost: 25, hpBoost: 200, healBoost: 30 }, unique: true } },
+            { worldLevel: 250, name: 'The Absolute', icon: '♾️', healthMult: 6.0, damageMult: 5.5, goldMin: 35000, goldMax: 50000, expReward: 13000, killsRequired: 2000, amulet: { id: 'amulet_absolute', name: "Absolute Amulet", icon: '👑', description: 'Ultimate power: +35 Dmg, +25 Def, +300 HP, +100 Mana', stats: { damageBoost: 35, defenseBoost: 25, hpBoost: 300, manaBoost: 100 }, unique: true } }
         ];
         this.gambleExclusiveAmulets = [
             { id: "gamble_amulet_luck", name: "Lucky Charm", icon: "🍀", price: 500, type: "amulet", description: "+25% Gold, +10% Heal", stats: { goldBoost: 25, healBoost: 10 }, unique: true },
@@ -230,33 +246,118 @@ class GameState {
         item.tier = Math.min(5, (item.tier || 1) + 1); item.name = item.name.replace(/ \+/g, '') + ' +';
         this.saveToLocalStorage(); return { success: true, message: 'Upgraded to tier ' + item.tier + '!' };
     }
-
     gamble(amount) {
         if (this.player.gold < amount) return { success: false, message: 'Not enough gold!' };
-        this.player.gold -= amount; var roll = Math.random(); var reward = null; var message = '';
+        this.player.gold -= amount;
+
+        // Add 5% of bet to progressive jackpot pool
+        var poolContribution = Math.floor(amount * 0.05);
+        this.player.jackpotPool = (this.player.jackpotPool || 0) + poolContribution;
+
         var luckyRank = this.getSkillRank('lucky_gambler');
-        var luckBonus = luckyRank * 0.02;
+        var luckBonus = luckyRank * 0.004;
+
+        // Streak bonus
+        var streakBonus = 0;
+        if (this.player.gambleStreak >= 3) streakBonus = 0.02;
+        if (this.player.gambleStreak >= 5) streakBonus = 0.04;
+        // Pity after 5 losses
+        var pityBonus = 0;
+        if (this.player.gambleStreak <= -5) pityBonus = 0.05;
+
+        var roll = Math.random();
+        var reward = null;
+        var message = '';
         var tier = amount >= 1000 ? 'high' : amount >= 500 ? 'medium' : amount >= 200 ? 'low' : 'tiny';
-        if (roll < 0.03 + luckBonus) {
-            if (tier === 'high') { var pool = this.gambleExclusiveWeapons.concat(this.gambleExclusiveAmulets.slice(4)); reward = pool[Math.floor(Math.random() * pool.length)]; }
-            else if (tier === 'medium') { var pool = this.gambleExclusiveAmulets.slice(2, 6).concat(this.gambleExclusiveWeapons.slice(0, 3)); reward = pool[Math.floor(Math.random() * pool.length)]; }
-            else if (tier === 'low') { var pool = this.gambleExclusiveAmulets.slice(0, 4).concat(this.gambleExclusiveWeapons.slice(0, 1)); reward = pool[Math.floor(Math.random() * pool.length)]; }
-            else { var pool = this.gambleExclusiveAmulets.slice(0, 2); reward = pool[Math.floor(Math.random() * pool.length)]; }
-            message = '🎉 JACKPOT! You won: ' + reward.icon + ' ' + reward.name + '!';
-        } else if (roll < 0.10 + luckBonus) {
-            if (tier === 'high' || tier === 'medium') { reward = this.gambleExclusiveAmulets[Math.floor(Math.random() * this.gambleExclusiveAmulets.length)]; }
-            else if (tier === 'low') { reward = this.gambleExclusiveAmulets[Math.floor(Math.random() * 4)]; }
-            else { reward = this.gambleMaterials[Math.floor(Math.random() * 3)]; }
+        var won = false;
+
+        // All winnable items are gamble-exclusive only
+        var allGambleItems = this.gambleExclusiveAmulets.concat(this.gambleExclusiveWeapons).concat(this.gambleMaterials);
+
+        var nothingChance = Math.max(0.02, 0.10 - (luckBonus * 2) - pityBonus);
+        var closeChance = 0.25;
+        var niceChance = 0.35;
+        var amazingChance = 0.22 + luckBonus;
+        var jackpotChance = 0.08 + luckBonus + streakBonus;
+
+        if (roll < jackpotChance) {
+            won = true;
+            if (tier === 'high') {
+                var pool = this.gambleExclusiveWeapons.concat(this.gambleExclusiveAmulets.slice(4));
+                reward = pool[Math.floor(Math.random() * pool.length)];
+            } else if (tier === 'medium') {
+                var pool = this.gambleExclusiveAmulets.slice(2, 6).concat(this.gambleExclusiveWeapons.slice(0, 3));
+                reward = pool[Math.floor(Math.random() * pool.length)];
+            } else if (tier === 'low') {
+                var pool = this.gambleExclusiveAmulets.slice(0, 4).concat(this.gambleExclusiveWeapons.slice(0, 1));
+                reward = pool[Math.floor(Math.random() * pool.length)];
+            } else {
+                reward = this.gambleExclusiveAmulets[Math.floor(Math.random() * 3)];
+            }
+
+            // Small chance (5%) to win the entire jackpot pool
+            if (Math.random() < 0.05 && this.player.jackpotPool > amount) {
+                var jackpotWin = this.player.jackpotPool;
+                this.player.gold += jackpotWin;
+                message = '🎉 JACKPOT + POOL! Won ' + reward.icon + ' ' + reward.name + ' AND ' + jackpotWin + ' gold pool!';
+                this.player.jackpotPool = 0;
+            } else {
+                message = '🎉 JACKPOT! You won: ' + reward.icon + ' ' + reward.name + '!';
+            }
+        } else if (roll < jackpotChance + amazingChance) {
+            won = true;
+            if (tier === 'high' || tier === 'medium') {
+                var pool = this.gambleExclusiveAmulets.slice(0, 5).concat(this.gambleMaterials.slice(3));
+                reward = pool[Math.floor(Math.random() * pool.length)];
+            } else {
+                var pool = this.gambleExclusiveAmulets.slice(0, 2).concat(this.gambleMaterials.slice(0, 2));
+                reward = pool[Math.floor(Math.random() * pool.length)];
+            }
             message = '🎊 Amazing! You won: ' + reward.icon + ' ' + reward.name + '!';
-        } else if (roll < 0.25 + luckBonus) {
-            reward = this.gambleMaterials[Math.floor(Math.random() * this.gambleMaterials.length)];
-            message = '👍 Nice! You found: ' + reward.icon + ' ' + reward.name + '!';
-        } else if (roll < 0.50 + luckBonus) {
-            var refund = Math.floor(amount * 0.75); this.player.gold += refund; this.saveToLocalStorage();
-            return { success: true, message: '😐 Got back ' + refund + ' gold (75%).' };
-        } else { this.saveToLocalStorage(); return { success: true, message: '😢 Nothing! Lost ' + amount + ' gold.' }; }
-        if (reward) { var existing = this.player.inventory.find(function(i) { return i.id === reward.id; }); if (existing && reward.unique) { var altRefund = Math.floor(amount * 1.5); this.player.gold += altRefund; this.saveToLocalStorage(); return { success: true, message: '🎰 Already own ' + reward.name + '! Refunded ' + altRefund + ' gold.' }; } this.addToInventory(reward); }
-        this.saveToLocalStorage(); return { success: true, message: message };
+        } else if (roll < jackpotChance + amazingChance + niceChance) {
+            won = true;
+            if (tier === 'high' || tier === 'medium') {
+                var pool = this.gambleMaterials.slice(0, 4);
+                reward = pool[Math.floor(Math.random() * pool.length)];
+            } else {
+                var pool = this.gambleMaterials.slice(0, 2);
+                reward = pool[Math.floor(Math.random() * pool.length)];
+            }
+            message = '👍 Nice! You won: ' + reward.icon + ' ' + reward.name + '!';
+        } else if (roll < jackpotChance + amazingChance + niceChance + closeChance) {
+            var refund = Math.floor(amount * (0.7 + Math.random() * 0.3));
+            this.player.gold += refund;
+            message = '😐 Got back ' + refund + ' gold.';
+        } else {
+            message = '💀 Nothing! Lost ' + amount + ' gold.';
+        }
+
+        // Update streak
+        if (won) {
+            this.player.gambleStreak = Math.min(10, (this.player.gambleStreak || 0) + 1);
+            if (this.player.gambleStreak >= 5) {
+                message += ' 🔥 ' + this.player.gambleStreak + ' win streak!';
+            }
+        } else {
+            this.player.gambleStreak = Math.max(-10, (this.player.gambleStreak || 0) - 1);
+            if (this.player.gambleStreak <= -5) {
+                message += ' 🫠 Pity bonus active!';
+            }
+        }
+
+        if (reward) {
+            var existing = this.player.inventory.find(function(i) { return i.id === reward.id; });
+            if (existing && reward.unique) {
+                var altRefund = Math.floor(amount * 1.1);
+                this.player.gold += altRefund;
+                this.saveToLocalStorage();
+                return { success: true, message: 'Already own ' + reward.name + '! Refunded ' + altRefund + ' gold.' };
+            }
+            this.addToInventory(reward);
+        }
+
+        this.saveToLocalStorage();
+        return { success: true, message: message };
     }
 
     fish() {
@@ -396,6 +497,8 @@ class GameState {
                 this.player.name = data.player.name || this.defaultPlayer.name;
                 this.player.skillPoints = data.player.skillPoints || 0;
                 this.player.skills = data.player.skills || {};
+                this.player.gambleStreak = data.player.gambleStreak || 0;
+                this.player.jackpotPool = data.player.jackpotPool || 0;
                 while (this.player.exp >= this.player.expToNextLevel) {
                     this.player.level++;
                     this.player.exp -= this.player.expToNextLevel;
@@ -420,6 +523,8 @@ class GameState {
         this.player.materials = {};
         this.player.skills = {};
         this.player.skillPoints = 0;
+        this.player.gambleStreak = 0;
+        this.player.jackpotPool = 0;
         this.shops = this.buildShopInventory();
         this.specialShop = this.buildAmuletShopInventory();
         this.recalculateStats();

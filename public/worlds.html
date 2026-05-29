@@ -116,17 +116,19 @@
         document.getElementById('total-kills').textContent = gameState.player.totalKills;
 
         var enemyDB = {
-            1:[{name:'Goblin',icon:'👹',gold:'10-15'},{name:'Goblin Archer',icon:'🏹',gold:'12-18'},{name:'Wild Boar',icon:'🐗',gold:'15-20'},{name:'Dire Wolf',icon:'🐺',gold:'18-22'},{name:'Troll',icon:'👹',gold:'20-25'}],
-            5:[{name:'Orc Warrior',icon:'⚔️',gold:'25-35'},{name:'Shadow Beast',icon:'👾',gold:'28-38'},{name:'Giant Spider',icon:'🕷️',gold:'22-30'},{name:'Stone Golem',icon:'🪨',gold:'30-40'},{name:'Orc Shaman',icon:'🧙‍♂️',gold:'35-45'}],
-            10:[{name:'Dark Knight',icon:'⚔️',gold:'40-55'},{name:'Demon',icon:'👿',gold:'45-60'},{name:'Wraith',icon:'😈',gold:'50-65'},{name:'Void Beast',icon:'⬛',gold:'42-58'},{name:'Skeleton Warrior',icon:'💀',gold:'38-50'}],
-            20:[{name:'Wyvern',icon:'🐉',gold:'60-80'},{name:'Lich Knight',icon:'💀',gold:'65-85'},{name:'Nightmare Beast',icon:'😱',gold:'70-90'},{name:'Infernal Guard',icon:'🔥',gold:'55-75'},{name:'Shadow Lord',icon:'🖤',gold:'75-95'}],
-            30:[{name:'Greater Demon',icon:'👿',gold:'90-120'},{name:'Ancient Dragon',icon:'🐉',gold:'100-130'},{name:'Reality Ripper',icon:'⚡',gold:'95-125'},{name:'Arch Lich',icon:'💀',gold:'110-140'},{name:'Void Lord',icon:'⬛',gold:'105-135'}],
-            50:[{name:'Eldritch Abomination',icon:'👾',gold:'150-200'},{name:'Void Emperor',icon:'⬛',gold:'160-210'},{name:'Cosmic Horror',icon:'🌌',gold:'145-195'},{name:'Apocalypse Herald',icon:'📯',gold:'170-220'}],
-            75:[{name:'Transcendent Being',icon:'✨',gold:'220-300'},{name:'Beyond Existence',icon:'🌌',gold:'250-330'},{name:'Celestial Tyrant',icon:'⭐',gold:'230-310'},{name:'God of Ruin',icon:'⚡',gold:'260-340'}],
-            100:[{name:'The Eternal One',icon:'👑',gold:'350-500'},{name:'The Infinite Terror',icon:'👻',gold:'380-530'},{name:'Absolute Sovereign',icon:'⭐',gold:'400-550'},{name:'Chaos Unbound',icon:'🌀',gold:'420-580'}]
+            1:[{name:'Goblin',icon:'👹',gold:'10-15'},{name:'Goblin Archer',icon:'🏹',gold:'12-18'},{name:'Wild Boar',icon:'🐗',gold:'15-20'},{name:'Dire Wolf',icon:'🐺',gold:'18-22'},{name:'Troll',icon:'👹',gold:'20-25'},{name:'Forest Sprite',icon:'🧚',gold:'14-19'}],
+            10:[{name:'Orc Warrior',icon:'⚔️',gold:'25-35'},{name:'Shadow Beast',icon:'👾',gold:'28-38'},{name:'Giant Spider',icon:'🕷️',gold:'22-30'},{name:'Stone Golem',icon:'🪨',gold:'30-40'},{name:'Orc Shaman',icon:'🧙‍♂️',gold:'35-45'},{name:'War Troll',icon:'👺',gold:'32-42'}],
+            25:[{name:'Dark Knight',icon:'⚔️',gold:'40-55'},{name:'Demon',icon:'👿',gold:'45-60'},{name:'Wraith',icon:'😈',gold:'50-65'},{name:'Void Beast',icon:'⬛',gold:'42-58'},{name:'Skeleton Warrior',icon:'💀',gold:'38-50'},{name:'Crypt Stalker',icon:'👣',gold:'48-62'}],
+            45:[{name:'Wyvern',icon:'🐉',gold:'60-80'},{name:'Lich Knight',icon:'💀',gold:'65-85'},{name:'Nightmare Beast',icon:'😱',gold:'70-90'},{name:'Infernal Guard',icon:'🔥',gold:'55-75'},{name:'Shadow Lord',icon:'🖤',gold:'75-95'},{name:'Fire Drake',icon:'🐲',gold:'68-88'}],
+            70:[{name:'Greater Demon',icon:'👿',gold:'90-120'},{name:'Ancient Dragon',icon:'🐉',gold:'100-130'},{name:'Reality Ripper',icon:'⚡',gold:'95-125'},{name:'Arch Lich',icon:'💀',gold:'110-140'},{name:'Void Lord',icon:'⬛',gold:'105-135'},{name:'Rift Walker',icon:'🚶',gold:'115-145'}],
+            100:[{name:'Eldritch Abomination',icon:'👾',gold:'150-200'},{name:'Void Emperor',icon:'⬛',gold:'160-210'},{name:'Cosmic Horror',icon:'🌌',gold:'145-195'},{name:'Apocalypse Herald',icon:'📯',gold:'170-220'},{name:'Eldritch Watcher',icon:'👁️',gold:'155-205'},{name:'Void Warden',icon:'🔒',gold:'165-215'}],
+            135:[{name:'Transcendent Being',icon:'✨',gold:'220-300'},{name:'Beyond Existence',icon:'🌌',gold:'250-330'},{name:'Celestial Tyrant',icon:'⭐',gold:'230-310'},{name:'God of Ruin',icon:'⚡',gold:'260-340'},{name:'Star Weaver',icon:'🌟',gold:'240-320'},{name:'Lightbane',icon:'☀️',gold:'270-350'}],
+            175:[{name:'Abyssal Horror',icon:'🦑',gold:'350-480'},{name:'Deep One',icon:'🐙',gold:'330-460'},{name:'Leviathan Spawn',icon:'🐋',gold:'370-500'},{name:'Trench Walker',icon:'🚶',gold:'340-470'},{name:'Abyssal Mage',icon:'🧙',gold:'360-490'},{name:'Void Kraken',icon:'🐙',gold:'380-510'}],
+            210:[{name:'Phoenix Knight',icon:'🔥',gold:'500-700'},{name:'Eternal Flame',icon:'💥',gold:'480-680'},{name:'Ash Warden',icon:'🛡️',gold:'520-720'},{name:'Inferno Lord',icon:'👑',gold:'510-710'},{name:'Cinder Beast',icon:'🐗',gold:'490-690'},{name:'Blaze Spirit',icon:'👻',gold:'530-730'}],
+            250:[{name:'The Eternal One',icon:'👑',gold:'800-1100'},{name:'The Infinite Terror',icon:'👻',gold:'850-1150'},{name:'Absolute Sovereign',icon:'⭐',gold:'820-1120'},{name:'Chaos Unbound',icon:'🌀',gold:'880-1180'},{name:'Void Incarnate',icon:'⬛',gold:'900-1200'},{name:'Infinity Golem',icon:'♾️',gold:'920-1250'}]
         };
 
-        var worldLevels = [1, 5, 10, 20, 30, 50, 75, 100];
+        var worldLevels = [1, 10, 25, 45, 70, 100, 135, 175, 210, 250];
         for (var w = 0; w < worldLevels.length; w++) {
             var lvl = worldLevels[w];
             var worldName = '';

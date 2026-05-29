@@ -62,6 +62,10 @@
     <div id="amulet-content" style="display:none;"></div>
     <div id="gamble-content" style="display:none; text-align:center;">
         <p>Risk your gold for a chance at rare loot!</p>
+        <div style="background:#1a1a2e;padding:10px;border-radius:8px;margin-bottom:15px;display:inline-block;min-width:300px;">
+            <span style="color:#ffd93d;font-size:14px;">🏆 Jackpot Pool: <strong id="jackpot-pool">0</strong> gold</span>
+            <span style="color:#aaa;font-size:12px;margin-left:15px;" id="streak-display"></span>
+        </div>
         <div class="gamble-options">
             <button class="gamble-btn-opt" onclick="doGamble(50)">💰 50g<br><small>Low risk</small></button>
             <button class="gamble-btn-opt" onclick="doGamble(200)">💰 200g<br><small>Medium risk</small></button>
@@ -92,6 +96,14 @@
     function updateDisplay() {
         document.getElementById('player-gold').textContent = gameState.player.gold;
         document.getElementById('total-kills').textContent = gameState.player.totalKills;
+        document.getElementById('jackpot-pool').textContent = gameState.player.jackpotPool || 0;
+
+        var streak = gameState.player.gambleStreak || 0;
+        var streakEl = document.getElementById('streak-display');
+        if (streak >= 3) streakEl.innerHTML = '🔥 Win Streak: <strong style="color:#43e97b;">' + streak + '</strong>';
+        else if (streak <= -3) streakEl.innerHTML = '❄️ Loss Streak: <strong style="color:#e74c3c;">' + Math.abs(streak) + '</strong>';
+        else streakEl.innerHTML = '';
+
         var hagglerRank = gameState.getSkillRank('haggler');
         if (hagglerRank > 0) {
             document.getElementById('discount-info').textContent = '🛡️ Haggler discount: ' + (hagglerRank * 3) + '%';
