@@ -6,553 +6,244 @@ class GameState {
             gold: 500, strength: 10, intelligence: 10, defense: 5, speed: 5,
             inventory: [], equippedWeapon: null, equippedArmor: null, equippedAmulet: null,
             bossDefeats: {}, totalKills: 0, materials: {},
-            skillPoints: 0, skills: {},
-            achievements: {}, titles: [], activeTitle: '',
+            skillPoints: 0, skills: {}, achievements: {}, titles: [], activeTitle: '',
             activePet: null, pets: [], prestigeLevel: 0,
-            gambleStreak: 0, jackpotPool: 0,
-            gambleCount: 0, fishCount: 0, mineCount: 0
+            gambleStreak: 0, jackpotPool: 0, gambleCount: 0, fishCount: 0, mineCount: 0,
+            prestigeSkills: {}, prestigePoints: 0
         };
         this.player = JSON.parse(JSON.stringify(this.defaultPlayer));
-        this.player.inventory = [];
-        this.player.bossDefeats = {};
-        this.player.totalKills = 0;
-        this.player.materials = {};
-        this.player.skills = {};
-        this.player.skillPoints = 0;
-        this.player.achievements = {};
-        this.player.titles = [];
-        this.player.activeTitle = '';
-        this.player.activePet = null;
-        this.player.pets = [];
-        this.player.prestigeLevel = 0;
-        this.player.gambleStreak = 0;
-        this.player.jackpotPool = 0;
-        this.player.gambleCount = 0;
-        this.player.fishCount = 0;
-        this.player.mineCount = 0;
+        this.player.inventory = []; this.player.bossDefeats = {}; this.player.totalKills = 0;
+        this.player.materials = {}; this.player.skills = {}; this.player.skillPoints = 0;
+        this.player.achievements = {}; this.player.titles = []; this.player.activeTitle = '';
+        this.player.activePet = null; this.player.pets = []; this.player.prestigeLevel = 0;
+        this.player.gambleStreak = 0; this.player.jackpotPool = 0;
+        this.player.gambleCount = 0; this.player.fishCount = 0; this.player.mineCount = 0;
+        this.player.prestigeSkills = {}; this.player.prestigePoints = 0;
         this.shops = this.buildShopInventory();
         this.specialShop = this.buildAmuletShopInventory();
         this.dropTables = {
-            1: [
-                { id: 'goblin_coin', name: 'Goblin Coin', icon: '👛', price: 25, rarity: 'common', dropRate: 0.50, material: true, tier: 1 },
-                { id: 'copper_ore', name: 'Copper Ore', icon: '🟠', price: 35, rarity: 'common', dropRate: 0.40, material: true, tier: 1 },
-                { id: 'forest_herb', name: 'Forest Herb', icon: '🍃', price: 75, rarity: 'uncommon', dropRate: 0.20, material: true, tier: 1 },
-                { id: 'wooden_ring', name: 'Wooden Ring', icon: '💍', price: 250, rarity: 'legendary', dropRate: 0.05 }
-            ],
-            10: [
-                { id: 'orc_fang', name: 'Orc Fang', icon: '🦷', price: 60, rarity: 'common', dropRate: 0.45, material: true, tier: 2 },
-                { id: 'silver_dust', name: 'Silver Dust', icon: '✨', price: 90, rarity: 'common', dropRate: 0.40, material: true, tier: 2 },
-                { id: 'shadow_essence', name: 'Shadow Essence', icon: '🌑', price: 180, rarity: 'uncommon', dropRate: 0.25, material: true, tier: 2 },
-                { id: 'cursed_amulet_loot', name: 'Cursed Amulet', icon: '🔮', price: 500, rarity: 'legendary', dropRate: 0.06 }
-            ],
-            25: [
-                { id: 'dark_crystal', name: 'Dark Crystal', icon: '⚫', price: 100, rarity: 'common', dropRate: 0.50, material: true, tier: 3 },
-                { id: 'bone_fragment', name: 'Bone Fragment', icon: '🦴', price: 80, rarity: 'common', dropRate: 0.45, material: true, tier: 3 },
-                { id: 'soul_stone', name: 'Soul Stone', icon: '💀', price: 250, rarity: 'uncommon', dropRate: 0.22, material: true, tier: 3 },
-                { id: 'demonic_seal', name: 'Demonic Seal', icon: '👿', price: 800, rarity: 'legendary', dropRate: 0.08 }
-            ],
-            45: [
-                { id: 'dragon_scale', name: 'Dragon Scale', icon: '🐲', price: 180, rarity: 'common', dropRate: 0.48, material: true, tier: 4 },
-                { id: 'infernal_ash', name: 'Infernal Ash', icon: '🔥', price: 150, rarity: 'common', dropRate: 0.42, material: true, tier: 4 },
-                { id: 'ancient_rune', name: 'Ancient Rune', icon: '📿', price: 400, rarity: 'uncommon', dropRate: 0.28, material: true, tier: 4 },
-                { id: 'nightbringer_gem', name: 'Nightbringer Gem', icon: '🌙', price: 1200, rarity: 'legendary', dropRate: 0.10 }
-            ],
-            70: [
-                { id: 'abyssal_pearl', name: 'Abyssal Pearl', icon: '🪨', price: 300, rarity: 'common', dropRate: 0.50, material: true, tier: 5 },
-                { id: 'void_shard', name: 'Void Shard', icon: '⬛', price: 250, rarity: 'common', dropRate: 0.45, material: true, tier: 5 },
-                { id: 'eternity_stone', name: 'Eternity Stone', icon: '⭐', price: 600, rarity: 'uncommon', dropRate: 0.30, material: true, tier: 5 },
-                { id: 'eternal_flame', name: 'Eternal Flame', icon: '🔥', price: 1800, rarity: 'legendary', dropRate: 0.12 }
-            ],
-            100: [
-                { id: 'primordial_essence', name: 'Primordial Essence', icon: '🌀', price: 500, rarity: 'common', dropRate: 0.50, material: true, tier: 6 },
-                { id: 'cosmic_dust', name: 'Cosmic Dust', icon: '🌌', price: 400, rarity: 'common', dropRate: 0.48, material: true, tier: 6 },
-                { id: 'eldritch_core', name: 'Eldritch Core', icon: '👾', price: 900, rarity: 'uncommon', dropRate: 0.32, material: true, tier: 6 },
-                { id: 'infinite_crystal', name: 'Infinite Crystal', icon: '💎', price: 2800, rarity: 'legendary', dropRate: 0.15 }
-            ],
-            135: [
-                { id: 'transcendent_shard', name: 'Transcendent Shard', icon: '✨', price: 750, rarity: 'common', dropRate: 0.52, material: true, tier: 7 },
-                { id: 'celestial_core', name: 'Celestial Core', icon: '⭐', price: 600, rarity: 'common', dropRate: 0.48, material: true, tier: 7 },
-                { id: 'omnipotent_essence', name: 'Omnipotent Essence', icon: '👁️', price: 1400, rarity: 'uncommon', dropRate: 0.35, material: true, tier: 7 },
-                { id: 'divine_crown', name: 'Divine Crown', icon: '👑', price: 4500, rarity: 'legendary', dropRate: 0.18 }
-            ],
-            175: [
-                { id: 'abyssal_heart', name: 'Abyssal Heart', icon: '🖤', price: 1100, rarity: 'common', dropRate: 0.50, material: true, tier: 8 },
-                { id: 'leviathan_scale', name: 'Leviathan Scale', icon: '🐋', price: 950, rarity: 'common', dropRate: 0.48, material: true, tier: 8 },
-                { id: 'deep_pearl', name: 'Deep Pearl', icon: '🫧', price: 2000, rarity: 'uncommon', dropRate: 0.32, material: true, tier: 8 },
-                { id: 'ocean_crown', name: 'Ocean Crown', icon: '👑', price: 7000, rarity: 'legendary', dropRate: 0.15 }
-            ],
-            210: [
-                { id: 'phoenix_feather', name: 'Phoenix Feather', icon: '🔥', price: 1600, rarity: 'common', dropRate: 0.50, material: true, tier: 9 },
-                { id: 'eternal_ember', name: 'Eternal Ember', icon: '✨', price: 1400, rarity: 'common', dropRate: 0.48, material: true, tier: 9 },
-                { id: 'rebirth_crystal', name: 'Rebirth Crystal', icon: '💎', price: 3000, rarity: 'uncommon', dropRate: 0.32, material: true, tier: 9 },
-                { id: 'phoenix_crown', name: 'Phoenix Crown', icon: '👑', price: 10000, rarity: 'legendary', dropRate: 0.15 }
-            ],
-            250: [
-                { id: 'eternal_fragment', name: 'Eternal Fragment', icon: '⏮️', price: 2500, rarity: 'common', dropRate: 0.50, material: true, tier: 10 },
-                { id: 'absolute_essence', name: 'Absolute Essence', icon: '🌟', price: 2200, rarity: 'common', dropRate: 0.48, material: true, tier: 10 },
-                { id: 'infinity_shard', name: 'Infinity Shard', icon: '♾️', price: 5000, rarity: 'uncommon', dropRate: 0.32, material: true, tier: 10 },
-                { id: 'infinity_crown', name: 'Infinity Crown', icon: '♾️', price: 15000, rarity: 'legendary', dropRate: 0.15 }
-            ]
+            1:[{id:'goblin_coin',name:'Goblin Coin',icon:'👛',price:25,rarity:'common',dropRate:0.50,material:true,tier:1},{id:'copper_ore',name:'Copper Ore',icon:'🟠',price:35,rarity:'common',dropRate:0.40,material:true,tier:1},{id:'forest_herb',name:'Forest Herb',icon:'🍃',price:75,rarity:'uncommon',dropRate:0.20,material:true,tier:1},{id:'wooden_ring',name:'Wooden Ring',icon:'💍',price:250,rarity:'legendary',dropRate:0.05}],
+            10:[{id:'orc_fang',name:'Orc Fang',icon:'🦷',price:60,rarity:'common',dropRate:0.45,material:true,tier:2},{id:'silver_dust',name:'Silver Dust',icon:'✨',price:90,rarity:'common',dropRate:0.40,material:true,tier:2},{id:'shadow_essence',name:'Shadow Essence',icon:'🌑',price:180,rarity:'uncommon',dropRate:0.25,material:true,tier:2},{id:'cursed_amulet_loot',name:'Cursed Amulet',icon:'🔮',price:500,rarity:'legendary',dropRate:0.06}],
+            25:[{id:'dark_crystal',name:'Dark Crystal',icon:'⚫',price:100,rarity:'common',dropRate:0.50,material:true,tier:3},{id:'bone_fragment',name:'Bone Fragment',icon:'🦴',price:80,rarity:'common',dropRate:0.45,material:true,tier:3},{id:'soul_stone',name:'Soul Stone',icon:'💀',price:250,rarity:'uncommon',dropRate:0.22,material:true,tier:3},{id:'demonic_seal',name:'Demonic Seal',icon:'👿',price:800,rarity:'legendary',dropRate:0.08}],
+            45:[{id:'dragon_scale',name:'Dragon Scale',icon:'🐲',price:180,rarity:'common',dropRate:0.48,material:true,tier:4},{id:'infernal_ash',name:'Infernal Ash',icon:'🔥',price:150,rarity:'common',dropRate:0.42,material:true,tier:4},{id:'ancient_rune',name:'Ancient Rune',icon:'📿',price:400,rarity:'uncommon',dropRate:0.28,material:true,tier:4},{id:'nightbringer_gem',name:'Nightbringer Gem',icon:'🌙',price:1200,rarity:'legendary',dropRate:0.10}],
+            70:[{id:'abyssal_pearl',name:'Abyssal Pearl',icon:'🪨',price:300,rarity:'common',dropRate:0.50,material:true,tier:5},{id:'void_shard',name:'Void Shard',icon:'⬛',price:250,rarity:'common',dropRate:0.45,material:true,tier:5},{id:'eternity_stone',name:'Eternity Stone',icon:'⭐',price:600,rarity:'uncommon',dropRate:0.30,material:true,tier:5},{id:'eternal_flame',name:'Eternal Flame',icon:'🔥',price:1800,rarity:'legendary',dropRate:0.12}],
+            100:[{id:'primordial_essence',name:'Primordial Essence',icon:'🌀',price:500,rarity:'common',dropRate:0.50,material:true,tier:6},{id:'cosmic_dust',name:'Cosmic Dust',icon:'🌌',price:400,rarity:'common',dropRate:0.48,material:true,tier:6},{id:'eldritch_core',name:'Eldritch Core',icon:'👾',price:900,rarity:'uncommon',dropRate:0.32,material:true,tier:6},{id:'infinite_crystal',name:'Infinite Crystal',icon:'💎',price:2800,rarity:'legendary',dropRate:0.15}],
+            135:[{id:'transcendent_shard',name:'Transcendent Shard',icon:'✨',price:750,rarity:'common',dropRate:0.52,material:true,tier:7},{id:'celestial_core',name:'Celestial Core',icon:'⭐',price:600,rarity:'common',dropRate:0.48,material:true,tier:7},{id:'omnipotent_essence',name:'Omnipotent Essence',icon:'👁️',price:1400,rarity:'uncommon',dropRate:0.35,material:true,tier:7},{id:'divine_crown',name:'Divine Crown',icon:'👑',price:4500,rarity:'legendary',dropRate:0.18}],
+            175:[{id:'abyssal_heart',name:'Abyssal Heart',icon:'🖤',price:1100,rarity:'common',dropRate:0.50,material:true,tier:8},{id:'leviathan_scale',name:'Leviathan Scale',icon:'🐋',price:950,rarity:'common',dropRate:0.48,material:true,tier:8},{id:'deep_pearl',name:'Deep Pearl',icon:'🫧',price:2000,rarity:'uncommon',dropRate:0.32,material:true,tier:8},{id:'ocean_crown',name:'Ocean Crown',icon:'👑',price:7000,rarity:'legendary',dropRate:0.15}],
+            210:[{id:'phoenix_feather',name:'Phoenix Feather',icon:'🔥',price:1600,rarity:'common',dropRate:0.50,material:true,tier:9},{id:'eternal_ember',name:'Eternal Ember',icon:'✨',price:1400,rarity:'common',dropRate:0.48,material:true,tier:9},{id:'rebirth_crystal',name:'Rebirth Crystal',icon:'💎',price:3000,rarity:'uncommon',dropRate:0.32,material:true,tier:9},{id:'phoenix_crown',name:'Phoenix Crown',icon:'👑',price:10000,rarity:'legendary',dropRate:0.15}],
+            250:[{id:'eternal_fragment',name:'Eternal Fragment',icon:'⏮️',price:2500,rarity:'common',dropRate:0.50,material:true,tier:10},{id:'absolute_essence',name:'Absolute Essence',icon:'🌟',price:2200,rarity:'common',dropRate:0.48,material:true,tier:10},{id:'infinity_shard',name:'Infinity Shard',icon:'♾️',price:5000,rarity:'uncommon',dropRate:0.32,material:true,tier:10},{id:'infinity_crown',name:'Infinity Crown',icon:'♾️',price:15000,rarity:'legendary',dropRate:0.15}]
         };
         this.worlds = [
-            { level: 1, name: 'Goblin Forest', difficulty: 'Easy', baseExp: 50 },
-            { level: 10, name: 'Orc Stronghold', difficulty: 'Easy', baseExp: 120 },
-            { level: 25, name: 'Shadow Crypt', difficulty: 'Medium', baseExp: 250 },
-            { level: 45, name: "Dragon's Peak", difficulty: 'Medium', baseExp: 450 },
-            { level: 70, name: 'Void Rift', difficulty: 'Hard', baseExp: 700 },
-            { level: 100, name: 'Eldritch Realm', difficulty: 'Hard', baseExp: 1000 },
-            { level: 135, name: 'Celestial Spire', difficulty: 'Very Hard', baseExp: 1400 },
-            { level: 175, name: 'Abyssal Depths', difficulty: 'Very Hard', baseExp: 1900 },
-            { level: 210, name: 'Eternal Nexus', difficulty: 'Insane', baseExp: 2500 },
-            { level: 250, name: 'The Infinite Void', difficulty: 'Insane', baseExp: 3200 }
+            {level:1,name:'Goblin Forest',difficulty:'Easy',baseExp:50},{level:10,name:'Orc Stronghold',difficulty:'Easy',baseExp:120},
+            {level:25,name:'Shadow Crypt',difficulty:'Medium',baseExp:250},{level:45,name:"Dragon's Peak",difficulty:'Medium',baseExp:450},
+            {level:70,name:'Void Rift',difficulty:'Hard',baseExp:700},{level:100,name:'Eldritch Realm',difficulty:'Hard',baseExp:1000},
+            {level:135,name:'Celestial Spire',difficulty:'Very Hard',baseExp:1400},{level:175,name:'Abyssal Depths',difficulty:'Very Hard',baseExp:1900},
+            {level:210,name:'Eternal Nexus',difficulty:'Insane',baseExp:2500},{level:250,name:'The Infinite Void',difficulty:'Insane',baseExp:3200}
         ];
         this.bosses = [
-            { worldLevel: 1, name: 'Forest Guardian', icon: '🌳', healthMult: 1.5, damageMult: 1.2, goldMin: 50, goldMax: 80, expReward: 150, killsRequired: 10, amulet: { id: 'amulet_forest', name: "Forest Amulet", icon: '🍃', description: "Nature's blessing enhances your healing", stats: { healBoost: 15 }, unique: true }, petDrop: 'pet_sapling' },
-            { worldLevel: 10, name: 'Orc Warlord', icon: '👹', healthMult: 1.8, damageMult: 1.5, goldMin: 200, goldMax: 300, expReward: 400, killsRequired: 50, amulet: { id: 'amulet_orc', name: "Warlord's Amulet", icon: '💀', description: 'Brutal strength flows through you', stats: { damageBoost: 5 }, unique: true }, petDrop: 'pet_warg' },
-            { worldLevel: 25, name: 'Shadow Demon', icon: '👿', healthMult: 2.0, damageMult: 1.8, goldMin: 500, goldMax: 750, expReward: 700, killsRequired: 100, amulet: { id: 'amulet_shadow', name: "Shadow Amulet", icon: '🌑', description: 'Dark energy increases your mana', stats: { manaBoost: 25 }, unique: true }, petDrop: 'pet_shade' },
-            { worldLevel: 45, name: 'Ancient Wyrm', icon: '🐉', healthMult: 2.5, damageMult: 2.2, goldMin: 1000, goldMax: 1500, expReward: 1200, killsRequired: 200, amulet: { id: 'amulet_dragon', name: "Dragon Amulet", icon: '🐲', description: 'Dragon fire empowers your attacks', stats: { damageBoost: 10 }, unique: true }, petDrop: 'pet_dragon' },
-            { worldLevel: 70, name: 'Void Titan', icon: '⬛', healthMult: 3.0, damageMult: 2.8, goldMin: 2000, goldMax: 3000, expReward: 2000, killsRequired: 350, amulet: { id: 'amulet_void', name: "Void Amulet", icon: '🌀', description: 'The void strengthens your defense', stats: { defenseBoost: 8 }, unique: true }, petDrop: 'pet_sprite' },
-            { worldLevel: 100, name: 'Eldritch Horror', icon: '👾', healthMult: 3.5, damageMult: 3.2, goldMin: 4000, goldMax: 5500, expReward: 3000, killsRequired: 500, amulet: { id: 'amulet_eldritch', name: "Eldritch Amulet", icon: '👁️', description: 'Ancient power boosts all healing', stats: { healBoost: 30 }, unique: true }, petDrop: 'pet_phoenix' },
-            { worldLevel: 135, name: 'Celestial Overlord', icon: '⭐', healthMult: 4.0, damageMult: 3.8, goldMin: 7000, goldMax: 9000, expReward: 4500, killsRequired: 700, amulet: { id: 'amulet_celestial', name: "Celestial Amulet", icon: '✨', description: 'Divine light enhances your mana pool', stats: { manaBoost: 50 }, unique: true }, petDrop: 'pet_star' },
-            { worldLevel: 175, name: 'Abyssal Leviathan', icon: '🐋', healthMult: 4.5, damageMult: 4.2, goldMin: 12000, goldMax: 16000, expReward: 6500, killsRequired: 1000, amulet: { id: 'amulet_abyssal', name: "Abyssal Amulet", icon: '🌊', description: 'Deep power: +20 Dmg, +15 Def, +100 HP', stats: { damageBoost: 20, defenseBoost: 15, hpBoost: 100 }, unique: true }, petDrop: 'pet_kraken' },
-            { worldLevel: 210, name: 'Eternal Phoenix', icon: '🔥', healthMult: 5.0, damageMult: 4.8, goldMin: 20000, goldMax: 28000, expReward: 9000, killsRequired: 1500, amulet: { id: 'amulet_phoenix_boss', name: "Phoenix Amulet", icon: '🐦', description: 'Rebirth: +25 Dmg, +200 HP, +30% Heal', stats: { damageBoost: 25, hpBoost: 200, healBoost: 30 }, unique: true }, petDrop: 'pet_ember' },
-            { worldLevel: 250, name: 'The Absolute', icon: '♾️', healthMult: 6.0, damageMult: 5.5, goldMin: 35000, goldMax: 50000, expReward: 13000, killsRequired: 2000, amulet: { id: 'amulet_absolute', name: "Absolute Amulet", icon: '👑', description: 'Ultimate power: +35 Dmg, +25 Def, +300 HP, +100 Mana', stats: { damageBoost: 35, defenseBoost: 25, hpBoost: 300, manaBoost: 100 }, unique: true }, petDrop: 'pet_infinity' }
+            {worldLevel:1,name:'Forest Guardian',icon:'🌳',healthMult:1.5,damageMult:1.2,goldMin:50,goldMax:80,expReward:150,killsRequired:10,amulet:{id:'amulet_forest',name:"Forest Amulet",icon:'🍃',description:"Nature's blessing enhances your healing",stats:{healBoost:15},unique:true},petDrop:'pet_sapling'},
+            {worldLevel:10,name:'Orc Warlord',icon:'👹',healthMult:1.8,damageMult:1.5,goldMin:200,goldMax:300,expReward:400,killsRequired:50,amulet:{id:'amulet_orc',name:"Warlord's Amulet",icon:'💀',description:'Brutal strength flows through you',stats:{damageBoost:5},unique:true},petDrop:'pet_warg'},
+            {worldLevel:25,name:'Shadow Demon',icon:'👿',healthMult:2.0,damageMult:1.8,goldMin:500,goldMax:750,expReward:700,killsRequired:100,amulet:{id:'amulet_shadow',name:"Shadow Amulet",icon:'🌑',description:'Dark energy increases your mana',stats:{manaBoost:25},unique:true},petDrop:'pet_shade'},
+            {worldLevel:45,name:'Ancient Wyrm',icon:'🐉',healthMult:2.5,damageMult:2.2,goldMin:1000,goldMax:1500,expReward:1200,killsRequired:200,amulet:{id:'amulet_dragon',name:"Dragon Amulet",icon:'🐲',description:'Dragon fire empowers your attacks',stats:{damageBoost:10},unique:true},petDrop:'pet_dragon'},
+            {worldLevel:70,name:'Void Titan',icon:'⬛',healthMult:3.0,damageMult:2.8,goldMin:2000,goldMax:3000,expReward:2000,killsRequired:350,amulet:{id:'amulet_void',name:"Void Amulet",icon:'🌀',description:'The void strengthens your defense',stats:{defenseBoost:8},unique:true},petDrop:'pet_sprite'},
+            {worldLevel:100,name:'Eldritch Horror',icon:'👾',healthMult:3.5,damageMult:3.2,goldMin:4000,goldMax:5500,expReward:3000,killsRequired:500,amulet:{id:'amulet_eldritch',name:"Eldritch Amulet",icon:'👁️',description:'Ancient power boosts all healing',stats:{healBoost:30},unique:true},petDrop:'pet_phoenix'},
+            {worldLevel:135,name:'Celestial Overlord',icon:'⭐',healthMult:4.0,damageMult:3.8,goldMin:7000,goldMax:9000,expReward:4500,killsRequired:700,amulet:{id:'amulet_celestial',name:"Celestial Amulet",icon:'✨',description:'Divine light enhances your mana pool',stats:{manaBoost:50},unique:true},petDrop:'pet_star'},
+            {worldLevel:175,name:'Abyssal Leviathan',icon:'🐋',healthMult:4.5,damageMult:4.2,goldMin:12000,goldMax:16000,expReward:6500,killsRequired:1000,amulet:{id:'amulet_abyssal',name:"Abyssal Amulet",icon:'🌊',description:'Deep power: +20 Dmg, +15 Def, +100 HP',stats:{damageBoost:20,defenseBoost:15,hpBoost:100},unique:true},petDrop:'pet_kraken'},
+            {worldLevel:210,name:'Eternal Phoenix',icon:'🔥',healthMult:5.0,damageMult:4.8,goldMin:20000,goldMax:28000,expReward:9000,killsRequired:1500,amulet:{id:'amulet_phoenix_boss',name:"Phoenix Amulet",icon:'🐦',description:'Rebirth: +25 Dmg, +200 HP, +30% Heal',stats:{damageBoost:25,hpBoost:200,healBoost:30},unique:true},petDrop:'pet_ember'},
+            {worldLevel:250,name:'The Absolute',icon:'♾️',healthMult:6.0,damageMult:5.5,goldMin:35000,goldMax:50000,expReward:13000,killsRequired:2000,amulet:{id:'amulet_absolute',name:"Absolute Amulet",icon:'👑',description:'Ultimate power: +35 Dmg, +25 Def, +300 HP, +100 Mana',stats:{damageBoost:35,defenseBoost:25,hpBoost:300,manaBoost:100},unique:true},petDrop:'pet_infinity'}
         ];
         this.gambleExclusiveAmulets = [
-            { id: "gamble_amulet_luck", name: "Lucky Charm", icon: "🍀", price: 500, type: "amulet", description: "+25% Gold, +10% Heal", stats: { goldBoost: 25, healBoost: 10 }, unique: true },
-            { id: "gamble_amulet_berserk", name: "Berserker Amulet", icon: "💢", price: 800, type: "amulet", description: "+20 Dmg", stats: { damageBoost: 20 }, unique: true },
-            { id: "gamble_amulet_tank", name: "Guardian Amulet", icon: "🛡️", price: 800, type: "amulet", description: "+15 Def, +50 HP", stats: { defenseBoost: 15, hpBoost: 50 }, unique: true },
-            { id: "gamble_amulet_archmage", name: "Archmage Amulet", icon: "🔮", price: 1000, type: "amulet", description: "+50 Mana, +15% Heal", stats: { manaBoost: 50, healBoost: 15 }, unique: true },
-            { id: "gamble_amulet_shadow", name: "Shadow Amulet", icon: "🌑", price: 1200, type: "amulet", description: "+18 Dmg, +25 Mana", stats: { damageBoost: 18, manaBoost: 25 }, unique: true },
-            { id: "gamble_amulet_phoenix", name: "Phoenix Amulet", icon: "🔥", price: 1500, type: "amulet", description: "+30% Heal, +40 HP", stats: { healBoost: 30, hpBoost: 40 }, unique: true },
-            { id: "gamble_amulet_titan", name: "Titan Amulet", icon: "💪", price: 2000, type: "amulet", description: "+25 Dmg, +10 Def, +60 HP", stats: { damageBoost: 25, defenseBoost: 10, hpBoost: 60 }, unique: true },
-            { id: "gamble_amulet_dragon", name: "Dragon Soul Amulet", icon: "🐲", price: 3000, type: "amulet", description: "+30 Dmg, +100 HP, +20% Gold", stats: { damageBoost: 30, hpBoost: 100, goldBoost: 20 }, unique: true }
+            {id:"gamble_amulet_luck",name:"Lucky Charm",icon:"🍀",price:500,type:"amulet",description:"+25% Gold, +10% Heal",stats:{goldBoost:25,healBoost:10},unique:true},
+            {id:"gamble_amulet_berserk",name:"Berserker Amulet",icon:"💢",price:800,type:"amulet",description:"+20 Dmg",stats:{damageBoost:20},unique:true},
+            {id:"gamble_amulet_tank",name:"Guardian Amulet",icon:"🛡️",price:800,type:"amulet",description:"+15 Def, +50 HP",stats:{defenseBoost:15,hpBoost:50},unique:true},
+            {id:"gamble_amulet_archmage",name:"Archmage Amulet",icon:"🔮",price:1000,type:"amulet",description:"+50 Mana, +15% Heal",stats:{manaBoost:50,healBoost:15},unique:true},
+            {id:"gamble_amulet_shadow",name:"Shadow Amulet",icon:"🌑",price:1200,type:"amulet",description:"+18 Dmg, +25 Mana",stats:{damageBoost:18,manaBoost:25},unique:true},
+            {id:"gamble_amulet_phoenix",name:"Phoenix Amulet",icon:"🔥",price:1500,type:"amulet",description:"+30% Heal, +40 HP",stats:{healBoost:30,hpBoost:40},unique:true},
+            {id:"gamble_amulet_titan",name:"Titan Amulet",icon:"💪",price:2000,type:"amulet",description:"+25 Dmg, +10 Def, +60 HP",stats:{damageBoost:25,defenseBoost:10,hpBoost:60},unique:true},
+            {id:"gamble_amulet_dragon",name:"Dragon Soul Amulet",icon:"🐲",price:3000,type:"amulet",description:"+30 Dmg, +100 HP, +20% Gold",stats:{damageBoost:30,hpBoost:100,goldBoost:20},unique:true}
         ];
         this.gambleExclusiveWeapons = [
-            { id: "gamble_weapon_gold", name: "Golden Blade", icon: "🌟⚔️", price: 2000, type: "weapon", category: "melee", damage: 65, description: "A blade of pure gold!", stats: { damage: 65 }, unique: true, tier: 4 },
-            { id: "gamble_weapon_shadow", name: "Shadow Dagger", icon: "🗡️", price: 2500, type: "weapon", category: "melee", damage: 80, description: "Strikes from darkness!", stats: { damage: 80 }, unique: true, tier: 4 },
-            { id: "gamble_weapon_storm", name: "Storm Bow", icon: "🌩️🏹", price: 3000, type: "weapon", category: "ranged", damage: 95, description: "Arrows crackle with lightning!", stats: { damage: 95 }, unique: true, tier: 5 },
-            { id: "gamble_weapon_frost", name: "Frost Staff", icon: "❄️🔮", price: 3500, type: "weapon", category: "magic", damage: 110, description: "Freezes enemies solid!", stats: { damage: 110, intelligence: 20 }, unique: true, tier: 5 },
-            { id: "gamble_weapon_inferno", name: "Inferno Blade", icon: "🔥⚔️", price: 4500, type: "weapon", category: "melee", damage: 140, description: "Burns with eternal flame!", stats: { damage: 140 }, unique: true, tier: 5 },
-            { id: "gamble_weapon_divine", name: "Divine Bow", icon: "✨🏹", price: 5500, type: "weapon", category: "ranged", damage: 175, description: "Blessed by the gods!", stats: { damage: 175 }, unique: true, tier: 5 }
+            {id:"gamble_weapon_gold",name:"Golden Blade",icon:"🌟⚔️",price:2000,type:"weapon",category:"melee",damage:65,description:"A blade of pure gold!",stats:{damage:65},unique:true,tier:4},
+            {id:"gamble_weapon_shadow",name:"Shadow Dagger",icon:"🗡️",price:2500,type:"weapon",category:"melee",damage:80,description:"Strikes from darkness!",stats:{damage:80},unique:true,tier:4},
+            {id:"gamble_weapon_storm",name:"Storm Bow",icon:"🌩️🏹",price:3000,type:"weapon",category:"ranged",damage:95,description:"Arrows crackle with lightning!",stats:{damage:95},unique:true,tier:5},
+            {id:"gamble_weapon_frost",name:"Frost Staff",icon:"❄️🔮",price:3500,type:"weapon",category:"magic",damage:110,description:"Freezes enemies solid!",stats:{damage:110,intelligence:20},unique:true,tier:5},
+            {id:"gamble_weapon_inferno",name:"Inferno Blade",icon:"🔥⚔️",price:4500,type:"weapon",category:"melee",damage:140,description:"Burns with eternal flame!",stats:{damage:140},unique:true,tier:5},
+            {id:"gamble_weapon_divine",name:"Divine Bow",icon:"✨🏹",price:5500,type:"weapon",category:"ranged",damage:175,description:"Blessed by the gods!",stats:{damage:175},unique:true,tier:5}
         ];
         this.gambleMaterials = [
-            { id: "gamble_mat_diamond", name: "Flawless Diamond", icon: "💎", price: 100, type: "loot", rarity: "uncommon", description: "A perfect gemstone" },
-            { id: "gamble_mat_soul", name: "Crystallized Soul", icon: "✨", price: 150, type: "loot", rarity: "uncommon", description: "Contains immense power" },
-            { id: "gamble_mat_star", name: "Star Fragment", icon: "⭐", price: 200, type: "loot", rarity: "rare", description: "A piece of a fallen star" },
-            { id: "gamble_mat_dragon", name: "Dragon Heart", icon: "❤️", price: 500, type: "loot", rarity: "legendary", description: "Still beating with power" },
-            { id: "gamble_mat_void", name: "Void Essence", icon: "🕳️", price: 750, type: "loot", rarity: "legendary", description: "Pure concentrated nothingness" }
+            {id:"gamble_mat_diamond",name:"Flawless Diamond",icon:"💎",price:100,type:"loot",rarity:"uncommon",description:"A perfect gemstone"},
+            {id:"gamble_mat_soul",name:"Crystallized Soul",icon:"✨",price:150,type:"loot",rarity:"uncommon",description:"Contains immense power"},
+            {id:"gamble_mat_star",name:"Star Fragment",icon:"⭐",price:200,type:"loot",rarity:"rare",description:"A piece of a fallen star"},
+            {id:"gamble_mat_dragon",name:"Dragon Heart",icon:"❤️",price:500,type:"loot",rarity:"legendary",description:"Still beating with power"},
+            {id:"gamble_mat_void",name:"Void Essence",icon:"🕳️",price:750,type:"loot",rarity:"legendary",description:"Pure concentrated nothingness"}
         ];
         this.fishingRewards = [
-            { id: "fish_minnow", name: "Minnow", icon: "🐟", price: 5, type: "loot", rarity: "common", description: "A tiny fish", weight: 45 },
-            { id: "fish_bass", name: "Bass", icon: "🐟", price: 15, type: "loot", rarity: "common", description: "A decent catch", weight: 35 },
-            { id: "fish_trout", name: "Trout", icon: "🐟", price: 25, type: "loot", rarity: "common", description: "A beautiful trout", weight: 25 },
-            { id: "fish_salmon", name: "Salmon", icon: "🐠", price: 40, type: "loot", rarity: "uncommon", description: "A strong salmon", weight: 18 },
-            { id: "fish_tuna", name: "Tuna", icon: "🐟", price: 60, type: "loot", rarity: "uncommon", description: "A mighty tuna!", weight: 12 },
-            { id: "fish_catfish", name: "Catfish", icon: "🐡", price: 35, type: "loot", rarity: "uncommon", description: "Whiskered bottom feeder", weight: 15 },
-            { id: "fish_piranha", name: "Piranha", icon: "🦈", price: 55, type: "loot", rarity: "uncommon", description: "Sharp teeth!", weight: 10 },
-            { id: "fish_carp", name: "Golden Carp", icon: "🐠", price: 90, type: "loot", rarity: "rare", description: "A shimmering golden carp", weight: 6 },
-            { id: "fish_eel", name: "Electric Eel", icon: "⚡", price: 110, type: "loot", rarity: "rare", description: "Still crackling with energy!", weight: 4 },
-            { id: "fish_octopus", name: "Octopus", icon: "🐙", price: 130, type: "loot", rarity: "rare", description: "Eight legs of value!", weight: 3 },
-            { id: "fish_shark", name: "Baby Shark", icon: "🦈", price: 250, type: "loot", rarity: "legendary", description: "Do do do do!", weight: 1 },
-            { id: "fish_swordfish", name: "Swordfish", icon: "⚔️", price: 300, type: "loot", rarity: "legendary", description: "Its nose is literally a sword!", weight: 1 },
-            { id: "fish_legendary", name: "Golden Fish", icon: "🐬", price: 200, type: "loot", rarity: "legendary", description: "A magnificent golden fish!", weight: 2 },
-            { id: "fish_old_boot", name: "Old Boot", icon: "👢", price: 2, type: "loot", rarity: "common", description: "Just an old boot...", weight: 55 },
-            { id: "fish_seaweed", name: "Seaweed", icon: "🌿", price: 5, type: "loot", rarity: "common", description: "Slimy but valuable", weight: 40 },
-            { id: "fish_driftwood", name: "Driftwood", icon: "🪵", price: 3, type: "loot", rarity: "common", description: "Waterlogged wood", weight: 38 },
-            { id: "fish_pearl", name: "Pearl", icon: "🫧", price: 100, type: "loot", rarity: "uncommon", description: "A beautiful pearl!", weight: 8 },
-            { id: "fish_message_bottle", name: "Message in a Bottle", icon: "🍾", price: 50, type: "loot", rarity: "uncommon", description: "Contains a mysterious note", weight: 6 },
-            { id: "fish_treasure_chest", name: "Sunken Treasure", icon: "🎁", price: 500, type: "loot", rarity: "legendary", description: "A chest from the deep!", weight: 0.5 },
-            { id: "fish_ancient_coin", name: "Ancient Coin", icon: "🪙", price: 175, type: "loot", rarity: "rare", description: "A coin from a lost civilization", weight: 3 },
-            { id: "fish_coral", name: "Rare Coral", icon: "🪸", price: 80, type: "loot", rarity: "uncommon", description: "Vibrant and valuable", weight: 7 }
+            {id:"fish_minnow",name:"Minnow",icon:"🐟",price:5,type:"loot",rarity:"common",description:"A tiny fish",weight:45},{id:"fish_bass",name:"Bass",icon:"🐟",price:15,type:"loot",rarity:"common",description:"A decent catch",weight:35},{id:"fish_trout",name:"Trout",icon:"🐟",price:25,type:"loot",rarity:"common",description:"A beautiful trout",weight:25},{id:"fish_salmon",name:"Salmon",icon:"🐠",price:40,type:"loot",rarity:"uncommon",description:"A strong salmon",weight:18},{id:"fish_tuna",name:"Tuna",icon:"🐟",price:60,type:"loot",rarity:"uncommon",description:"A mighty tuna!",weight:12},{id:"fish_catfish",name:"Catfish",icon:"🐡",price:35,type:"loot",rarity:"uncommon",description:"Whiskered bottom feeder",weight:15},{id:"fish_piranha",name:"Piranha",icon:"🦈",price:55,type:"loot",rarity:"uncommon",description:"Sharp teeth!",weight:10},{id:"fish_carp",name:"Golden Carp",icon:"🐠",price:90,type:"loot",rarity:"rare",description:"A shimmering golden carp",weight:6},{id:"fish_eel",name:"Electric Eel",icon:"⚡",price:110,type:"loot",rarity:"rare",description:"Still crackling with energy!",weight:4},{id:"fish_octopus",name:"Octopus",icon:"🐙",price:130,type:"loot",rarity:"rare",description:"Eight legs of value!",weight:3},{id:"fish_shark",name:"Baby Shark",icon:"🦈",price:250,type:"loot",rarity:"legendary",description:"Do do do do!",weight:1},{id:"fish_swordfish",name:"Swordfish",icon:"⚔️",price:300,type:"loot",rarity:"legendary",description:"Its nose is literally a sword!",weight:1},{id:"fish_legendary",name:"Golden Fish",icon:"🐬",price:200,type:"loot",rarity:"legendary",description:"A magnificent golden fish!",weight:2},{id:"fish_old_boot",name:"Old Boot",icon:"👢",price:2,type:"loot",rarity:"common",description:"Just an old boot...",weight:55},{id:"fish_seaweed",name:"Seaweed",icon:"🌿",price:5,type:"loot",rarity:"common",description:"Slimy but valuable",weight:40},{id:"fish_driftwood",name:"Driftwood",icon:"🪵",price:3,type:"loot",rarity:"common",description:"Waterlogged wood",weight:38},{id:"fish_pearl",name:"Pearl",icon:"🫧",price:100,type:"loot",rarity:"uncommon",description:"A beautiful pearl!",weight:8},{id:"fish_message_bottle",name:"Message in a Bottle",icon:"🍾",price:50,type:"loot",rarity:"uncommon",description:"Contains a mysterious note",weight:6},{id:"fish_treasure_chest",name:"Sunken Treasure",icon:"🎁",price:500,type:"loot",rarity:"legendary",description:"A chest from the deep!",weight:0.5},{id:"fish_ancient_coin",name:"Ancient Coin",icon:"🪙",price:175,type:"loot",rarity:"rare",description:"A coin from a lost civilization",weight:3},{id:"fish_coral",name:"Rare Coral",icon:"🪸",price:80,type:"loot",rarity:"uncommon",description:"Vibrant and valuable",weight:7}
         ];
-
         this.miningRewards = [
-            { id: "mine_stone", name: "Stone Chunk", icon: "🪨", price: 5, type: "loot", rarity: "common", description: "Basic stone", weight: 50 },
-            { id: "mine_coal", name: "Coal", icon: "🪵", price: 3, type: "loot", rarity: "common", description: "Just coal...", weight: 45 },
-            { id: "mine_iron", name: "Iron Ore", icon: "⛏️", price: 20, type: "loot", rarity: "common", description: "Raw iron ore", weight: 35 },
-            { id: "mine_copper", name: "Copper Ore", icon: "🟠", price: 15, type: "loot", rarity: "common", description: "Raw copper ore", weight: 33 },
-            { id: "mine_silver", name: "Silver Ore", icon: "✨", price: 40, type: "loot", rarity: "uncommon", description: "Shiny silver ore", weight: 22 },
-            { id: "mine_gold_nugget", name: "Gold Nugget", icon: "🌟", price: 60, type: "loot", rarity: "uncommon", description: "A shiny gold nugget!", weight: 16 },
-            { id: "mine_gem", name: "Rare Gem", icon: "💎", price: 150, type: "loot", rarity: "rare", description: "A sparkling gemstone!", weight: 5 },
-            { id: "mine_diamond", name: "Diamond", icon: "💠", price: 350, type: "loot", rarity: "legendary", description: "A perfect diamond!", weight: 1 },
-            { id: "mine_ruby", name: "Ruby", icon: "🔴", price: 200, type: "loot", rarity: "rare", description: "Blood-red ruby", weight: 3 },
-            { id: "mine_sapphire", name: "Sapphire", icon: "🔵", price: 220, type: "loot", rarity: "rare", description: "Deep blue sapphire", weight: 3 },
-            { id: "mine_emerald", name: "Emerald", icon: "🟢", price: 250, type: "loot", rarity: "rare", description: "Vibrant green emerald", weight: 2 },
-            { id: "mine_amethyst", name: "Amethyst", icon: "🟣", price: 180, type: "loot", rarity: "rare", description: "Purple crystal", weight: 4 },
-            { id: "mine_topaz", name: "Topaz", icon: "🟡", price: 160, type: "loot", rarity: "uncommon", description: "Golden topaz", weight: 6 },
-            { id: "mine_obsidian", name: "Obsidian", icon: "⬛", price: 90, type: "loot", rarity: "uncommon", description: "Volcanic glass", weight: 10 },
-            { id: "mine_fossil", name: "Ancient Fossil", icon: "🦴", price: 120, type: "loot", rarity: "uncommon", description: "A prehistoric bone", weight: 7 },
-            { id: "mine_meteorite", name: "Meteorite Fragment", icon: "☄️", price: 400, type: "loot", rarity: "legendary", description: "From outer space!", weight: 0.5 },
-            { id: "mine_crystal_cluster", name: "Crystal Cluster", icon: "💎", price: 280, type: "loot", rarity: "rare", description: "Multiple crystals fused together", weight: 2 },
-            { id: "mine_geode", name: "Geode", icon: "🥚", price: 100, type: "loot", rarity: "uncommon", description: "What's inside?", weight: 8 },
-            { id: "mine_salt", name: "Rock Salt", icon: "🧂", price: 10, type: "loot", rarity: "common", description: "Essential mineral", weight: 25 },
-            { id: "mine_sulfur", name: "Sulfur", icon: "🟡", price: 25, type: "loot", rarity: "common", description: "Smells like... potential", weight: 18 }
+            {id:"mine_stone",name:"Stone Chunk",icon:"🪨",price:5,type:"loot",rarity:"common",description:"Basic stone",weight:50},{id:"mine_coal",name:"Coal",icon:"🪵",price:3,type:"loot",rarity:"common",description:"Just coal...",weight:45},{id:"mine_iron",name:"Iron Ore",icon:"⛏️",price:20,type:"loot",rarity:"common",description:"Raw iron ore",weight:35},{id:"mine_copper",name:"Copper Ore",icon:"🟠",price:15,type:"loot",rarity:"common",description:"Raw copper ore",weight:33},{id:"mine_silver",name:"Silver Ore",icon:"✨",price:40,type:"loot",rarity:"uncommon",description:"Shiny silver ore",weight:22},{id:"mine_gold_nugget",name:"Gold Nugget",icon:"🌟",price:60,type:"loot",rarity:"uncommon",description:"A shiny gold nugget!",weight:16},{id:"mine_gem",name:"Rare Gem",icon:"💎",price:150,type:"loot",rarity:"rare",description:"A sparkling gemstone!",weight:5},{id:"mine_diamond",name:"Diamond",icon:"💠",price:350,type:"loot",rarity:"legendary",description:"A perfect diamond!",weight:1},{id:"mine_ruby",name:"Ruby",icon:"🔴",price:200,type:"loot",rarity:"rare",description:"Blood-red ruby",weight:3},{id:"mine_sapphire",name:"Sapphire",icon:"🔵",price:220,type:"loot",rarity:"rare",description:"Deep blue sapphire",weight:3},{id:"mine_emerald",name:"Emerald",icon:"🟢",price:250,type:"loot",rarity:"rare",description:"Vibrant green emerald",weight:2},{id:"mine_amethyst",name:"Amethyst",icon:"🟣",price:180,type:"loot",rarity:"rare",description:"Purple crystal",weight:4},{id:"mine_topaz",name:"Topaz",icon:"🟡",price:160,type:"loot",rarity:"uncommon",description:"Golden topaz",weight:6},{id:"mine_obsidian",name:"Obsidian",icon:"⬛",price:90,type:"loot",rarity:"uncommon",description:"Volcanic glass",weight:10},{id:"mine_fossil",name:"Ancient Fossil",icon:"🦴",price:120,type:"loot",rarity:"uncommon",description:"A prehistoric bone",weight:7},{id:"mine_meteorite",name:"Meteorite Fragment",icon:"☄️",price:400,type:"loot",rarity:"legendary",description:"From outer space!",weight:0.5},{id:"mine_crystal_cluster",name:"Crystal Cluster",icon:"💎",price:280,type:"loot",rarity:"rare",description:"Multiple crystals fused together",weight:2},{id:"mine_geode",name:"Geode",icon:"🥚",price:100,type:"loot",rarity:"uncommon",description:"What's inside?",weight:8},{id:"mine_salt",name:"Rock Salt",icon:"🧂",price:10,type:"loot",rarity:"common",description:"Essential mineral",weight:25},{id:"mine_sulfur",name:"Sulfur",icon:"🟡",price:25,type:"loot",rarity:"common",description:"Smells like... potential",weight:18}
         ];
         this.craftingRecipes = [
-            // Consumables
-            { id: "craft_hp", name: "Health Potion", icon: "🧪", result: { id: "health_potion_crafted", name: "Health Potion", icon: "🧪", price: 30, type: "consumable", heal: 50, stats: { heal: 50 }, quantity: 1 }, materials: [{ id: "copper_ore", amount: 3 }, { id: "forest_herb", amount: 2 }] },
-            { id: "craft_mana", name: "Mana Potion", icon: "💙", result: { id: "mana_potion_crafted", name: "Mana Potion", icon: "💙", price: 35, type: "consumable", mana: 40, stats: { mana: 40 }, quantity: 1 }, materials: [{ id: "silver_dust", amount: 3 }, { id: "forest_herb", amount: 2 }] },
-            { id: "craft_greater_hp", name: "Greater Health Potion", icon: "🧪", result: { id: "greater_hp_crafted", name: "Greater Health Potion", icon: "🧪", price: 75, type: "consumable", heal: 120, stats: { heal: 120 }, quantity: 1 }, materials: [{ id: "dark_crystal", amount: 2 }, { id: "soul_stone", amount: 1 }, { id: "forest_herb", amount: 4 }] },
-            { id: "craft_elixir", name: "Strength Elixir", icon: "💪", result: { id: "elixir_strength", name: "Strength Elixir", icon: "💪", price: 150, type: "consumable", description: "Permanently +1 Strength", stats: { strengthBoost: 1 }, quantity: 1 }, materials: [{ id: "dragon_scale", amount: 5 }, { id: "infernal_ash", amount: 3 }, { id: "ancient_rune", amount: 2 }] },
-            { id: "craft_elixir_def", name: "Defense Elixir", icon: "🛡️", result: { id: "elixir_defense", name: "Defense Elixir", icon: "🛡️", price: 150, type: "consumable", description: "Permanently +1 Defense", stats: { defenseBoost: 1 }, quantity: 1 }, materials: [{ id: "abyssal_pearl", amount: 5 }, { id: "void_shard", amount: 3 }, { id: "ancient_rune", amount: 2 }] },
-
-            // Exclusive Weapons
-            { id: "craft_bone_blade", name: "Bone Blade", icon: "🦴⚔️", result: { id: "bone_blade_crafted", name: "Bone Blade", icon: "🦴⚔️", price: 800, type: "weapon", category: "melee", damage: 28, stats: { damage: 28 }, unique: true, tier: 3, quantity: 1 }, materials: [{ id: "bone_fragment", amount: 8 }, { id: "shadow_essence", amount: 3 }] },
-            { id: "craft_venom_dagger", name: "Venom Dagger", icon: "🐍🗡️", result: { id: "venom_dagger_crafted", name: "Venom Dagger", icon: "🐍🗡️", price: 2500, type: "weapon", category: "melee", damage: 45, stats: { damage: 45, poisonChance: 15 }, unique: true, tier: 4, quantity: 1 }, materials: [{ id: "soul_stone", amount: 5 }, { id: "demonic_seal", amount: 2 }, { id: "dark_crystal", amount: 4 }] },
-            { id: "craft_thunder_axe", name: "Thunder Axe", icon: "⚡🪓", result: { id: "thunder_axe_crafted", name: "Thunder Axe", icon: "⚡🪓", price: 5000, type: "weapon", category: "melee", damage: 70, stats: { damage: 70, stunChance: 10 }, unique: true, tier: 4, quantity: 1 }, materials: [{ id: "eternity_stone", amount: 5 }, { id: "void_shard", amount: 4 }, { id: "dragon_scale", amount: 6 }] },
-            { id: "craft_crystal_bow", name: "Crystal Bow", icon: "💎🏹", result: { id: "crystal_bow_crafted", name: "Crystal Bow", icon: "💎🏹", price: 4000, type: "weapon", category: "ranged", damage: 58, stats: { damage: 58, critBonus: 5 }, unique: true, tier: 4, quantity: 1 }, materials: [{ id: "soul_stone", amount: 6 }, { id: "ancient_rune", amount: 3 }, { id: "dark_crystal", amount: 5 }] },
-            { id: "craft_void_staff", name: "Void Staff", icon: "⬛🔮", result: { id: "void_staff_crafted", name: "Void Staff", icon: "⬛🔮", price: 6000, type: "weapon", category: "magic", damage: 72, stats: { damage: 72, intelligence: 12, manaBoost: 20 }, unique: true, tier: 4, quantity: 1 }, materials: [{ id: "void_shard", amount: 8 }, { id: "abyssal_pearl", amount: 5 }, { id: "eternity_stone", amount: 3 }] },
-
-            // Exclusive Armor
-            { id: "craft_bone_armor", name: "Bone Plate", icon: "🦴🛡️", result: { id: "bone_armor_crafted", name: "Bone Plate", icon: "🦴🛡️", price: 1500, type: "armor", defense: 30, stats: { defense: 30, damageReflect: 5 }, unique: true, tier: 3, quantity: 1 }, materials: [{ id: "bone_fragment", amount: 10 }, { id: "shadow_essence", amount: 4 }] },
-            { id: "craft_crystal_armor", name: "Crystal Carapace", icon: "💎🛡️", result: { id: "crystal_armor_crafted", name: "Crystal Carapace", icon: "💎🛡️", price: 5000, type: "armor", defense: 48, stats: { defense: 48, manaBoost: 25 }, unique: true, tier: 4, quantity: 1 }, materials: [{ id: "dark_crystal", amount: 8 }, { id: "soul_stone", amount: 4 }, { id: "abyssal_pearl", amount: 3 }] },
-            { id: "craft_dragon_plate", name: "Dragonplate Armor", icon: "🐲🛡️", result: { id: "dragon_plate_crafted", name: "Dragonplate Armor", icon: "🐲🛡️", price: 15000, type: "armor", defense: 72, stats: { defense: 72, hpBoost: 60, fireResist: 10 }, unique: true, tier: 5, quantity: 1 }, materials: [{ id: "dragon_scale", amount: 15 }, { id: "infernal_ash", amount: 10 }, { id: "nightbringer_gem", amount: 3 }, { id: "eternal_flame", amount: 2 }] },
-            { id: "craft_void_armor", name: "Void Shroud", icon: "⬛🛡️", result: { id: "void_armor_crafted", name: "Void Shroud", icon: "⬛🛡️", price: 20000, type: "armor", defense: 85, stats: { defense: 85, manaBoost: 40, dodgeChance: 5 }, unique: true, tier: 5, quantity: 1 }, materials: [{ id: "void_shard", amount: 12 }, { id: "eternity_stone", amount: 6 }, { id: "primordial_essence", amount: 5 }, { id: "infinite_crystal", amount: 2 }] },
-
-            // Exclusive Amulets
-            { id: "craft_warrior_amulet", name: "Warrior's Mark", icon: "⚔️📿", result: { id: "warrior_amulet_crafted", name: "Warrior's Mark", icon: "⚔️📿", price: 3000, type: "amulet", description: "+12 Dmg, +5 Def", stats: { damageBoost: 12, defenseBoost: 5 }, unique: true, quantity: 1 }, materials: [{ id: "dragon_scale", amount: 8 }, { id: "infernal_ash", amount: 5 }, { id: "ancient_rune", amount: 3 }] },
-            { id: "craft_mage_amulet", name: "Mage's Focus", icon: "🔮📿", result: { id: "mage_amulet_crafted", name: "Mage's Focus", icon: "🔮📿", price: 3000, type: "amulet", description: "+25 Mana, +10% Heal", stats: { manaBoost: 25, healBoost: 10 }, unique: true, quantity: 1 }, materials: [{ id: "soul_stone", amount: 6 }, { id: "dark_crystal", amount: 5 }, { id: "shadow_essence", amount: 4 }] },
-            { id: "craft_lucky_amulet", name: "Fortune Pendant", icon: "🍀📿", result: { id: "lucky_amulet_crafted", name: "Fortune Pendant", icon: "🍀📿", price: 4000, type: "amulet", description: "+20% Gold, +5% Crit", stats: { goldBoost: 20, critChance: 5 }, unique: true, quantity: 1 }, materials: [{ id: "nightbringer_gem", amount: 2 }, { id: "ancient_rune", amount: 4 }, { id: "silver_dust", amount: 10 }] },
-
-            // Exclusive Accessories
-            { id: "craft_ring_power", name: "Ring of Power", icon: "💍", result: { id: "ring_power_crafted", name: "Ring of Power", icon: "💍", price: 5000, type: "amulet", description: "+8 Dmg, +8 Def, +30 HP", stats: { damageBoost: 8, defenseBoost: 8, hpBoost: 30 }, unique: true, quantity: 1 }, materials: [{ id: "primordial_essence", amount: 6 }, { id: "eldritch_core", amount: 3 }, { id: "infinite_crystal", amount: 1 }] },
-            { id: "craft_ring_wisdom", name: "Ring of Wisdom", icon: "💍", result: { id: "ring_wisdom_crafted", name: "Ring of Wisdom", icon: "💍", price: 5000, type: "amulet", description: "+15 Int, +40 Mana", stats: { intelligenceBoost: 15, manaBoost: 40 }, unique: true, quantity: 1 }, materials: [{ id: "transcendent_shard", amount: 6 }, { id: "celestial_core", amount: 3 }, { id: "divine_crown", amount: 1 }] }
-        ];        this.petData = [
-            { id: "pet_sapling", name: "Forest Sapling", icon: "🌱", description: "+10 max HP", bonus: { hpBoost: 10 }, source: "Boss: Forest Guardian" },
-            { id: "pet_warg", name: "War Pup", icon: "🐺", description: "+3 damage", bonus: { damageBoost: 3 }, source: "Boss: Orc Warlord" },
-            { id: "pet_shade", name: "Shadow Wisp", icon: "👻", description: "+2% crit chance", bonus: { critChance: 2 }, source: "Boss: Shadow Demon" },
-            { id: "pet_dragon", name: "Baby Dragon", icon: "🐲", description: "+5% fire damage", bonus: { fireDamage: 5 }, source: "Boss: Ancient Wyrm" },
-            { id: "pet_sprite", name: "Void Sprite", icon: "👾", description: "+3 mana per turn", bonus: { manaRegen: 3 }, source: "Boss: Void Titan" },
-            { id: "pet_phoenix", name: "Phoenix Chick", icon: "🐦", description: "+5% healing", bonus: { healBoost: 5 }, source: "Boss: Eldritch Horror" },
-            { id: "pet_star", name: "Star Fragment", icon: "⭐", description: "+5 intelligence", bonus: { intBoost: 5 }, source: "Boss: Celestial Overlord" },
-            { id: "pet_kraken", name: "Baby Kraken", icon: "🐙", description: "+8 defense", bonus: { defenseBoost: 8 }, source: "Boss: Abyssal Leviathan" },
-            { id: "pet_ember", name: "Ember Spark", icon: "🔥", description: "+5% gold", bonus: { goldBoost: 5 }, source: "Boss: Eternal Phoenix" },
-            { id: "pet_infinity", name: "Infinity Wisp", icon: "♾️", description: "+25 max mana", bonus: { manaBoost: 25 }, source: "Boss: The Absolute" },
-            { id: "pet_fish", name: "Golden Fish", icon: "🐠", description: "+10% gold", bonus: { goldBoost: 10 }, source: "Fishing (very rare)" },
-            { id: "pet_golem", name: "Mini Golem", icon: "🪨", description: "+5 defense", bonus: { defenseBoost: 5 }, source: "Mining (very rare)" },
-            { id: "pet_wolf", name: "Wolf Pup", icon: "🐺", description: "+3% crit chance", bonus: { critChance: 3 }, source: "Achievement: 500 kills" },
-            { id: "pet_celestial", name: "Celestial Wisp", icon: "✨", description: "+20 max mana", bonus: { manaBoost: 20 }, source: "Achievement: All bosses" }
+            {id:"craft_hp",name:"Health Potion",icon:"🧪",result:{id:"health_potion",name:"Health Potion",icon:"🧪",price:30,type:"consumable",heal:50,stats:{heal:50},quantity:1},materials:[{id:"copper_ore",amount:3},{id:"forest_herb",amount:2}]},
+            {id:"craft_mana",name:"Mana Potion",icon:"💙",result:{id:"mana_potion",name:"Mana Potion",icon:"💙",price:35,type:"consumable",mana:40,stats:{mana:40},quantity:1},materials:[{id:"silver_dust",amount:3},{id:"forest_herb",amount:2}]},
+            {id:"craft_greater_hp",name:"Greater Health Potion",icon:"🧪",result:{id:"greater_health_potion",name:"Greater Health Potion",icon:"🧪",price:75,type:"consumable",heal:120,stats:{heal:120},quantity:1},materials:[{id:"dark_crystal",amount:2},{id:"soul_stone",amount:1},{id:"forest_herb",amount:4}]},
+            {id:"craft_elixir",name:"Strength Elixir",icon:"💪",result:{id:"elixir_strength",name:"Strength Elixir",icon:"💪",price:150,type:"consumable",description:"Permanently +1 Strength",stats:{strengthBoost:1},quantity:1},materials:[{id:"dragon_scale",amount:5},{id:"infernal_ash",amount:3},{id:"ancient_rune",amount:2}]},
+            {id:"craft_elixir_def",name:"Defense Elixir",icon:"🛡️",result:{id:"elixir_defense",name:"Defense Elixir",icon:"🛡️",price:150,type:"consumable",description:"Permanently +1 Defense",stats:{defenseBoost:1},quantity:1},materials:[{id:"abyssal_pearl",amount:5},{id:"void_shard",amount:3},{id:"ancient_rune",amount:2}]},
+            {id:"craft_bone_blade",name:"Bone Blade",icon:"🦴⚔️",result:{id:"bone_blade_crafted",name:"Bone Blade",icon:"🦴⚔️",price:800,type:"weapon",category:"melee",damage:28,stats:{damage:28},unique:true,tier:3,quantity:1},materials:[{id:"bone_fragment",amount:8},{id:"shadow_essence",amount:3}]},
+            {id:"craft_venom_dagger",name:"Venom Dagger",icon:"🐍🗡️",result:{id:"venom_dagger_crafted",name:"Venom Dagger",icon:"🐍🗡️",price:2500,type:"weapon",category:"melee",damage:45,stats:{damage:45,poisonChance:15},unique:true,tier:4,quantity:1},materials:[{id:"soul_stone",amount:5},{id:"demonic_seal",amount:2},{id:"dark_crystal",amount:4}]},
+            {id:"craft_thunder_axe",name:"Thunder Axe",icon:"⚡🪓",result:{id:"thunder_axe_crafted",name:"Thunder Axe",icon:"⚡🪓",price:5000,type:"weapon",category:"melee",damage:70,stats:{damage:70,stunChance:10},unique:true,tier:4,quantity:1},materials:[{id:"eternity_stone",amount:5},{id:"void_shard",amount:4},{id:"dragon_scale",amount:6}]},
+            {id:"craft_crystal_bow",name:"Crystal Bow",icon:"💎🏹",result:{id:"crystal_bow_crafted",name:"Crystal Bow",icon:"💎🏹",price:4000,type:"weapon",category:"ranged",damage:58,stats:{damage:58,critBonus:5},unique:true,tier:4,quantity:1},materials:[{id:"soul_stone",amount:6},{id:"ancient_rune",amount:3},{id:"dark_crystal",amount:5}]},
+            {id:"craft_void_staff",name:"Void Staff",icon:"⬛🔮",result:{id:"void_staff_crafted",name:"Void Staff",icon:"⬛🔮",price:6000,type:"weapon",category:"magic",damage:72,stats:{damage:72,intelligence:12,manaBoost:20},unique:true,tier:4,quantity:1},materials:[{id:"void_shard",amount:8},{id:"abyssal_pearl",amount:5},{id:"eternity_stone",amount:3}]},
+            {id:"craft_bone_armor",name:"Bone Plate",icon:"🦴🛡️",result:{id:"bone_armor_crafted",name:"Bone Plate",icon:"🦴🛡️",price:1500,type:"armor",defense:30,stats:{defense:30,damageReflect:5},unique:true,tier:3,quantity:1},materials:[{id:"bone_fragment",amount:10},{id:"shadow_essence",amount:4}]},
+            {id:"craft_crystal_armor",name:"Crystal Carapace",icon:"💎🛡️",result:{id:"crystal_armor_crafted",name:"Crystal Carapace",icon:"💎🛡️",price:5000,type:"armor",defense:48,stats:{defense:48,manaBoost:25},unique:true,tier:4,quantity:1},materials:[{id:"dark_crystal",amount:8},{id:"soul_stone",amount:4},{id:"abyssal_pearl",amount:3}]},
+            {id:"craft_dragon_plate",name:"Dragonplate Armor",icon:"🐲🛡️",result:{id:"dragon_plate_crafted",name:"Dragonplate Armor",icon:"🐲🛡️",price:15000,type:"armor",defense:72,stats:{defense:72,hpBoost:60,fireResist:10},unique:true,tier:5,quantity:1},materials:[{id:"dragon_scale",amount:15},{id:"infernal_ash",amount:10},{id:"nightbringer_gem",amount:3},{id:"eternal_flame",amount:2}]},
+            {id:"craft_void_armor",name:"Void Shroud",icon:"⬛🛡️",result:{id:"void_armor_crafted",name:"Void Shroud",icon:"⬛🛡️",price:20000,type:"armor",defense:85,stats:{defense:85,manaBoost:40,dodgeChance:5},unique:true,tier:5,quantity:1},materials:[{id:"void_shard",amount:12},{id:"eternity_stone",amount:6},{id:"primordial_essence",amount:5},{id:"infinite_crystal",amount:2}]},
+            {id:"craft_warrior_amulet",name:"Warrior's Mark",icon:"⚔️📿",result:{id:"warrior_amulet_crafted",name:"Warrior's Mark",icon:"⚔️📿",price:3000,type:"amulet",description:"+12 Dmg, +5 Def",stats:{damageBoost:12,defenseBoost:5},unique:true,quantity:1},materials:[{id:"dragon_scale",amount:8},{id:"infernal_ash",amount:5},{id:"ancient_rune",amount:3}]},
+            {id:"craft_mage_amulet",name:"Mage's Focus",icon:"🔮📿",result:{id:"mage_amulet_crafted",name:"Mage's Focus",icon:"🔮📿",price:3000,type:"amulet",description:"+25 Mana, +10% Heal",stats:{manaBoost:25,healBoost:10},unique:true,quantity:1},materials:[{id:"soul_stone",amount:6},{id:"dark_crystal",amount:5},{id:"shadow_essence",amount:4}]},
+            {id:"craft_lucky_amulet",name:"Fortune Pendant",icon:"🍀📿",result:{id:"lucky_amulet_crafted",name:"Fortune Pendant",icon:"🍀📿",price:4000,type:"amulet",description:"+20% Gold, +5% Crit",stats:{goldBoost:20,critChance:5},unique:true,quantity:1},materials:[{id:"nightbringer_gem",amount:2},{id:"ancient_rune",amount:4},{id:"silver_dust",amount:10}]},
+            {id:"craft_ring_power",name:"Ring of Power",icon:"💍",result:{id:"ring_power_crafted",name:"Ring of Power",icon:"💍",price:5000,type:"amulet",description:"+8 Dmg, +8 Def, +30 HP",stats:{damageBoost:8,defenseBoost:8,hpBoost:30},unique:true,quantity:1},materials:[{id:"primordial_essence",amount:6},{id:"eldritch_core",amount:3},{id:"infinite_crystal",amount:1}]},
+            {id:"craft_ring_wisdom",name:"Ring of Wisdom",icon:"💍",result:{id:"ring_wisdom_crafted",name:"Ring of Wisdom",icon:"💍",price:5000,type:"amulet",description:"+15 Int, +40 Mana",stats:{intelligenceBoost:15,manaBoost:40},unique:true,quantity:1},materials:[{id:"transcendent_shard",amount:6},{id:"celestial_core",amount:3},{id:"divine_crown",amount:1}]}
+        ];
+        this.petData = [
+            {id:"pet_sapling",name:"Forest Sapling",icon:"🌱",description:"+10 max HP",bonus:{hpBoost:10},source:"Boss: Forest Guardian"},{id:"pet_warg",name:"War Pup",icon:"🐺",description:"+3 damage",bonus:{damageBoost:3},source:"Boss: Orc Warlord"},{id:"pet_shade",name:"Shadow Wisp",icon:"👻",description:"+2% crit chance",bonus:{critChance:2},source:"Boss: Shadow Demon"},{id:"pet_dragon",name:"Baby Dragon",icon:"🐲",description:"+5% fire damage",bonus:{fireDamage:5},source:"Boss: Ancient Wyrm"},{id:"pet_sprite",name:"Void Sprite",icon:"👾",description:"+3 mana per turn",bonus:{manaRegen:3},source:"Boss: Void Titan"},{id:"pet_phoenix",name:"Phoenix Chick",icon:"🐦",description:"+5% healing",bonus:{healBoost:5},source:"Boss: Eldritch Horror"},{id:"pet_star",name:"Star Fragment",icon:"⭐",description:"+5 intelligence",bonus:{intBoost:5},source:"Boss: Celestial Overlord"},{id:"pet_kraken",name:"Baby Kraken",icon:"🐙",description:"+8 defense",bonus:{defenseBoost:8},source:"Boss: Abyssal Leviathan"},{id:"pet_ember",name:"Ember Spark",icon:"🔥",description:"+5% gold",bonus:{goldBoost:5},source:"Boss: Eternal Phoenix"},{id:"pet_infinity",name:"Infinity Wisp",icon:"♾️",description:"+25 max mana",bonus:{manaBoost:25},source:"Boss: The Absolute"},{id:"pet_fish",name:"Golden Fish",icon:"🐠",description:"+10% gold",bonus:{goldBoost:10},source:"Fishing (very rare)"},{id:"pet_golem",name:"Mini Golem",icon:"🪨",description:"+5 defense",bonus:{defenseBoost:5},source:"Mining (very rare)"},{id:"pet_wolf",name:"Wolf Pup",icon:"🐺",description:"+3% crit chance",bonus:{critChance:3},source:"Achievement: 500 kills"},{id:"pet_celestial",name:"Celestial Wisp",icon:"✨",description:"+20 max mana",bonus:{manaBoost:20},source:"Achievement: All bosses"}
         ];
         this.achievementData = [
-            { id: "kills_50", name: "Goblin Slayer", desc: "Kill 50 enemies", icon: "🗡️", check: function() { return gameState.player.totalKills >= 50; }, title: "Goblin Slayer" },
-            { id: "kills_500", name: "Monster Hunter", desc: "Kill 500 enemies", icon: "⚔️", check: function() { return gameState.player.totalKills >= 500; }, title: "Monster Hunter", pet: "pet_wolf" },
-            { id: "boss_3", name: "Boss Hunter", desc: "Defeat 3 bosses", icon: "👑", check: function() { var c = 0; for (var k in gameState.player.bossDefeats) { if (gameState.player.bossDefeats[k]) c++; } return c >= 3; }, title: "Boss Hunter" },
-            { id: "boss_all", name: "Legend", desc: "Defeat all 10 bosses", icon: "🏆", check: function() { var c = 0; for (var k in gameState.player.bossDefeats) { if (gameState.player.bossDefeats[k]) c++; } return c >= 10; }, title: "Legend", pet: "pet_celestial" },
-            { id: "gamble_100", name: "High Roller", desc: "Gamble 100 times", icon: "🎰", check: function() { return (gameState.player.gambleCount || 0) >= 100; }, title: "High Roller" },
-            { id: "fish_50", name: "Master Angler", desc: "Catch 50 fish", icon: "🎣", check: function() { return (gameState.player.fishCount || 0) >= 50; }, title: "Master Angler" },
-            { id: "mine_100", name: "Master Miner", desc: "Mine 100 times", icon: "⛏️", check: function() { return (gameState.player.mineCount || 0) >= 100; }, title: "Master Miner" },
-            { id: "level_50", name: "Veteran", desc: "Reach level 50", icon: "⭐", check: function() { return gameState.player.level >= 50; }, title: "Veteran" },
-            { id: "level_100", name: "Elite", desc: "Reach level 100", icon: "🌟", check: function() { return gameState.player.level >= 100; }, title: "Elite" },
-            { id: "level_250", name: "Maxed Out", desc: "Reach level 250", icon: "👑", check: function() { return gameState.player.level >= 250; }, title: "Supreme" }
+            {id:"kills_50",name:"Goblin Slayer",desc:"Kill 50 enemies",icon:"🗡️",check:function(){return gameState.player.totalKills>=50;},title:"Goblin Slayer"},{id:"kills_500",name:"Monster Hunter",desc:"Kill 500 enemies",icon:"⚔️",check:function(){return gameState.player.totalKills>=500;},title:"Monster Hunter",pet:"pet_wolf"},{id:"boss_3",name:"Boss Hunter",desc:"Defeat 3 bosses",icon:"👑",check:function(){var c=0;for(var k in gameState.player.bossDefeats){if(gameState.player.bossDefeats[k])c++;}return c>=3;},title:"Boss Hunter"},{id:"boss_all",name:"Legend",desc:"Defeat all 10 bosses",icon:"🏆",check:function(){var c=0;for(var k in gameState.player.bossDefeats){if(gameState.player.bossDefeats[k])c++;}return c>=10;},title:"Legend",pet:"pet_celestial"},{id:"gamble_100",name:"High Roller",desc:"Gamble 100 times",icon:"🎰",check:function(){return(gameState.player.gambleCount||0)>=100;},title:"High Roller"},{id:"fish_50",name:"Master Angler",desc:"Catch 50 fish",icon:"🎣",check:function(){return(gameState.player.fishCount||0)>=50;},title:"Master Angler"},{id:"mine_100",name:"Master Miner",desc:"Mine 100 times",icon:"⛏️",check:function(){return(gameState.player.mineCount||0)>=100;},title:"Master Miner"},{id:"level_50",name:"Veteran",desc:"Reach level 50",icon:"⭐",check:function(){return gameState.player.level>=50;},title:"Veteran"},{id:"level_100",name:"Elite",desc:"Reach level 100",icon:"🌟",check:function(){return gameState.player.level>=100;},title:"Elite"},{id:"level_250",name:"Maxed Out",desc:"Reach level 250",icon:"👑",check:function(){return gameState.player.level>=250;},title:"Supreme"}
         ];
+        this.prestigeSkillData = {
+            eternal_strength:{name:'Eternal Strength',desc:'+2% base Strength per rank',ranks:25,cost:1},eternal_mind:{name:'Eternal Mind',desc:'+2% base Intelligence per rank',ranks:25,cost:1},eternal_defense:{name:'Eternal Defense',desc:'+2% base Defense per rank',ranks:25,cost:1},eternal_vitality:{name:'Eternal Vitality',desc:'+3% base HP per rank',ranks:20,cost:1},eternal_mana:{name:'Eternal Mana',desc:'+3% base Mana per rank',ranks:20,cost:1},gold_magnet:{name:'Gold Magnet',desc:'+3% gold per rank',ranks:20,cost:1},xp_accelerator:{name:'XP Accelerator',desc:'+3% EXP per rank',ranks:20,cost:1},loot_master:{name:'Loot Master',desc:'+2% drop rate per rank',ranks:15,cost:2},critical_mastery:{name:'Critical Mastery',desc:'+1% crit chance per rank',ranks:10,cost:2},damage_absorb:{name:'Damage Absorb',desc:'-1% damage taken per rank',ranks:10,cost:2}
+        };
         this.loadFromLocalStorage();
         this.recalculateStats();
     }
 
-    getEquippedWeapon() { if (!this.player.equippedWeapon) return null; for (var i = 0; i < this.player.inventory.length; i++) { if (this.player.inventory[i].id === this.player.equippedWeapon) return this.player.inventory[i]; } return null; }
-    getEquippedArmor() { if (!this.player.equippedArmor) return null; for (var i = 0; i < this.player.inventory.length; i++) { if (this.player.inventory[i].id === this.player.equippedArmor) return this.player.inventory[i]; } return null; }
-    getEquippedAmulet() { if (!this.player.equippedAmulet) return null; for (var i = 0; i < this.player.inventory.length; i++) { if (this.player.inventory[i].id === this.player.equippedAmulet) return this.player.inventory[i]; } return null; }
-    getTierNumber(d) { if (d >= 120) return 5; if (d >= 75) return 4; if (d >= 35) return 3; if (d >= 15) return 2; return 1; }
-    getTierColor(t) { if (t === 5) return '#ffd700'; if (t === 4) return '#a855f7'; if (t === 3) return '#3b82f6'; if (t === 2) return '#22c55e'; return '#ffffff'; }
-    getTierName(t) { if (t === 5) return 'Legendary'; if (t === 4) return 'Epic'; if (t === 3) return 'Rare'; if (t === 2) return 'Uncommon'; return 'Common'; }
-    getSkillRank(skillId) { return (this.player.skills && this.player.skills[skillId]) ? this.player.skills[skillId] : 0; }
+    getEquippedWeapon(){if(!this.player.equippedWeapon)return null;for(var i=0;i<this.player.inventory.length;i++){if(this.player.inventory[i].id===this.player.equippedWeapon)return this.player.inventory[i];}return null;}
+    getEquippedArmor(){if(!this.player.equippedArmor)return null;for(var i=0;i<this.player.inventory.length;i++){if(this.player.inventory[i].id===this.player.equippedArmor)return this.player.inventory[i];}return null;}
+    getEquippedAmulet(){if(!this.player.equippedAmulet)return null;for(var i=0;i<this.player.inventory.length;i++){if(this.player.inventory[i].id===this.player.equippedAmulet)return this.player.inventory[i];}return null;}
+    getTierNumber(d){if(d>=120)return 5;if(d>=75)return 4;if(d>=35)return 3;if(d>=15)return 2;return 1;}
+    getTierColor(t){if(t===5)return'#ffd700';if(t===4)return'#a855f7';if(t===3)return'#3b82f6';if(t===2)return'#22c55e';return'#ffffff';}
+    getTierName(t){if(t===5)return'Legendary';if(t===4)return'Epic';if(t===3)return'Rare';if(t===2)return'Uncommon';return'Common';}
+    getSkillRank(skillId){return(this.player.skills&&this.player.skills[skillId])?this.player.skills[skillId]:0;}
 
-    getSetBonus() {
-        var weapon = this.getEquippedWeapon(); var armor = this.getEquippedArmor();
-        if (!weapon || !armor) return 0;
-        var wTier = weapon.tier || this.getTierNumber(weapon.damage || 0);
-        var aTier = armor.tier || this.getTierNumber(armor.defense || 0);
-        if (wTier === aTier) return wTier; return 0;
+    getSetBonus(){var w=this.getEquippedWeapon(),a=this.getEquippedArmor();if(!w||!a)return 0;var wt=w.tier||this.getTierNumber(w.damage||0),at=a.tier||this.getTierNumber(a.defense||0);if(wt===at)return wt;return 0;}
+    getActivePetBonus(){if(!this.player.activePet)return{};for(var i=0;i<this.petData.length;i++){if(this.petData[i].id===this.player.activePet)return this.petData[i].bonus;}return{};}
+
+    getTotalStats(){
+        var w=this.getEquippedWeapon(),a=this.getEquippedArmor(),am=this.getEquippedAmulet();
+        var bd=0,bi=0,bdef=0,hb=0,mb=0,gb=0,hpb=0;
+        if(w&&w.stats){bd+=(w.stats.damage||0);bi+=(w.stats.intelligence||0);}
+        if(a&&a.stats)bdef+=(a.stats.defense||0);
+        if(am&&am.stats){bd+=(am.stats.damageBoost||0);bdef+=(am.stats.defenseBoost||0);hb+=(am.stats.healBoost||0);mb+=(am.stats.manaBoost||0);gb+=(am.stats.goldBoost||0);hpb+=(am.stats.hpBoost||0);}
+        var br=this.getSkillRank('brute_force'),tr=this.getSkillRank('toughness'),ar=this.getSkillRank('arcane_power'),mpr=this.getSkillRank('mana_pool'),grr=this.getSkillRank('gold_rush');
+        if(br>0)bd+=Math.floor(this.player.strength*(br*0.02));if(ar>0)bi+=Math.floor(this.player.intelligence*(ar*0.02));
+        if(tr>0)hpb+=Math.floor(this.player.maxHealth*(tr*0.01));if(mpr>0)mb+=mpr*10;if(grr>0)gb+=grr*4;
+        var sb=this.getSetBonus();if(sb>0){bd+=sb*2;bdef+=sb*2;}
+        var pb=this.getActivePetBonus();
+        if(pb.fireDamage)bd+=Math.floor((this.player.strength+bd)*(pb.fireDamage/100));if(pb.goldBoost)gb+=pb.goldBoost;if(pb.healBoost)hb+=pb.healBoost;
+        if(pb.defenseBoost)bdef+=pb.defenseBoost;if(pb.manaRegen)mb+=pb.manaRegen;if(pb.manaBoost)mb+=pb.manaBoost;if(pb.intBoost)bi+=pb.intBoost;
+        var ps=this.player.prestigeSkills||{};
+        if(ps.eternal_strength)bd+=Math.floor(this.player.strength*(ps.eternal_strength*0.02));if(ps.eternal_mind)bi+=Math.floor(this.player.intelligence*(ps.eternal_mind*0.02));
+        if(ps.eternal_defense)bdef+=Math.floor(this.player.defense*(ps.eternal_defense*0.02));if(ps.eternal_vitality)hpb+=Math.floor(this.player.maxHealth*(ps.eternal_vitality*0.03));
+        if(ps.eternal_mana)mb+=Math.floor(this.player.maxMana*(ps.eternal_mana*0.03));if(ps.gold_magnet)gb+=ps.gold_magnet*3;
+        return{damage:this.player.strength+bd,intelligence:this.player.intelligence+bi,defense:this.player.defense+bdef,bonusDamage:bd,bonusIntelligence:bi,bonusDefense:bdef,healBoost:hb,manaBoost:mb,goldBoost:gb,hpBoost:hpb,setBonus:sb,petBonus:pb};
     }
 
-    getActivePetBonus() {
-        if (!this.player.activePet) return {};
-        for (var i = 0; i < this.petData.length; i++) { if (this.petData[i].id === this.player.activePet) return this.petData[i].bonus; }
-        return {};
+    recalculateStats(){var t=this.getTotalStats();this.player.maxHealth=150+(this.player.level*10)+(t.defense*5)+t.hpBoost;this.player.health=Math.min(this.player.health,this.player.maxHealth);this.player.maxMana=100+(this.player.level*5)+(t.intelligence*3)+t.manaBoost;this.player.mana=Math.min(this.player.mana,this.player.maxMana);}
+    getUpgradeCost(tier){var c={1:{gold:200,materialTier:1,amount:3},2:{gold:500,materialTier:2,amount:4},3:{gold:1000,materialTier:3,amount:5},4:{gold:2500,materialTier:4,amount:6},5:{gold:5000,materialTier:5,amount:8}};return c[tier]||c[1];}
+    hasRequiredMaterials(item){var cost=this.getUpgradeCost(item.tier||1),count=0;for(var key in this.player.materials){if(!this.player.materials.hasOwnProperty(key))continue;var mat=this.findMaterialById(key);if(mat&&mat.tier>=cost.materialTier)count+=this.player.materials[key];}return count>=cost.amount;}
+    findMaterialById(id){for(var level in this.dropTables){if(!this.dropTables.hasOwnProperty(level))continue;for(var i=0;i<this.dropTables[level].length;i++){if(this.dropTables[level][i].id===id&&this.dropTables[level][i].material)return this.dropTables[level][i];}}return null;}
+    consumeUpgradeMaterials(itemTier,amount){var consumed=0,mats=[];for(var key in this.player.materials){if(!this.player.materials.hasOwnProperty(key))continue;if(this.player.materials[key]<=0)continue;var mat=this.findMaterialById(key);if(mat&&mat.tier>=itemTier)mats.push({id:key,count:this.player.materials[key],tier:mat.tier});}mats.sort(function(a,b){return a.tier-b.tier;});for(var i=0;i<mats.length&&consumed<amount;i++){var need=amount-consumed,take=Math.min(need,mats[i].count);this.player.materials[mats[i].id]-=take;consumed+=take;}return consumed>=amount;}
+    upgradeItem(itemId){var item=null;for(var i=0;i<this.player.inventory.length;i++){if(this.player.inventory[i].id===itemId){item=this.player.inventory[i];break;}}if(!item)return{success:false,message:'Item not found!'};if(!item.tier||item.tier>=5)return{success:false,message:'Already max tier!'};var cost=this.getUpgradeCost(item.tier);if(this.player.gold<cost.gold)return{success:false,message:'Need '+cost.gold+' gold and '+cost.amount+' Tier '+cost.materialTier+'+ materials!'};if(!this.hasRequiredMaterials(item))return{success:false,message:'Need '+cost.amount+' Tier '+cost.materialTier+'+ materials!'};this.player.gold-=cost.gold;if(!this.consumeUpgradeMaterials(cost.materialTier,cost.amount))return{success:false,message:'Material consumption failed!'};if(item.stats){if(item.stats.damage)item.stats.damage=Math.floor(item.stats.damage*1.3);if(item.stats.defense)item.stats.defense=Math.floor(item.stats.defense*1.3);if(item.stats.intelligence)item.stats.intelligence=Math.floor(item.stats.intelligence*1.3);}if(item.damage)item.damage=Math.floor(item.damage*1.3);if(item.defense)item.defense=Math.floor(item.defense*1.3);item.tier=Math.min(5,(item.tier||1)+1);item.name=item.name.replace(/ \+/g,'')+' +';this.saveToLocalStorage();return{success:true,message:'Upgraded to tier '+item.tier+'!'};}
+
+    gamble(amount){
+        if(this.player.gold<amount)return{success:false,message:'Not enough gold!'};this.player.gold-=amount;this.player.gambleCount=(this.player.gambleCount||0)+1;
+        var lr=this.getSkillRank('lucky_gambler'),lb=lr*0.004,sb=0;if(this.player.gambleStreak>=3)sb=0.02;if(this.player.gambleStreak>=5)sb=0.04;
+        var pb=0;if(this.player.gambleStreak<=-5)pb=0.05;var pc=Math.floor(amount*0.05);this.player.jackpotPool=(this.player.jackpotPool||0)+pc;
+        var roll=Math.random(),reward=null,message='',won=false,tier=amount>=1000?'high':amount>=500?'medium':amount>=200?'low':'tiny';
+        var cc=0.25,nc=0.35,ac=0.22+lb,jc=0.08+lb+sb;
+        if(roll<jc){won=true;if(tier==='high'){var pool=this.gambleExclusiveWeapons.concat(this.gambleExclusiveAmulets.slice(4));reward=pool[Math.floor(Math.random()*pool.length)];}else if(tier==='medium'){var pool=this.gambleExclusiveAmulets.slice(2,6).concat(this.gambleExclusiveWeapons.slice(0,3));reward=pool[Math.floor(Math.random()*pool.length)];}else if(tier==='low'){var pool=this.gambleExclusiveAmulets.slice(0,4).concat(this.gambleExclusiveWeapons.slice(0,1));reward=pool[Math.floor(Math.random()*pool.length)];}else{reward=this.gambleExclusiveAmulets[Math.floor(Math.random()*3)];}if(Math.random()<0.05&&this.player.jackpotPool>amount){var jw=this.player.jackpotPool;this.player.gold+=jw;message='🎉 JACKPOT + POOL! Won '+reward.icon+' '+reward.name+' AND '+jw+' gold!';this.player.jackpotPool=0;}else{message='🎉 JACKPOT! You won: '+reward.icon+' '+reward.name+'!';}}
+        else if(roll<jc+ac){won=true;if(tier==='high'||tier==='medium'){var pool=this.gambleExclusiveAmulets.slice(0,5).concat(this.gambleMaterials.slice(3));reward=pool[Math.floor(Math.random()*pool.length)];}else{var pool=this.gambleExclusiveAmulets.slice(0,2).concat(this.gambleMaterials.slice(0,2));reward=pool[Math.floor(Math.random()*pool.length)];}message='🎊 Amazing! You won: '+reward.icon+' '+reward.name+'!';}
+        else if(roll<jc+ac+nc){won=true;if(tier==='high'||tier==='medium'){var pool=this.gambleMaterials.slice(0,4);reward=pool[Math.floor(Math.random()*pool.length)];}else{var pool=this.gambleMaterials.slice(0,2);reward=pool[Math.floor(Math.random()*pool.length)];}message='👍 Nice! You won: '+reward.icon+' '+reward.name+'!';}
+        else if(roll<jc+ac+nc+cc){var refund=Math.floor(amount*(0.7+Math.random()*0.3));this.player.gold+=refund;message='😐 Got back '+refund+' gold.';}
+        else{message='💀 Nothing! Lost '+amount+' gold.';}
+        if(won){this.player.gambleStreak=Math.min(10,(this.player.gambleStreak||0)+1);if(this.player.gambleStreak>=5)message+=' 🔥 '+this.player.gambleStreak+' win streak!';}else{this.player.gambleStreak=Math.max(-10,(this.player.gambleStreak||0)-1);if(this.player.gambleStreak<=-5)message+=' 🫠 Pity bonus active!';}
+        if(reward){var existing=this.player.inventory.find(function(i){return i.id===reward.id;});if(existing&&reward.unique){var ar=Math.floor(amount*1.1);this.player.gold+=ar;this.saveToLocalStorage();return{success:true,message:'Already own '+reward.name+'! Refunded '+ar+' gold.'};}this.addToInventory(reward);}
+        this.saveToLocalStorage();return{success:true,message:message};
     }
 
-    getTotalStats() {
-        var weapon = this.getEquippedWeapon(); var armor = this.getEquippedArmor(); var amulet = this.getEquippedAmulet();
-        var bonusDamage = 0, bonusIntelligence = 0, bonusDefense = 0, healBoost = 0, manaBoost = 0, goldBoost = 0, hpBoost = 0;
-        if (weapon && weapon.stats) { bonusDamage += (weapon.stats.damage || 0); bonusIntelligence += (weapon.stats.intelligence || 0); }
-        if (armor && armor.stats) { bonusDefense += (armor.stats.defense || 0); }
-        if (amulet && amulet.stats) { bonusDamage += (amulet.stats.damageBoost || 0); bonusDefense += (amulet.stats.defenseBoost || 0); healBoost += (amulet.stats.healBoost || 0); manaBoost += (amulet.stats.manaBoost || 0); goldBoost += (amulet.stats.goldBoost || 0); hpBoost += (amulet.stats.hpBoost || 0); }
-        var bruteRank = this.getSkillRank('brute_force'); var toughnessRank = this.getSkillRank('toughness');
-        var arcaneRank = this.getSkillRank('arcane_power'); var manaPoolRank = this.getSkillRank('mana_pool');
-        var goldRushRank = this.getSkillRank('gold_rush');
-        if (bruteRank > 0) bonusDamage += Math.floor(this.player.strength * (bruteRank * 0.02));
-        if (arcaneRank > 0) bonusIntelligence += Math.floor(this.player.intelligence * (arcaneRank * 0.02));
-        if (toughnessRank > 0) hpBoost += Math.floor(this.player.maxHealth * (toughnessRank * 0.01));
-        if (manaPoolRank > 0) manaBoost += manaPoolRank * 10;
-        if (goldRushRank > 0) goldBoost += goldRushRank * 4;
-        var setBonus = this.getSetBonus(); if (setBonus > 0) { bonusDamage += setBonus * 2; bonusDefense += setBonus * 2; }
-        var petBonus = this.getActivePetBonus();
-        if (petBonus.fireDamage) bonusDamage += Math.floor((this.player.strength + bonusDamage) * (petBonus.fireDamage / 100));
-        if (petBonus.goldBoost) goldBoost += petBonus.goldBoost;
-        if (petBonus.healBoost) healBoost += petBonus.healBoost;
-        if (petBonus.defenseBoost) bonusDefense += petBonus.defenseBoost;
-        if (petBonus.manaRegen) manaBoost += petBonus.manaRegen;
-        if (petBonus.manaBoost) manaBoost += petBonus.manaBoost;
-        if (petBonus.intBoost) bonusIntelligence += petBonus.intBoost;
-        return { damage: this.player.strength + bonusDamage, intelligence: this.player.intelligence + bonusIntelligence, defense: this.player.defense + bonusDefense, bonusDamage: bonusDamage, bonusIntelligence: bonusIntelligence, bonusDefense: bonusDefense, healBoost: healBoost, manaBoost: manaBoost, goldBoost: goldBoost, hpBoost: hpBoost, setBonus: setBonus, petBonus: petBonus };
+    fish(){this.player.fishCount=(this.player.fishCount||0)+1;var tw=0;for(var i=0;i<this.fishingRewards.length;i++)tw+=this.fishingRewards[i].weight;var roll=Math.floor(Math.random()*tw),cum=0,reward=this.fishingRewards[0];for(var i=0;i<this.fishingRewards.length;i++){cum+=this.fishingRewards[i].weight;if(roll<cum){reward=this.fishingRewards[i];break;}}this.addDropToInventory(reward);this.saveToLocalStorage();if(reward.id==='fish_legendary'&&Math.random()<0.02&&this.player.pets.indexOf('pet_fish')===-1){this.player.pets.push('pet_fish');return{success:true,message:'🎣 You caught: '+reward.icon+' '+reward.name+'!\n🐠 BONUS: Golden Fish pet unlocked!',reward:reward};}return{success:true,message:'🎣 You caught: '+reward.icon+' '+reward.name+'!',reward:reward};}
+    mine(){this.player.mineCount=(this.player.mineCount||0)+1;var tw=0;for(var i=0;i<this.miningRewards.length;i++)tw+=this.miningRewards[i].weight;var roll=Math.floor(Math.random()*tw),cum=0,reward=this.miningRewards[0];for(var i=0;i<this.miningRewards.length;i++){cum+=this.miningRewards[i].weight;if(roll<cum){reward=this.miningRewards[i];break;}}this.addDropToInventory(reward);this.saveToLocalStorage();if(reward.id==='mine_diamond'&&Math.random()<0.03&&this.player.pets.indexOf('pet_golem')===-1){this.player.pets.push('pet_golem');return{success:true,message:'⛏️ You mined: '+reward.icon+' '+reward.name+'!\n🪨 BONUS: Mini Golem pet unlocked!',reward:reward};}return{success:true,message:'⛏️ You mined: '+reward.icon+' '+reward.name+'!',reward:reward};}
+    craft(recipeId){var recipe=null;for(var i=0;i<this.craftingRecipes.length;i++){if(this.craftingRecipes[i].id===recipeId){recipe=this.craftingRecipes[i];break;}}if(!recipe)return{success:false,message:'Recipe not found!'};for(var j=0;j<recipe.materials.length;j++){var mat=recipe.materials[j],owned=this.player.materials[mat.id]||0;if(owned<mat.amount)return{success:false,message:'Need '+mat.amount+'x '+mat.id+' (have '+owned+')'};}for(var j=0;j<recipe.materials.length;j++){this.player.materials[recipe.materials[j].id]-=recipe.materials[j].amount;}this.addToInventory(recipe.result);this.saveToLocalStorage();return{success:true,message:'✅ Crafted '+recipe.result.name+'!'};}
+    checkAchievements(){var na=[];for(var i=0;i<this.achievementData.length;i++){var ach=this.achievementData[i];if(!this.player.achievements[ach.id]&&ach.check()){this.player.achievements[ach.id]=true;if(ach.title&&this.player.titles.indexOf(ach.title)===-1)this.player.titles.push(ach.title);if(ach.pet&&this.player.pets.indexOf(ach.pet)===-1)this.player.pets.push(ach.pet);na.push(ach);}}this.saveToLocalStorage();return na;}
+    equipPet(petId){if(this.player.activePet===petId){this.player.activePet=null;this.saveToLocalStorage();return{success:true,message:'Pet unequipped.'};}if(this.player.pets.indexOf(petId)===-1)return{success:false,message:"You don't own this pet!"};this.player.activePet=petId;this.saveToLocalStorage();return{success:true,message:'Pet equipped!'};}
+    getPetById(petId){for(var i=0;i<this.petData.length;i++){if(this.petData[i].id===petId)return this.petData[i];}return null;}
+    addPetToInventory(petId){var pet=this.getPetById(petId);if(!pet)return;for(var i=0;i<this.player.inventory.length;i++){if(this.player.inventory[i].id===petId)return;}this.player.inventory.push({id:pet.id,name:pet.name,icon:pet.icon,price:0,type:'pet',description:pet.description,stats:pet.bonus,quantity:1,unique:true});this.saveToLocalStorage();}
+
+    prestige(){
+        if(this.player.level<250)return{success:false,message:'Must be level 250 to prestige!'};
+        this.player.prestigeLevel=(this.player.prestigeLevel||0)+1;this.player.prestigePoints=(this.player.prestigePoints||0)+1;
+        var pm=1+(this.player.prestigeLevel*0.05);
+        this.player.level=1;this.player.exp=0;this.player.expToNextLevel=100;this.player.gold=500;
+        this.player.strength=Math.floor(10*pm);this.player.intelligence=Math.floor(10*pm);this.player.defense=Math.floor(5*pm);this.player.speed=5;
+        this.player.maxHealth=Math.floor(203*pm);this.player.maxMana=Math.floor(125*pm);
+        this.player.inventory=[];this.player.equippedWeapon=null;this.player.equippedArmor=null;this.player.equippedAmulet=null;this.player.activePet=null;
+        this.player.materials={};this.player.totalKills=0;this.player.bossDefeats={};this.player.skillPoints=0;this.player.skills={};
+        this.player.gambleStreak=0;this.player.jackpotPool=0;this.player.gambleCount=0;this.player.fishCount=0;this.player.mineCount=0;
+        this.player.titles=[];this.player.activeTitle='';
+        this.shops=this.buildShopInventory();this.specialShop=this.buildAmuletShopInventory();
+        this.recalculateStats();this.player.health=this.player.maxHealth;this.player.mana=this.player.maxMana;
+        this.saveToLocalStorage();
+        return{success:true,message:'🌟 Prestige '+this.player.prestigeLevel+'! Everything reset except achievements and pets. +'+(this.player.prestigeLevel*5)+'% permanent bonus.'};
     }
 
-    recalculateStats() {
-        var totals = this.getTotalStats();
-        this.player.maxHealth = 150 + (this.player.level * 10) + (totals.defense * 5) + totals.hpBoost;
-        this.player.health = Math.min(this.player.health, this.player.maxHealth);
-        this.player.maxMana = 100 + (this.player.level * 5) + (totals.intelligence * 3) + totals.manaBoost;
-        this.player.mana = Math.min(this.player.mana, this.player.maxMana);
+    buildShopInventory(){
+        var mw=[{id:"wooden_sword",name:"Wooden Sword",icon:"⚔️",price:50,type:"weapon",category:"melee",damage:8,description:"A basic wooden training sword",stats:{damage:8},unique:true,tier:1},{id:"iron_sword",name:"Iron Sword",icon:"⚔️",price:300,type:"weapon",category:"melee",damage:18,description:"A reliable iron blade",stats:{damage:18},unique:true,tier:2},{id:"steel_sword",name:"Steel Sword",icon:"⚔️",price:1500,type:"weapon",category:"melee",damage:35,description:"Forged from pure steel",stats:{damage:35},unique:true,tier:3},{id:"battle_axe",name:"Battle Axe",icon:"🪓",price:2500,type:"weapon",category:"melee",damage:50,description:"A heavy two-handed axe",stats:{damage:50},unique:true,tier:3},{id:"silver_sword",name:"Silver Sword",icon:"⚔️",price:6000,type:"weapon",category:"melee",damage:75,description:"Enchanted with silver magic",stats:{damage:75},unique:true,tier:4},{id:"greatsword",name:"Greatsword",icon:"⚔️",price:10000,type:"weapon",category:"melee",damage:100,description:"An imposing two-handed blade",stats:{damage:100},unique:true,tier:4},{id:"blessed_sword",name:"Blessed Sword",icon:"✨⚔️",price:18000,type:"weapon",category:"melee",damage:125,description:"Blessed by the ancient gods",stats:{damage:125},unique:true,tier:5},{id:"obsidian_blade",name:"Obsidian Blade",icon:"⚫⚔️",price:25000,type:"weapon",category:"melee",damage:135,description:"Forged from volcanic obsidian",stats:{damage:135},unique:true,tier:5},{id:"dragon_slayer_sword",name:"Dragon Slayer Sword",icon:"🐲⚔️",price:40000,type:"weapon",category:"melee",damage:150,description:"Legendary sword designed to slay dragons",stats:{damage:150},unique:true,tier:5}];
+        var rw=[{id:"wooden_bow",name:"Wooden Bow",icon:"🏹",price:60,type:"weapon",category:"ranged",damage:10,description:"A simple wooden bow",stats:{damage:10},unique:true,tier:1},{id:"short_bow",name:"Short Bow",icon:"🏹",price:350,type:"weapon",category:"ranged",damage:20,description:"Compact and quick to fire",stats:{damage:20},unique:true,tier:2},{id:"longbow",name:"Longbow",icon:"🏹",price:1800,type:"weapon",category:"ranged",damage:38,description:"Powerful bow with long range",stats:{damage:38},unique:true,tier:3},{id:"crossbow",name:"Crossbow",icon:"🎯",price:3000,type:"weapon",category:"ranged",damage:65,description:"A mechanical bow with high force",stats:{damage:65},unique:true,tier:3},{id:"elven_bow",name:"Elven Bow",icon:"🏹",price:7000,type:"weapon",category:"ranged",damage:85,description:"Crafted by ancient elves",stats:{damage:85},unique:true,tier:4},{id:"heavy_crossbow",name:"Heavy Crossbow",icon:"🎯",price:12000,type:"weapon",category:"ranged",damage:110,description:"A devastating mechanical weapon",stats:{damage:110},unique:true,tier:4},{id:"frost_bow",name:"Frost Bow",icon:"❄️🏹",price:20000,type:"weapon",category:"ranged",damage:130,description:"Imbued with icy magic",stats:{damage:130},unique:true,tier:5},{id:"celestial_longbow",name:"Celestial Longbow",icon:"⭐🏹",price:45000,type:"weapon",category:"ranged",damage:170,description:"A divine bow from the heavens",stats:{damage:170},unique:true,tier:5}];
+        var mgw=[{id:"wooden_staff",name:"Wooden Staff",icon:"🪵🔮",price:70,type:"weapon",category:"magic",damage:12,description:"A basic wooden staff for spellcasting",stats:{damage:12,intelligence:3},unique:true,tier:1},{id:"mana_wand",name:"Mana Wand",icon:"✨🪄",price:400,type:"weapon",category:"magic",damage:22,description:"Channels mana efficiently",stats:{damage:22,intelligence:5},unique:true,tier:2},{id:"crystal_staff",name:"Crystal Staff",icon:"💎🔮",price:2000,type:"weapon",category:"magic",damage:40,description:"Amplifies magical power",stats:{damage:40,intelligence:8},unique:true,tier:3},{id:"fire_scepter",name:"Fire Scepter",icon:"🔥🔱",price:3500,type:"weapon",category:"magic",damage:60,description:"Channels the power of flame",stats:{damage:60,intelligence:10},unique:true,tier:3},{id:"arcane_staff",name:"Arcane Staff",icon:"🌀🔮",price:8000,type:"weapon",category:"magic",damage:88,description:"Infused with raw arcane energy",stats:{damage:88,intelligence:15},unique:true,tier:4},{id:"shadow_wand",name:"Shadow Wand",icon:"🌑🪄",price:14000,type:"weapon",category:"magic",damage:115,description:"Wields dark shadow magic",stats:{damage:115,intelligence:18},unique:true,tier:4},{id:"divine_staff",name:"Divine Staff",icon:"☀️🔮",price:22000,type:"weapon",category:"magic",damage:138,description:"Blessed with divine light",stats:{damage:138,intelligence:22},unique:true,tier:5},{id:"celestial_orb",name:"Celestial Orb",icon:"⭐💎",price:50000,type:"weapon",category:"magic",damage:150,description:"A mystical orb from the celestial realm",stats:{damage:150,intelligence:25},unique:true,tier:5}];
+        var ar=[{id:"leather_armor",name:"Leather Armor",icon:"🛡️",price:150,type:"armor",defense:10,description:"Light protection",stats:{defense:10},unique:true,tier:1},{id:"iron_armor",name:"Iron Armor",icon:"🛡️",price:800,type:"armor",defense:25,description:"Heavy iron protection",stats:{defense:25},unique:true,tier:2},{id:"steel_armor",name:"Steel Armor",icon:"🛡️",price:3000,type:"armor",defense:40,description:"Solid steel plating",stats:{defense:40},unique:true,tier:3},{id:"dragon_armor",name:"Dragon Scale Armor",icon:"🐲🛡️",price:12000,type:"armor",defense:65,description:"Forged from dragon scales",stats:{defense:65},unique:true,tier:4},{id:"divine_armor",name:"Divine Armor",icon:"✨🛡️",price:35000,type:"armor",defense:100,description:"Blessed by the gods",stats:{defense:100},unique:true,tier:5}];
+        var con=[{id:"health_potion",name:"Health Potion",icon:"🧪",price:30,type:"consumable",heal:50,description:"Restore 50 HP",stats:{heal:50}},{id:"mana_potion",name:"Mana Potion",icon:"💙",price:35,type:"consumable",mana:40,description:"Restore 40 Mana",stats:{mana:40}},{id:"greater_health_potion",name:"Greater Health Potion",icon:"🧪",price:75,type:"consumable",heal:120,description:"Restore 120 HP",stats:{heal:120}},{id:"greater_mana_potion",name:"Greater Mana Potion",icon:"💙",price:85,type:"consumable",mana:100,description:"Restore 100 Mana",stats:{mana:100}}];
+        var si=[{id:"special_sword_10",name:"Vampiric Blade",icon:"🩸⚔️",price:3000,type:"weapon",category:"melee",damage:55,description:"Heals you on kill",stats:{damage:55},unique:true,tier:4,requirement:{type:'kills',amount:25}},{id:"special_bow_25",name:"Thunder Bow",icon:"⚡🏹",price:3500,type:"weapon",category:"ranged",damage:70,description:"Chance to stun on hit",stats:{damage:70},unique:true,tier:4,requirement:{type:'kills',amount:50}},{id:"special_staff_50",name:"Inferno Staff",icon:"🔥🔮",price:4500,type:"weapon",category:"magic",damage:90,description:"Fire spells deal bonus damage",stats:{damage:90,intelligence:12},unique:true,tier:4,requirement:{type:'kills',amount:100}},{id:"special_armor_75",name:"Phoenix Armor",icon:"🔥🛡️",price:5000,type:"armor",defense:50,description:"Revive once per battle",stats:{defense:50},unique:true,tier:4,requirement:{type:'kills',amount:200}},{id:"special_amulet_100",name:"Slayer's Mark",icon:"💀📿",price:6000,type:"amulet",description:"Power grows with every kill",stats:{damageBoost:10,goldBoost:15},unique:true,requirement:{type:'kills',amount:350}},{id:"special_sword_boss1",name:"Guardian's Blade",icon:"🌳⚔️",price:2000,type:"weapon",category:"melee",damage:45,description:"Forged from the Forest Guardian's bark",stats:{damage:45,defenseBoost:5},unique:true,tier:3,requirement:{type:'boss',worldLevel:1}},{id:"special_bow_boss5",name:"Warlord's Crossbow",icon:"👹🎯",price:3500,type:"weapon",category:"ranged",damage:80,description:"Taken from the Orc Warlord's arsenal",stats:{damage:80,damageBoost:5},unique:true,tier:4,requirement:{type:'boss',worldLevel:5}},{id:"special_staff_boss10",name:"Demonheart Staff",icon:"👿🔮",price:5000,type:"weapon",category:"magic",damage:100,description:"Pulses with the Shadow Demon's energy",stats:{damage:100,intelligence:18,manaBoost:20},unique:true,tier:5,requirement:{type:'boss',worldLevel:10}},{id:"special_armor_boss20",name:"Wyrm Scale Armor",icon:"🐉🛡️",price:6000,type:"armor",defense:70,description:"Scales of the Ancient Wyrm",stats:{defense:70,hpBoost:50},unique:true,tier:4,requirement:{type:'boss',worldLevel:20}},{id:"special_amulet_boss30",name:"Titan's Essence",icon:"⬛📿",price:7000,type:"amulet",description:"Fragment of the Void Titan's power",stats:{damageBoost:12,defenseBoost:8,hpBoost:60},unique:true,requirement:{type:'boss',worldLevel:30}},{id:"special_sword_boss50",name:"Eldritch Blade",icon:"👾⚔️",price:9000,type:"weapon",category:"melee",damage:160,description:"Reality bends around this blade",stats:{damage:160,healBoost:20},unique:true,tier:5,requirement:{type:'boss',worldLevel:50}},{id:"special_bow_boss75",name:"Celestial Longbow",icon:"⭐🏹",price:11000,type:"weapon",category:"ranged",damage:190,description:"Blessed by the Celestial Overlord",stats:{damage:190,manaBoost:40},unique:true,tier:5,requirement:{type:'boss',worldLevel:75}},{id:"special_armor_boss100",name:"Absolute Plate",icon:"♾️🛡️",price:15000,type:"armor",defense:120,description:"Armor of The Absolute itself",stats:{defense:120,hpBoost:100,healBoost:25},unique:true,tier:5,requirement:{type:'boss',worldLevel:100}}];
+        return mw.concat(rw).concat(mgw).concat(ar).concat(con).concat(si);
     }
 
-    getUpgradeCost(tier) { var costs = { 1: { gold: 200, materialTier: 1, amount: 3 }, 2: { gold: 500, materialTier: 2, amount: 4 }, 3: { gold: 1000, materialTier: 3, amount: 5 }, 4: { gold: 2500, materialTier: 4, amount: 6 }, 5: { gold: 5000, materialTier: 5, amount: 8 } }; return costs[tier] || costs[1]; }
-    hasRequiredMaterials(item) { var cost = this.getUpgradeCost(item.tier || 1); var count = 0; for (var key in this.player.materials) { if (!this.player.materials.hasOwnProperty(key)) continue; var mat = this.findMaterialById(key); if (mat && mat.tier >= cost.materialTier) count += this.player.materials[key]; } return count >= cost.amount; }
-    findMaterialById(id) { for (var level in this.dropTables) { if (!this.dropTables.hasOwnProperty(level)) continue; for (var i = 0; i < this.dropTables[level].length; i++) { if (this.dropTables[level][i].id === id && this.dropTables[level][i].material) return this.dropTables[level][i]; } } return null; }
-    consumeUpgradeMaterials(itemTier, amount) { var consumed = 0; var mats = []; for (var key in this.player.materials) { if (!this.player.materials.hasOwnProperty(key)) continue; if (this.player.materials[key] <= 0) continue; var mat = this.findMaterialById(key); if (mat && mat.tier >= itemTier) mats.push({ id: key, count: this.player.materials[key], tier: mat.tier }); } mats.sort(function(a, b) { return a.tier - b.tier; }); for (var i = 0; i < mats.length && consumed < amount; i++) { var need = amount - consumed; var take = Math.min(need, mats[i].count); this.player.materials[mats[i].id] -= take; consumed += take; } return consumed >= amount; }
-
-    upgradeItem(itemId) { var item = null; for (var i = 0; i < this.player.inventory.length; i++) { if (this.player.inventory[i].id === itemId) { item = this.player.inventory[i]; break; } } if (!item) return { success: false, message: 'Item not found!' }; if (!item.tier || item.tier >= 5) return { success: false, message: 'Already max tier!' }; var cost = this.getUpgradeCost(item.tier); if (this.player.gold < cost.gold) return { success: false, message: 'Need ' + cost.gold + ' gold and ' + cost.amount + ' Tier ' + cost.materialTier + '+ materials!' }; if (!this.hasRequiredMaterials(item)) return { success: false, message: 'Need ' + cost.amount + ' Tier ' + cost.materialTier + '+ materials!' }; this.player.gold -= cost.gold; if (!this.consumeUpgradeMaterials(cost.materialTier, cost.amount)) return { success: false, message: 'Material consumption failed!' }; if (item.stats) { if (item.stats.damage) item.stats.damage = Math.floor(item.stats.damage * 1.3); if (item.stats.defense) item.stats.defense = Math.floor(item.stats.defense * 1.3); if (item.stats.intelligence) item.stats.intelligence = Math.floor(item.stats.intelligence * 1.3); } if (item.damage) item.damage = Math.floor(item.damage * 1.3); if (item.defense) item.defense = Math.floor(item.defense * 1.3); item.tier = Math.min(5, (item.tier || 1) + 1); item.name = item.name.replace(/ \+/g, '') + ' +'; this.saveToLocalStorage(); return { success: true, message: 'Upgraded to tier ' + item.tier + '!' }; }
-
-    gamble(amount) {
-        if (this.player.gold < amount) return { success: false, message: 'Not enough gold!' };
-        this.player.gold -= amount;
-        this.player.gambleCount = (this.player.gambleCount || 0) + 1;
-        var luckyRank = this.getSkillRank('lucky_gambler'); var luckBonus = luckyRank * 0.004;
-        var streakBonus = 0; if (this.player.gambleStreak >= 3) streakBonus = 0.02; if (this.player.gambleStreak >= 5) streakBonus = 0.04;
-        var pityBonus = 0; if (this.player.gambleStreak <= -5) pityBonus = 0.05;
-        var poolContribution = Math.floor(amount * 0.05); this.player.jackpotPool = (this.player.jackpotPool || 0) + poolContribution;
-        var roll = Math.random(); var reward = null; var message = ''; var won = false;
-        var tier = amount >= 1000 ? 'high' : amount >= 500 ? 'medium' : amount >= 200 ? 'low' : 'tiny';
-        var closeChance = 0.25; var niceChance = 0.35;
-        var amazingChance = 0.22 + luckBonus; var jackpotChance = 0.08 + luckBonus + streakBonus;
-        if (roll < jackpotChance) { won = true; if (tier === 'high') { var pool = this.gambleExclusiveWeapons.concat(this.gambleExclusiveAmulets.slice(4)); reward = pool[Math.floor(Math.random() * pool.length)]; } else if (tier === 'medium') { var pool = this.gambleExclusiveAmulets.slice(2, 6).concat(this.gambleExclusiveWeapons.slice(0, 3)); reward = pool[Math.floor(Math.random() * pool.length)]; } else if (tier === 'low') { var pool = this.gambleExclusiveAmulets.slice(0, 4).concat(this.gambleExclusiveWeapons.slice(0, 1)); reward = pool[Math.floor(Math.random() * pool.length)]; } else { reward = this.gambleExclusiveAmulets[Math.floor(Math.random() * 3)]; } if (Math.random() < 0.05 && this.player.jackpotPool > amount) { var jw = this.player.jackpotPool; this.player.gold += jw; message = '🎉 JACKPOT + POOL! Won ' + reward.icon + ' ' + reward.name + ' AND ' + jw + ' gold!'; this.player.jackpotPool = 0; } else { message = '🎉 JACKPOT! You won: ' + reward.icon + ' ' + reward.name + '!'; } }
-        else if (roll < jackpotChance + amazingChance) { won = true; if (tier === 'high' || tier === 'medium') { var pool = this.gambleExclusiveAmulets.slice(0, 5).concat(this.gambleMaterials.slice(3)); reward = pool[Math.floor(Math.random() * pool.length)]; } else { var pool = this.gambleExclusiveAmulets.slice(0, 2).concat(this.gambleMaterials.slice(0, 2)); reward = pool[Math.floor(Math.random() * pool.length)]; } message = '🎊 Amazing! You won: ' + reward.icon + ' ' + reward.name + '!'; }
-        else if (roll < jackpotChance + amazingChance + niceChance) { won = true; if (tier === 'high' || tier === 'medium') { var pool = this.gambleMaterials.slice(0, 4); reward = pool[Math.floor(Math.random() * pool.length)]; } else { var pool = this.gambleMaterials.slice(0, 2); reward = pool[Math.floor(Math.random() * pool.length)]; } message = '👍 Nice! You won: ' + reward.icon + ' ' + reward.name + '!'; }
-        else if (roll < jackpotChance + amazingChance + niceChance + closeChance) { var refund = Math.floor(amount * (0.7 + Math.random() * 0.3)); this.player.gold += refund; message = '😐 Got back ' + refund + ' gold.'; }
-        else { message = '💀 Nothing! Lost ' + amount + ' gold.'; }
-        if (won) { this.player.gambleStreak = Math.min(10, (this.player.gambleStreak || 0) + 1); if (this.player.gambleStreak >= 5) message += ' 🔥 ' + this.player.gambleStreak + ' win streak!'; } else { this.player.gambleStreak = Math.max(-10, (this.player.gambleStreak || 0) - 1); if (this.player.gambleStreak <= -5) message += ' 🫠 Pity bonus active!'; }
-        if (reward) { var existing = this.player.inventory.find(function(i) { return i.id === reward.id; }); if (existing && reward.unique) { var altRefund = Math.floor(amount * 1.1); this.player.gold += altRefund; this.saveToLocalStorage(); return { success: true, message: 'Already own ' + reward.name + '! Refunded ' + altRefund + ' gold.' }; } this.addToInventory(reward); }
-        this.saveToLocalStorage(); return { success: true, message: message };
+    buildAmuletShopInventory(){
+        return[{id:"shop_amulet_1a",name:"Amulet of Vitality",icon:"❤️",price:200,type:"amulet",description:"+30 Max HP",stats:{hpBoost:30},unique:true},{id:"shop_amulet_1b",name:"Amulet of Greed",icon:"🪙",price:250,type:"amulet",description:"+20% Gold",stats:{goldBoost:20},unique:true},{id:"shop_amulet_5a",name:"Amulet of the Mage",icon:"💎",price:500,type:"amulet",description:"+30 Max Mana",stats:{manaBoost:30},unique:true},{id:"shop_amulet_5b",name:"Warrior's Pendant",icon:"⚡",price:450,type:"amulet",description:"+3 Dmg, +3 Def",stats:{damageBoost:3,defenseBoost:3},unique:true},{id:"shop_amulet_10a",name:"Amulet of Regeneration",icon:"💚",price:800,type:"amulet",description:"+20% Healing",stats:{healBoost:20},unique:true},{id:"shop_amulet_10b",name:"Balanced Pendant",icon:"☯️",price:900,type:"amulet",description:"+15 HP, +15 Mana, +8% Gold",stats:{hpBoost:15,manaBoost:15,goldBoost:8},unique:true},{id:"shop_amulet_20a",name:"Dragonkin Amulet",icon:"🐲",price:1500,type:"amulet",description:"+8 Damage",stats:{damageBoost:8},unique:true},{id:"shop_amulet_20b",name:"Guardian's Shield",icon:"🛡️",price:1400,type:"amulet",description:"+8 Defense",stats:{defenseBoost:8},unique:true},{id:"shop_amulet_30a",name:"Soul Amulet",icon:"💀",price:2200,type:"amulet",description:"+5 Dmg, +15% Heal",stats:{damageBoost:5,healBoost:15},unique:true},{id:"shop_amulet_30b",name:"Midas Touch",icon:"👑",price:2000,type:"amulet",description:"+35% Gold",stats:{goldBoost:35},unique:true},{id:"shop_amulet_50a",name:"Eldritch Pendant",icon:"👁️",price:3500,type:"amulet",description:"+6 Dmg, +40 HP, +30 Mana",stats:{damageBoost:6,hpBoost:40,manaBoost:30},unique:true},{id:"shop_amulet_50b",name:"Healer's Grace",icon:"💖",price:3200,type:"amulet",description:"+35% Healing",stats:{healBoost:35},unique:true},{id:"shop_amulet_75a",name:"Celestial Charm",icon:"⭐",price:5000,type:"amulet",description:"+7 Dmg, +7 Def, +50 HP, +40 Mana",stats:{damageBoost:7,defenseBoost:7,hpBoost:50,manaBoost:40},unique:true},{id:"shop_amulet_75b",name:"Fortune's Favor",icon:"🍀",price:4800,type:"amulet",description:"+50% Gold, +25 Mana",stats:{goldBoost:50,manaBoost:25},unique:true},{id:"shop_amulet_100a",name:"Infinity Pendant",icon:"♾️",price:8000,type:"amulet",description:"+12 Dmg, +8 Def, +80 HP, +60 Mana",stats:{damageBoost:12,defenseBoost:8,hpBoost:80,manaBoost:60},unique:true},{id:"shop_amulet_100b",name:"Transcendent Soul",icon:"🌟",price:7500,type:"amulet",description:"+60% Gold, +40% Heal",stats:{goldBoost:60,healBoost:40},unique:true}];
     }
 
-    fish() { this.player.fishCount = (this.player.fishCount || 0) + 1; var totalWeight = 0; for (var i = 0; i < this.fishingRewards.length; i++) totalWeight += this.fishingRewards[i].weight; var roll = Math.floor(Math.random() * totalWeight); var cumulative = 0; var reward = this.fishingRewards[0]; for (var i = 0; i < this.fishingRewards.length; i++) { cumulative += this.fishingRewards[i].weight; if (roll < cumulative) { reward = this.fishingRewards[i]; break; } } this.addDropToInventory(reward); this.saveToLocalStorage(); if (reward.id === 'fish_legendary' && Math.random() < 0.02 && this.player.pets.indexOf('pet_fish') === -1) { this.player.pets.push('pet_fish'); return { success: true, message: '🎣 You caught: ' + reward.icon + ' ' + reward.name + '!\n🐠 BONUS: Golden Fish pet unlocked!', reward: reward }; } return { success: true, message: '🎣 You caught: ' + reward.icon + ' ' + reward.name + '!', reward: reward }; }
-    mine() { this.player.mineCount = (this.player.mineCount || 0) + 1; var totalWeight = 0; for (var i = 0; i < this.miningRewards.length; i++) totalWeight += this.miningRewards[i].weight; var roll = Math.floor(Math.random() * totalWeight); var cumulative = 0; var reward = this.miningRewards[0]; for (var i = 0; i < this.miningRewards.length; i++) { cumulative += this.miningRewards[i].weight; if (roll < cumulative) { reward = this.miningRewards[i]; break; } } this.addDropToInventory(reward); this.saveToLocalStorage(); if (reward.id === 'mine_diamond' && Math.random() < 0.03 && this.player.pets.indexOf('pet_golem') === -1) { this.player.pets.push('pet_golem'); return { success: true, message: '⛏️ You mined: ' + reward.icon + ' ' + reward.name + '!\n🪨 BONUS: Mini Golem pet unlocked!', reward: reward }; } return { success: true, message: '⛏️ You mined: ' + reward.icon + ' ' + reward.name + '!', reward: reward }; }
+    getDiscountedPrice(op){var hr=this.getSkillRank('haggler');if(hr<=0)return op;return Math.floor(op*(1-hr*0.03));}
+    isSpecialItemUnlocked(item){if(!item.requirement)return true;if(item.requirement.type==='kills')return this.player.totalKills>=item.requirement.amount;if(item.requirement.type==='boss')return this.player.bossDefeats&&this.player.bossDefeats[item.requirement.worldLevel];return false;}
+    addMaterial(item){if(!item.material)return;if(!this.player.materials[item.id])this.player.materials[item.id]=0;this.player.materials[item.id]++;}
 
-    craft(recipeId) { var recipe = null; for (var i = 0; i < this.craftingRecipes.length; i++) { if (this.craftingRecipes[i].id === recipeId) { recipe = this.craftingRecipes[i]; break; } } if (!recipe) return { success: false, message: 'Recipe not found!' }; for (var j = 0; j < recipe.materials.length; j++) { var mat = recipe.materials[j]; var owned = this.player.materials[mat.id] || 0; if (owned < mat.amount) return { success: false, message: 'Need ' + mat.amount + 'x ' + mat.id + ' (have ' + owned + ')' }; } for (var j = 0; j < recipe.materials.length; j++) { this.player.materials[recipe.materials[j].id] -= recipe.materials[j].amount; } this.addToInventory(recipe.result); this.saveToLocalStorage(); return { success: true, message: '✅ Crafted ' + recipe.result.name + '!' }; }
-    checkAchievements() { var newAchs = []; for (var i = 0; i < this.achievementData.length; i++) { var ach = this.achievementData[i]; if (!this.player.achievements[ach.id] && ach.check()) { this.player.achievements[ach.id] = true; if (ach.title && this.player.titles.indexOf(ach.title) === -1) this.player.titles.push(ach.title); if (ach.pet && this.player.pets.indexOf(ach.pet) === -1) this.player.pets.push(ach.pet); newAchs.push(ach); } } this.saveToLocalStorage(); return newAchs; }
-    equipPet(petId) { if (this.player.activePet === petId) { this.player.activePet = null; this.saveToLocalStorage(); return { success: true, message: 'Pet unequipped.' }; } if (this.player.pets.indexOf(petId) === -1) return { success: false, message: "You don't own this pet!" }; this.player.activePet = petId; this.saveToLocalStorage(); return { success: true, message: 'Pet equipped!' }; }
-    getPetById(petId) { for (var i = 0; i < this.petData.length; i++) { if (this.petData[i].id === petId) return this.petData[i]; } return null; }
-prestige() {
-    if (this.player.level < 250) return { success: false, message: 'Must be level 250 to prestige!' };
-    this.player.prestigeLevel = (this.player.prestigeLevel || 0) + 1;
-
-    // Apply prestige multiplier to base stats
-    var pm = 1 + (this.player.prestigeLevel * 0.05);
-
-    // Reset everything except achievements and pets
-    this.player.level = 1;
-    this.player.exp = 0;
-    this.player.expToNextLevel = 100;
-    this.player.gold = 500;
-    this.player.strength = Math.floor(10 * pm);
-    this.player.intelligence = Math.floor(10 * pm);
-    this.player.defense = Math.floor(5 * pm);
-    this.player.speed = 5;
-    this.player.maxHealth = Math.floor(203 * pm);
-    this.player.maxMana = Math.floor(125 * pm);
-    this.player.inventory = [];
-    this.player.equippedWeapon = null;
-    this.player.equippedArmor = null;
-    this.player.equippedAmulet = null;
-    this.player.activePet = null;
-    this.player.materials = {};
-    this.player.totalKills = 0;
-    this.player.bossDefeats = {};
-    this.player.skillPoints = 0;
-    this.player.skills = {};
-    this.player.gambleStreak = 0;
-    this.player.jackpotPool = 0;
-    this.player.gambleCount = 0;
-    this.player.fishCount = 0;
-    this.player.mineCount = 0;
-    this.player.titles = [];
-    this.player.activeTitle = '';
-
-    this.shops = this.buildShopInventory();
-    this.specialShop = this.buildAmuletShopInventory();
-    this.recalculateStats();
-    this.player.health = this.player.maxHealth;
-    this.player.mana = this.player.maxMana;
-    this.saveToLocalStorage();
-    return { success: true, message: '🌟 Prestige ' + this.player.prestigeLevel + '! Everything reset except achievements and pets. +' + (this.player.prestigeLevel * 5) + '% permanent bonus.' };
-}
-buildShopInventory() {
-        var meleeWeapons = [
-            { id: "wooden_sword", name: "Wooden Sword", icon: "⚔️", price: 50, type: "weapon", category: "melee", damage: 8, description: "A basic wooden training sword", stats: { damage: 8 }, unique: true, tier: 1 },
-            { id: "iron_sword", name: "Iron Sword", icon: "⚔️", price: 300, type: "weapon", category: "melee", damage: 18, description: "A reliable iron blade", stats: { damage: 18 }, unique: true, tier: 2 },
-            { id: "steel_sword", name: "Steel Sword", icon: "⚔️", price: 1500, type: "weapon", category: "melee", damage: 35, description: "Forged from pure steel", stats: { damage: 35 }, unique: true, tier: 3 },
-            { id: "battle_axe", name: "Battle Axe", icon: "🪓", price: 2500, type: "weapon", category: "melee", damage: 50, description: "A heavy two-handed axe", stats: { damage: 50 }, unique: true, tier: 3 },
-            { id: "silver_sword", name: "Silver Sword", icon: "⚔️", price: 6000, type: "weapon", category: "melee", damage: 75, description: "Enchanted with silver magic", stats: { damage: 75 }, unique: true, tier: 4 },
-            { id: "greatsword", name: "Greatsword", icon: "⚔️", price: 10000, type: "weapon", category: "melee", damage: 100, description: "An imposing two-handed blade", stats: { damage: 100 }, unique: true, tier: 4 },
-            { id: "blessed_sword", name: "Blessed Sword", icon: "✨⚔️", price: 18000, type: "weapon", category: "melee", damage: 125, description: "Blessed by the ancient gods", stats: { damage: 125 }, unique: true, tier: 5 },
-            { id: "obsidian_blade", name: "Obsidian Blade", icon: "⚫⚔️", price: 25000, type: "weapon", category: "melee", damage: 135, description: "Forged from volcanic obsidian", stats: { damage: 135 }, unique: true, tier: 5 },
-            { id: "dragon_slayer_sword", name: "Dragon Slayer Sword", icon: "🐲⚔️", price: 40000, type: "weapon", category: "melee", damage: 150, description: "Legendary sword designed to slay dragons", stats: { damage: 150 }, unique: true, tier: 5 }
-        ];
-        var rangedWeapons = [
-            { id: "wooden_bow", name: "Wooden Bow", icon: "🏹", price: 60, type: "weapon", category: "ranged", damage: 10, description: "A simple wooden bow", stats: { damage: 10 }, unique: true, tier: 1 },
-            { id: "short_bow", name: "Short Bow", icon: "🏹", price: 350, type: "weapon", category: "ranged", damage: 20, description: "Compact and quick to fire", stats: { damage: 20 }, unique: true, tier: 2 },
-            { id: "longbow", name: "Longbow", icon: "🏹", price: 1800, type: "weapon", category: "ranged", damage: 38, description: "Powerful bow with long range", stats: { damage: 38 }, unique: true, tier: 3 },
-            { id: "crossbow", name: "Crossbow", icon: "🎯", price: 3000, type: "weapon", category: "ranged", damage: 65, description: "A mechanical bow with high force", stats: { damage: 65 }, unique: true, tier: 3 },
-            { id: "elven_bow", name: "Elven Bow", icon: "🏹", price: 7000, type: "weapon", category: "ranged", damage: 85, description: "Crafted by ancient elves", stats: { damage: 85 }, unique: true, tier: 4 },
-            { id: "heavy_crossbow", name: "Heavy Crossbow", icon: "🎯", price: 12000, type: "weapon", category: "ranged", damage: 110, description: "A devastating mechanical weapon", stats: { damage: 110 }, unique: true, tier: 4 },
-            { id: "frost_bow", name: "Frost Bow", icon: "❄️🏹", price: 20000, type: "weapon", category: "ranged", damage: 130, description: "Imbued with icy magic", stats: { damage: 130 }, unique: true, tier: 5 },
-            { id: "celestial_longbow", name: "Celestial Longbow", icon: "⭐🏹", price: 45000, type: "weapon", category: "ranged", damage: 170, description: "A divine bow from the heavens", stats: { damage: 170 }, unique: true, tier: 5 }
-        ];
-        var magicWeapons = [
-            { id: "wooden_staff", name: "Wooden Staff", icon: "🪵🔮", price: 70, type: "weapon", category: "magic", damage: 12, description: "A basic wooden staff for spellcasting", stats: { damage: 12, intelligence: 3 }, unique: true, tier: 1 },
-            { id: "mana_wand", name: "Mana Wand", icon: "✨🪄", price: 400, type: "weapon", category: "magic", damage: 22, description: "Channels mana efficiently", stats: { damage: 22, intelligence: 5 }, unique: true, tier: 2 },
-            { id: "crystal_staff", name: "Crystal Staff", icon: "💎🔮", price: 2000, type: "weapon", category: "magic", damage: 40, description: "Amplifies magical power", stats: { damage: 40, intelligence: 8 }, unique: true, tier: 3 },
-            { id: "fire_scepter", name: "Fire Scepter", icon: "🔥🔱", price: 3500, type: "weapon", category: "magic", damage: 60, description: "Channels the power of flame", stats: { damage: 60, intelligence: 10 }, unique: true, tier: 3 },
-            { id: "arcane_staff", name: "Arcane Staff", icon: "🌀🔮", price: 8000, type: "weapon", category: "magic", damage: 88, description: "Infused with raw arcane energy", stats: { damage: 88, intelligence: 15 }, unique: true, tier: 4 },
-            { id: "shadow_wand", name: "Shadow Wand", icon: "🌑🪄", price: 14000, type: "weapon", category: "magic", damage: 115, description: "Wields dark shadow magic", stats: { damage: 115, intelligence: 18 }, unique: true, tier: 4 },
-            { id: "divine_staff", name: "Divine Staff", icon: "☀️🔮", price: 22000, type: "weapon", category: "magic", damage: 138, description: "Blessed with divine light", stats: { damage: 138, intelligence: 22 }, unique: true, tier: 5 },
-            { id: "celestial_orb", name: "Celestial Orb", icon: "⭐💎", price: 50000, type: "weapon", category: "magic", damage: 150, description: "A mystical orb from the celestial realm", stats: { damage: 150, intelligence: 25 }, unique: true, tier: 5 }
-        ];
-        var armors = [
-            { id: "leather_armor", name: "Leather Armor", icon: "🛡️", price: 150, type: "armor", defense: 10, description: "Light protection", stats: { defense: 10 }, unique: true, tier: 1 },
-            { id: "iron_armor", name: "Iron Armor", icon: "🛡️", price: 800, type: "armor", defense: 25, description: "Heavy iron protection", stats: { defense: 25 }, unique: true, tier: 2 },
-            { id: "steel_armor", name: "Steel Armor", icon: "🛡️", price: 3000, type: "armor", defense: 40, description: "Solid steel plating", stats: { defense: 40 }, unique: true, tier: 3 },
-            { id: "dragon_armor", name: "Dragon Scale Armor", icon: "🐲🛡️", price: 12000, type: "armor", defense: 65, description: "Forged from dragon scales", stats: { defense: 65 }, unique: true, tier: 4 },
-            { id: "divine_armor", name: "Divine Armor", icon: "✨🛡️", price: 35000, type: "armor", defense: 100, description: "Blessed by the gods", stats: { defense: 100 }, unique: true, tier: 5 }
-        ];
-        var consumables = [
-            { id: "health_potion", name: "Health Potion", icon: "🧪", price: 30, type: "consumable", heal: 50, description: "Restore 50 HP", stats: { heal: 50 } },
-            { id: "mana_potion", name: "Mana Potion", icon: "💙", price: 35, type: "consumable", mana: 40, description: "Restore 40 Mana", stats: { mana: 40 } },
-            { id: "greater_health_potion", name: "Greater Health Potion", icon: "🧪", price: 75, type: "consumable", heal: 120, description: "Restore 120 HP", stats: { heal: 120 } },
-            { id: "greater_mana_potion", name: "Greater Mana Potion", icon: "💙", price: 85, type: "consumable", mana: 100, description: "Restore 100 Mana", stats: { mana: 100 } }
-        ];
-        var specialItems = [
-            { id: "special_sword_10", name: "Vampiric Blade", icon: "🩸⚔️", price: 3000, type: "weapon", category: "melee", damage: 55, description: "Heals you on kill", stats: { damage: 55 }, unique: true, tier: 4, requirement: { type: 'kills', amount: 25 } },
-            { id: "special_bow_25", name: "Thunder Bow", icon: "⚡🏹", price: 3500, type: "weapon", category: "ranged", damage: 70, description: "Chance to stun on hit", stats: { damage: 70 }, unique: true, tier: 4, requirement: { type: 'kills', amount: 50 } },
-            { id: "special_staff_50", name: "Inferno Staff", icon: "🔥🔮", price: 4500, type: "weapon", category: "magic", damage: 90, description: "Fire spells deal bonus damage", stats: { damage: 90, intelligence: 12 }, unique: true, tier: 4, requirement: { type: 'kills', amount: 100 } },
-            { id: "special_armor_75", name: "Phoenix Armor", icon: "🔥🛡️", price: 5000, type: "armor", defense: 50, description: "Revive once per battle", stats: { defense: 50 }, unique: true, tier: 4, requirement: { type: 'kills', amount: 200 } },
-            { id: "special_amulet_100", name: "Slayer's Mark", icon: "💀📿", price: 6000, type: "amulet", description: "Power grows with every kill", stats: { damageBoost: 10, goldBoost: 15 }, unique: true, requirement: { type: 'kills', amount: 350 } },
-            { id: "special_sword_boss1", name: "Guardian's Blade", icon: "🌳⚔️", price: 2000, type: "weapon", category: "melee", damage: 45, description: "Forged from the Forest Guardian's bark", stats: { damage: 45, defenseBoost: 5 }, unique: true, tier: 3, requirement: { type: 'boss', worldLevel: 1 } },
-            { id: "special_bow_boss5", name: "Warlord's Crossbow", icon: "👹🎯", price: 3500, type: "weapon", category: "ranged", damage: 80, description: "Taken from the Orc Warlord's arsenal", stats: { damage: 80, damageBoost: 5 }, unique: true, tier: 4, requirement: { type: 'boss', worldLevel: 5 } },
-            { id: "special_staff_boss10", name: "Demonheart Staff", icon: "👿🔮", price: 5000, type: "weapon", category: "magic", damage: 100, description: "Pulses with the Shadow Demon's energy", stats: { damage: 100, intelligence: 18, manaBoost: 20 }, unique: true, tier: 5, requirement: { type: 'boss', worldLevel: 10 } },
-            { id: "special_armor_boss20", name: "Wyrm Scale Armor", icon: "🐉🛡️", price: 6000, type: "armor", defense: 70, description: "Scales of the Ancient Wyrm", stats: { defense: 70, hpBoost: 50 }, unique: true, tier: 4, requirement: { type: 'boss', worldLevel: 20 } },
-            { id: "special_amulet_boss30", name: "Titan's Essence", icon: "⬛📿", price: 7000, type: "amulet", description: "Fragment of the Void Titan's power", stats: { damageBoost: 12, defenseBoost: 8, hpBoost: 60 }, unique: true, requirement: { type: 'boss', worldLevel: 30 } },
-            { id: "special_sword_boss50", name: "Eldritch Blade", icon: "👾⚔️", price: 9000, type: "weapon", category: "melee", damage: 160, description: "Reality bends around this blade", stats: { damage: 160, healBoost: 20 }, unique: true, tier: 5, requirement: { type: 'boss', worldLevel: 50 } },
-            { id: "special_bow_boss75", name: "Celestial Longbow", icon: "⭐🏹", price: 11000, type: "weapon", category: "ranged", damage: 190, description: "Blessed by the Celestial Overlord", stats: { damage: 190, manaBoost: 40 }, unique: true, tier: 5, requirement: { type: 'boss', worldLevel: 75 } },
-            { id: "special_armor_boss100", name: "Absolute Plate", icon: "♾️🛡️", price: 15000, type: "armor", defense: 120, description: "Armor of The Absolute itself", stats: { defense: 120, hpBoost: 100, healBoost: 25 }, unique: true, tier: 5, requirement: { type: 'boss', worldLevel: 100 } }
-        ];
-        return meleeWeapons.concat(rangedWeapons).concat(magicWeapons).concat(armors).concat(consumables).concat(specialItems);
+    loadFromLocalStorage(){
+        var saved=localStorage.getItem('rpgGameState');
+        if(saved){var data=JSON.parse(saved);if(data.player){
+            this.player.level=data.player.level||this.defaultPlayer.level;this.player.exp=data.player.exp||0;this.player.expToNextLevel=data.player.expToNextLevel||this.defaultPlayer.expToNextLevel;
+            this.player.health=data.player.health||this.defaultPlayer.health;this.player.maxHealth=data.player.maxHealth||this.defaultPlayer.maxHealth;
+            this.player.mana=data.player.mana||this.defaultPlayer.mana;this.player.maxMana=data.player.maxMana||this.defaultPlayer.maxMana;
+            this.player.gold=data.player.gold||this.defaultPlayer.gold;this.player.strength=data.player.strength||this.defaultPlayer.strength;
+            this.player.intelligence=data.player.intelligence||this.defaultPlayer.intelligence;this.player.defense=data.player.defense||this.defaultPlayer.defense;
+            this.player.speed=data.player.speed||this.defaultPlayer.speed;this.player.inventory=data.player.inventory||[];
+            this.player.equippedWeapon=data.player.equippedWeapon||null;this.player.equippedArmor=data.player.equippedArmor||null;this.player.equippedAmulet=data.player.equippedAmulet||null;
+            this.player.bossDefeats=data.player.bossDefeats||{};this.player.totalKills=data.player.totalKills||0;this.player.materials=data.player.materials||{};
+            this.player.name=data.player.name||this.defaultPlayer.name;this.player.skillPoints=data.player.skillPoints||0;this.player.skills=data.player.skills||{};
+            this.player.achievements=data.player.achievements||{};this.player.titles=data.player.titles||[];this.player.activeTitle=data.player.activeTitle||'';
+            this.player.activePet=data.player.activePet||null;this.player.pets=data.player.pets||[];this.player.prestigeLevel=data.player.prestigeLevel||0;
+            this.player.gambleStreak=data.player.gambleStreak||0;this.player.jackpotPool=data.player.jackpotPool||0;
+            this.player.gambleCount=data.player.gambleCount||0;this.player.fishCount=data.player.fishCount||0;this.player.mineCount=data.player.mineCount||0;
+            this.player.prestigeSkills=data.player.prestigeSkills||{};this.player.prestigePoints=data.player.prestigePoints||0;
+            if(this.player.prestigeLevel>0){var pm=1+(this.player.prestigeLevel*0.05);this.player.strength=Math.floor(10*pm);this.player.intelligence=Math.floor(10*pm);this.player.defense=Math.floor(5*pm);this.player.maxHealth=Math.floor(203*pm);this.player.maxMana=Math.floor(125*pm);this.player.health=Math.min(this.player.health,this.player.maxHealth);this.player.mana=Math.min(this.player.mana,this.player.maxMana);}
+            while(this.player.exp>=this.player.expToNextLevel){this.player.level++;this.player.exp-=this.player.expToNextLevel;this.player.expToNextLevel=Math.floor(this.player.expToNextLevel*1.1);this.player.strength+=1;this.player.intelligence+=1;this.player.defense+=1;this.player.skillPoints++;}
+        }}
     }
 
-    buildAmuletShopInventory() {
-        return [
-            { id: "shop_amulet_1a", name: "Amulet of Vitality", icon: "❤️", price: 200, type: "amulet", description: "+30 Max HP", stats: { hpBoost: 30 }, unique: true },
-            { id: "shop_amulet_1b", name: "Amulet of Greed", icon: "🪙", price: 250, type: "amulet", description: "+20% Gold", stats: { goldBoost: 20 }, unique: true },
-            { id: "shop_amulet_5a", name: "Amulet of the Mage", icon: "💎", price: 500, type: "amulet", description: "+30 Max Mana", stats: { manaBoost: 30 }, unique: true },
-            { id: "shop_amulet_5b", name: "Warrior's Pendant", icon: "⚡", price: 450, type: "amulet", description: "+3 Dmg, +3 Def", stats: { damageBoost: 3, defenseBoost: 3 }, unique: true },
-            { id: "shop_amulet_10a", name: "Amulet of Regeneration", icon: "💚", price: 800, type: "amulet", description: "+20% Healing", stats: { healBoost: 20 }, unique: true },
-            { id: "shop_amulet_10b", name: "Balanced Pendant", icon: "☯️", price: 900, type: "amulet", description: "+15 HP, +15 Mana, +8% Gold", stats: { hpBoost: 15, manaBoost: 15, goldBoost: 8 }, unique: true },
-            { id: "shop_amulet_20a", name: "Dragonkin Amulet", icon: "🐲", price: 1500, type: "amulet", description: "+8 Damage", stats: { damageBoost: 8 }, unique: true },
-            { id: "shop_amulet_20b", name: "Guardian's Shield", icon: "🛡️", price: 1400, type: "amulet", description: "+8 Defense", stats: { defenseBoost: 8 }, unique: true },
-            { id: "shop_amulet_30a", name: "Soul Amulet", icon: "💀", price: 2200, type: "amulet", description: "+5 Dmg, +15% Heal", stats: { damageBoost: 5, healBoost: 15 }, unique: true },
-            { id: "shop_amulet_30b", name: "Midas Touch", icon: "👑", price: 2000, type: "amulet", description: "+35% Gold", stats: { goldBoost: 35 }, unique: true },
-            { id: "shop_amulet_50a", name: "Eldritch Pendant", icon: "👁️", price: 3500, type: "amulet", description: "+6 Dmg, +40 HP, +30 Mana", stats: { damageBoost: 6, hpBoost: 40, manaBoost: 30 }, unique: true },
-            { id: "shop_amulet_50b", name: "Healer's Grace", icon: "💖", price: 3200, type: "amulet", description: "+35% Healing", stats: { healBoost: 35 }, unique: true },
-            { id: "shop_amulet_75a", name: "Celestial Charm", icon: "⭐", price: 5000, type: "amulet", description: "+7 Dmg, +7 Def, +50 HP, +40 Mana", stats: { damageBoost: 7, defenseBoost: 7, hpBoost: 50, manaBoost: 40 }, unique: true },
-            { id: "shop_amulet_75b", name: "Fortune's Favor", icon: "🍀", price: 4800, type: "amulet", description: "+50% Gold, +25 Mana", stats: { goldBoost: 50, manaBoost: 25 }, unique: true },
-            { id: "shop_amulet_100a", name: "Infinity Pendant", icon: "♾️", price: 8000, type: "amulet", description: "+12 Dmg, +8 Def, +80 HP, +60 Mana", stats: { damageBoost: 12, defenseBoost: 8, hpBoost: 80, manaBoost: 60 }, unique: true },
-            { id: "shop_amulet_100b", name: "Transcendent Soul", icon: "🌟", price: 7500, type: "amulet", description: "+60% Gold, +40% Heal", stats: { goldBoost: 60, healBoost: 40 }, unique: true }
-        ];
-    }
-
-    getDiscountedPrice(originalPrice) { var hagglerRank = this.getSkillRank('haggler'); if (hagglerRank <= 0) return originalPrice; return Math.floor(originalPrice * (1 - hagglerRank * 0.03)); }
-    isSpecialItemUnlocked(item) { if (!item.requirement) return true; if (item.requirement.type === 'kills') return this.player.totalKills >= item.requirement.amount; if (item.requirement.type === 'boss') return this.player.bossDefeats && this.player.bossDefeats[item.requirement.worldLevel]; return false; }
-    addMaterial(item) { if (!item.material) return; if (!this.player.materials[item.id]) this.player.materials[item.id] = 0; this.player.materials[item.id]++; }
-
-loadFromLocalStorage() {
-    var saved = localStorage.getItem('rpgGameState');
-    if (saved) {
-        var data = JSON.parse(saved);
-        if (data.player) {
-            this.player.level = data.player.level || this.defaultPlayer.level;
-            this.player.exp = data.player.exp || 0;
-            this.player.expToNextLevel = data.player.expToNextLevel || this.defaultPlayer.expToNextLevel;
-            this.player.health = data.player.health || this.defaultPlayer.health;
-            this.player.maxHealth = data.player.maxHealth || this.defaultPlayer.maxHealth;
-            this.player.mana = data.player.mana || this.defaultPlayer.mana;
-            this.player.maxMana = data.player.maxMana || this.defaultPlayer.maxMana;
-            this.player.gold = data.player.gold || this.defaultPlayer.gold;
-            this.player.strength = data.player.strength || this.defaultPlayer.strength;
-            this.player.intelligence = data.player.intelligence || this.defaultPlayer.intelligence;
-            this.player.defense = data.player.defense || this.defaultPlayer.defense;
-            this.player.speed = data.player.speed || this.defaultPlayer.speed;
-            this.player.inventory = data.player.inventory || [];
-            this.player.equippedWeapon = data.player.equippedWeapon || null;
-            this.player.equippedArmor = data.player.equippedArmor || null;
-            this.player.equippedAmulet = data.player.equippedAmulet || null;
-            this.player.bossDefeats = data.player.bossDefeats || {};
-            this.player.totalKills = data.player.totalKills || 0;
-            this.player.materials = data.player.materials || {};
-            this.player.name = data.player.name || this.defaultPlayer.name;
-            this.player.skillPoints = data.player.skillPoints || 0;
-            this.player.skills = data.player.skills || {};
-            this.player.achievements = data.player.achievements || {};
-            this.player.titles = data.player.titles || [];
-            this.player.activeTitle = data.player.activeTitle || '';
-            this.player.activePet = data.player.activePet || null;
-            this.player.pets = data.player.pets || [];
-            this.player.prestigeLevel = data.player.prestigeLevel || 0;
-            this.player.gambleStreak = data.player.gambleStreak || 0;
-            this.player.jackpotPool = data.player.jackpotPool || 0;
-            this.player.gambleCount = data.player.gambleCount || 0;
-            this.player.fishCount = data.player.fishCount || 0;
-            this.player.mineCount = data.player.mineCount || 0;
-
-            // Apply prestige bonus to base stats if needed
-            if (this.player.prestigeLevel > 0) {
-                var pm = 1 + (this.player.prestigeLevel * 0.05);
-                this.player.strength = Math.floor(10 * pm);
-                this.player.intelligence = Math.floor(10 * pm);
-                this.player.defense = Math.floor(5 * pm);
-                this.player.maxHealth = Math.floor(203 * pm);
-                this.player.maxMana = Math.floor(125 * pm);
-                this.player.health = Math.min(this.player.health, this.player.maxHealth);
-                this.player.mana = Math.min(this.player.mana, this.player.maxMana);
-            }
-
-            while (this.player.exp >= this.player.expToNextLevel) {
-                this.player.level++; this.player.exp -= this.player.expToNextLevel;
-                this.player.expToNextLevel = Math.floor(this.player.expToNextLevel * 1.1);
-                this.player.strength += 1; this.player.intelligence += 1; this.player.defense += 1; this.player.skillPoints++;
-            }
-        }
-    }
-}
-    saveToLocalStorage() { localStorage.setItem('rpgGameState', JSON.stringify({ player: this.player })); }
-
-    resetGame() {
-        localStorage.removeItem('rpgGameState');
-        this.player = JSON.parse(JSON.stringify(this.defaultPlayer));
-        this.player.inventory = []; this.player.bossDefeats = {}; this.player.totalKills = 0; this.player.materials = {};
-        this.player.skills = {}; this.player.skillPoints = 0; this.player.achievements = {}; this.player.titles = [];
-        this.player.activeTitle = ''; this.player.activePet = null; this.player.pets = []; this.player.prestigeLevel = 0;
-        this.player.gambleStreak = 0; this.player.jackpotPool = 0; this.player.gambleCount = 0; this.player.fishCount = 0; this.player.mineCount = 0;
-        this.shops = this.buildShopInventory(); this.specialShop = this.buildAmuletShopInventory();
-        this.recalculateStats();
-    }
-
-    buyItem(itemId, isSpecial) { isSpecial = isSpecial || false; var shopList = isSpecial ? this.specialShop : this.shops; var item = null; for (var i = 0; i < shopList.length; i++) { if (shopList[i].id === itemId) { item = shopList[i]; break; } } if (!item) return { success: false, message: 'Item not found!' }; var price = this.getDiscountedPrice(item.price); if (this.player.gold < price) return { success: false, message: 'Not enough gold! Need ' + price + 'g.' }; if (item.requirement && !this.isSpecialItemUnlocked(item)) return { success: false, message: 'Requirements not met!' }; if (item.unique) { for (var j = 0; j < this.player.inventory.length; j++) { if (this.player.inventory[j].id === itemId) return { success: false, message: 'Already owned!' }; } } this.player.gold -= price; this.addToInventory(item); if (item.unique) { if (isSpecial) { this.specialShop = this.specialShop.filter(function(i) { return i.id !== itemId; }); } else { this.shops = this.shops.filter(function(i) { return i.id !== itemId; }); } } this.saveToLocalStorage(); return { success: true, message: item.name + ' purchased for ' + price + 'g!' }; }
-    addToInventory(item) { for (var i = 0; i < this.player.inventory.length; i++) { if (this.player.inventory[i].id === item.id) { if (!item.unique) { this.player.inventory[i].quantity = (this.player.inventory[i].quantity || 1) + 1; } return; } } this.player.inventory.push({ id: item.id, name: item.name, icon: item.icon, price: item.price, type: item.type, category: item.category, damage: item.damage, defense: item.defense, description: item.description, stats: item.stats ? JSON.parse(JSON.stringify(item.stats)) : null, rarity: item.rarity, unique: item.unique, tier: item.tier, quantity: 1 }); }
-    addDropToInventory(item) { for (var i = 0; i < this.player.inventory.length; i++) { if (this.player.inventory[i].id === item.id) { this.player.inventory[i].quantity = (this.player.inventory[i].quantity || 1) + 1; return; } } this.player.inventory.push({ id: item.id, name: item.name, icon: item.icon, price: item.price || 1, type: 'loot', rarity: item.rarity, description: item.description || '', quantity: 1 }); }
-    addKill() { this.player.totalKills++; this.saveToLocalStorage(); }
-
-    gainExp(amount) { var quickLearnerRank = this.getSkillRank('quick_learner'); var expBonus = quickLearnerRank * 0.04; var totalExp = Math.floor(amount * (1 + expBonus)); this.player.exp += totalExp; while (this.player.exp >= this.player.expToNextLevel) { this.player.level++; this.player.exp -= this.player.expToNextLevel; this.player.expToNextLevel = Math.floor(this.player.expToNextLevel * 1.1); this.player.strength += 1; this.player.intelligence += 1; this.player.defense += 1; this.player.skillPoints++; } this.recalculateStats(); this.player.health = this.player.maxHealth; this.player.mana = this.player.maxMana; this.saveToLocalStorage(); }
-    gainGold(amount) { var t = this.getTotalStats(); var treasureRank = this.getSkillRank('treasure_hunter'); var bossBonus = treasureRank * 0.30; var totalBonus = (t.goldBoost / 100) + bossBonus; var b = Math.floor(amount * totalBonus); this.player.gold += amount + b; this.saveToLocalStorage(); return b; }
+    saveToLocalStorage(){localStorage.setItem('rpgGameState',JSON.stringify({player:this.player}));}
+    resetGame(){localStorage.removeItem('rpgGameState');this.player=JSON.parse(JSON.stringify(this.defaultPlayer));this.player.inventory=[];this.player.bossDefeats={};this.player.totalKills=0;this.player.materials={};this.player.skills={};this.player.skillPoints=0;this.player.achievements={};this.player.titles=[];this.player.activeTitle='';this.player.activePet=null;this.player.pets=[];this.player.prestigeLevel=0;this.player.gambleStreak=0;this.player.jackpotPool=0;this.player.gambleCount=0;this.player.fishCount=0;this.player.mineCount=0;this.player.prestigeSkills={};this.player.prestigePoints=0;this.shops=this.buildShopInventory();this.specialShop=this.buildAmuletShopInventory();this.recalculateStats();}
+    buyItem(itemId,isSpecial){isSpecial=isSpecial||false;var shopList=isSpecial?this.specialShop:this.shops,item=null;for(var i=0;i<shopList.length;i++){if(shopList[i].id===itemId){item=shopList[i];break;}}if(!item)return{success:false,message:'Item not found!'};var price=this.getDiscountedPrice(item.price);if(this.player.gold<price)return{success:false,message:'Not enough gold! Need '+price+'g.'};if(item.requirement&&!this.isSpecialItemUnlocked(item))return{success:false,message:'Requirements not met!'};if(item.unique){for(var j=0;j<this.player.inventory.length;j++){if(this.player.inventory[j].id===itemId)return{success:false,message:'Already owned!'};}}this.player.gold-=price;this.addToInventory(item);if(item.unique){if(isSpecial)this.specialShop=this.specialShop.filter(function(i){return i.id!==itemId;});else this.shops=this.shops.filter(function(i){return i.id!==itemId;});}this.saveToLocalStorage();return{success:true,message:item.name+' purchased for '+price+'g!'};}
+    addToInventory(item){for(var i=0;i<this.player.inventory.length;i++){if(this.player.inventory[i].id===item.id){if(!item.unique){this.player.inventory[i].quantity=(this.player.inventory[i].quantity||1)+1;}return;}}this.player.inventory.push({id:item.id,name:item.name,icon:item.icon,price:item.price,type:item.type,category:item.category,damage:item.damage,defense:item.defense,description:item.description,stats:item.stats?JSON.parse(JSON.stringify(item.stats)):null,rarity:item.rarity,unique:item.unique,tier:item.tier,quantity:1});}
+    addDropToInventory(item){for(var i=0;i<this.player.inventory.length;i++){if(this.player.inventory[i].id===item.id){this.player.inventory[i].quantity=(this.player.inventory[i].quantity||1)+1;return;}}this.player.inventory.push({id:item.id,name:item.name,icon:item.icon,price:item.price||1,type:'loot',rarity:item.rarity,description:item.description||'',quantity:1});}
+    addKill(){this.player.totalKills++;this.saveToLocalStorage();}
+    gainExp(amount){var qlr=this.getSkillRank('quick_learner'),eb=qlr*0.04,te=Math.floor(amount*(1+eb));this.player.exp+=te;while(this.player.exp>=this.player.expToNextLevel){this.player.level++;this.player.exp-=this.player.expToNextLevel;this.player.expToNextLevel=Math.floor(this.player.expToNextLevel*1.1);this.player.strength+=1;this.player.intelligence+=1;this.player.defense+=1;this.player.skillPoints++;}this.recalculateStats();this.player.health=this.player.maxHealth;this.player.mana=this.player.maxMana;this.saveToLocalStorage();}
+    gainGold(amount){var t=this.getTotalStats(),tr=this.getSkillRank('treasure_hunter'),bb=tr*0.30,tb=(t.goldBoost/100)+bb,b=Math.floor(amount*tb);this.player.gold+=amount+b;this.saveToLocalStorage();return b;}
 }
 
 var gameState = new GameState();

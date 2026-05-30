@@ -8,24 +8,33 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: #fff; font-family: 'Arial', sans-serif; min-height: 100vh; padding: 20px; }
         .container { max-width: 1100px; margin: 0 auto; }
-        .header { text-align: center; margin-bottom: 25px; }
+        .header { text-align: center; margin-bottom: 20px; }
         .header h1 { font-size: 38px; color: #ff6b6b; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
         .header p { color: #aaa; margin-top: 8px; font-size: 14px; }
         .back-btn { padding: 10px 20px; background: #ff6b6b; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; margin-bottom: 15px; font-size: 14px; }
         .back-btn:hover { transform: translateY(-2px); }
-        .top-bar { display: flex; justify-content: space-between; align-items: center; background: #2a2a3e; border-radius: 10px; padding: 15px 25px; margin-bottom: 20px; border: 2px solid #ff6b6b; }
-        .top-bar .points { font-size: 22px; font-weight: bold; color: #ffd93d; }
+        .tab-bar { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+        .tab-btn { padding: 10px 18px; border: none; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; transition: all 0.3s ease; color: #fff; }
+        .tab-btn.active { transform: translateY(-3px); box-shadow: 0 5px 20px rgba(0,0,0,0.3); }
+        .tab-warrior { background: #ff6b6b; } .tab-warrior.active { background: #ff4444; }
+        .tab-mage { background: #a366ff; } .tab-mage.active { background: #8b5cf6; }
+        .tab-utility { background: #f59e0b; } .tab-utility.active { background: #fbbf24; color: #1a1a2e; }
+        .tab-prestige { background: #ffd93d; color: #1a1a2e; } .tab-prestige.active { background: #fbbf24; }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; background: #2a2a3e; border-radius: 10px; padding: 15px 25px; margin-bottom: 20px; border: 2px solid #ff6b6b; flex-wrap: wrap; gap: 10px; }
+        .top-bar .points { font-size: 20px; font-weight: bold; color: #ffd93d; }
+        .top-bar .prestige-points { font-size: 20px; font-weight: bold; color: #ffd93d; }
         .top-bar .respec-btn { padding: 10px 20px; background: #e74c3c; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px; }
         .top-bar .respec-btn:hover { background: #c0392b; }
-        .branches { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
         .branch { background: #2a2a3e; border: 3px solid #4ecdc4; border-radius: 15px; padding: 20px; }
         .branch.warrior { border-color: #ff6b6b; }
         .branch.mage { border-color: #a366ff; }
         .branch.utility { border-color: #ffd93d; }
+        .branch.prestige { border-color: #ffd93d; background: #2a2a2e; }
         .branch h2 { text-align: center; font-size: 24px; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #444; }
         .branch.warrior h2 { color: #ff6b6b; }
         .branch.mage h2 { color: #a366ff; }
         .branch.utility h2 { color: #ffd93d; }
+        .branch.prestige h2 { color: #ffd93d; }
         .tier-label { font-size: 13px; color: #888; margin: 12px 0 6px 0; padding-left: 5px; border-left: 3px solid #555; }
         .skill-card { background: #1a1a2e; border: 2px solid #333; border-radius: 8px; padding: 12px; margin-bottom: 8px; cursor: pointer; transition: all 0.2s ease; position: relative; }
         .skill-card:hover { border-color: #4ecdc4; transform: translateY(-2px); }
@@ -38,8 +47,10 @@
         .skill-card.warrior-card { border-left: 3px solid #ff6b6b; }
         .skill-card.mage-card { border-left: 3px solid #a366ff; }
         .skill-card.utility-card { border-left: 3px solid #ffd93d; }
+        .skill-card.prestige-card { border-left: 3px solid #ffd93d; }
+        .prestige-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
         .respec-info { text-align: center; margin-top: 20px; color: #aaa; font-size: 12px; }
-        @media (max-width: 900px) { .branches { grid-template-columns: 1fr; } }
+        @media (max-width: 900px) { .prestige-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
@@ -49,66 +60,83 @@
         <h1>🌟 Skill Tree</h1>
         <p>Spend skill points to unlock powerful abilities. Choose wisely!</p>
     </div>
+
+    <div class="tab-bar">
+        <button class="tab-btn tab-warrior active" id="tab-warrior" onclick="switchTab('warrior')">⚔️ Warrior</button>
+        <button class="tab-btn tab-mage" id="tab-mage" onclick="switchTab('mage')">🔮 Mage</button>
+        <button class="tab-btn tab-utility" id="tab-utility" onclick="switchTab('utility')">💎 Utility</button>
+        <button class="tab-btn tab-prestige" id="tab-prestige" onclick="switchTab('prestige')">👑 Prestige</button>
+    </div>
+
     <div class="top-bar">
-        <span class="points">⭐ Available Points: <span id="skill-points-display">0</span></span>
+        <span class="points">⭐ Skill Points: <span id="skill-points-display">0</span></span>
+        <span class="prestige-points">👑 Prestige Points: <span id="prestige-points-display">0</span></span>
         <button class="respec-btn" id="respec-btn" onclick="respecSkills()">🔄 Respec All (<span id="respec-cost">0</span>g)</button>
     </div>
-    <div class="branches">
-        <!-- Warrior Branch -->
-        <div class="branch warrior">
-            <h2>⚔️ Warrior</h2>
-            <div class="tier-label">Tier 1</div>
-            <div id="skill-brute_force" class="skill-card warrior-card"></div>
-            <div id="skill-toughness" class="skill-card warrior-card"></div>
-            <div class="tier-label">Tier 2</div>
-            <div id="skill-critical_strike" class="skill-card warrior-card"></div>
-            <div id="skill-lifesteal" class="skill-card warrior-card"></div>
-            <div class="tier-label">Tier 3</div>
-            <div id="skill-thorns" class="skill-card warrior-card"></div>
-            <div id="skill-execute" class="skill-card warrior-card"></div>
-            <div class="tier-label">Tier 4</div>
-            <div id="skill-berserker_rage" class="skill-card warrior-card"></div>
-            <div id="skill-whirlwind" class="skill-card warrior-card"></div>
-        </div>
-        <!-- Mage Branch -->
-        <div class="branch mage">
-            <h2>🔮 Mage</h2>
-            <div class="tier-label">Tier 1</div>
-            <div id="skill-arcane_power" class="skill-card mage-card"></div>
-            <div id="skill-mana_pool" class="skill-card mage-card"></div>
-            <div class="tier-label">Tier 2</div>
-            <div id="skill-mana_shield" class="skill-card mage-card"></div>
-            <div id="skill-fire_mastery" class="skill-card mage-card"></div>
-            <div class="tier-label">Tier 3</div>
-            <div id="skill-poison_expert" class="skill-card mage-card"></div>
-            <div id="skill-stun_duration" class="skill-card mage-card"></div>
-            <div class="tier-label">Tier 4</div>
-            <div id="skill-meteor" class="skill-card mage-card"></div>
-            <div id="skill-mana_regeneration" class="skill-card mage-card"></div>
-        </div>
-        <!-- Utility Branch -->
-        <div class="branch utility">
-            <h2>💎 Utility</h2>
-            <div class="tier-label">Tier 1</div>
-            <div id="skill-gold_rush" class="skill-card utility-card"></div>
-            <div id="skill-scavenger" class="skill-card utility-card"></div>
-            <div class="tier-label">Tier 2</div>
-            <div id="skill-haggler" class="skill-card utility-card"></div>
-            <div id="skill-second_wind" class="skill-card utility-card"></div>
-            <div class="tier-label">Tier 3</div>
-            <div id="skill-lucky_gambler" class="skill-card utility-card"></div>
-            <div id="skill-quick_learner" class="skill-card utility-card"></div>
-            <div class="tier-label">Tier 4</div>
-            <div id="skill-treasure_hunter" class="skill-card utility-card"></div>
-            <div id="skill-resilience" class="skill-card utility-card"></div>
-        </div>
+
+    <!-- Warrior Branch -->
+    <div class="branch warrior" id="warrior-branch">
+        <h2>⚔️ Warrior</h2>
+        <div class="tier-label">Tier 1</div>
+        <div id="skill-brute_force" class="skill-card warrior-card"></div>
+        <div id="skill-toughness" class="skill-card warrior-card"></div>
+        <div class="tier-label">Tier 2</div>
+        <div id="skill-critical_strike" class="skill-card warrior-card"></div>
+        <div id="skill-lifesteal" class="skill-card warrior-card"></div>
+        <div class="tier-label">Tier 3</div>
+        <div id="skill-thorns" class="skill-card warrior-card"></div>
+        <div id="skill-execute" class="skill-card warrior-card"></div>
+        <div class="tier-label">Tier 4</div>
+        <div id="skill-berserker_rage" class="skill-card warrior-card"></div>
+        <div id="skill-whirlwind" class="skill-card warrior-card"></div>
     </div>
-    <div class="respec-info">Respec cost = Level × 50 gold. All skill points are refunded.</div>
+
+    <!-- Mage Branch -->
+    <div class="branch mage" id="mage-branch" style="display:none;">
+        <h2>🔮 Mage</h2>
+        <div class="tier-label">Tier 1</div>
+        <div id="skill-arcane_power" class="skill-card mage-card"></div>
+        <div id="skill-mana_pool" class="skill-card mage-card"></div>
+        <div class="tier-label">Tier 2</div>
+        <div id="skill-mana_shield" class="skill-card mage-card"></div>
+        <div id="skill-fire_mastery" class="skill-card mage-card"></div>
+        <div class="tier-label">Tier 3</div>
+        <div id="skill-poison_expert" class="skill-card mage-card"></div>
+        <div id="skill-stun_duration" class="skill-card mage-card"></div>
+        <div class="tier-label">Tier 4</div>
+        <div id="skill-meteor" class="skill-card mage-card"></div>
+        <div id="skill-mana_regeneration" class="skill-card mage-card"></div>
+    </div>
+
+    <!-- Utility Branch -->
+    <div class="branch utility" id="utility-branch" style="display:none;">
+        <h2>💎 Utility</h2>
+        <div class="tier-label">Tier 1</div>
+        <div id="skill-gold_rush" class="skill-card utility-card"></div>
+        <div id="skill-scavenger" class="skill-card utility-card"></div>
+        <div class="tier-label">Tier 2</div>
+        <div id="skill-haggler" class="skill-card utility-card"></div>
+        <div id="skill-second_wind" class="skill-card utility-card"></div>
+        <div class="tier-label">Tier 3</div>
+        <div id="skill-lucky_gambler" class="skill-card utility-card"></div>
+        <div id="skill-quick_learner" class="skill-card utility-card"></div>
+        <div class="tier-label">Tier 4</div>
+        <div id="skill-treasure_hunter" class="skill-card utility-card"></div>
+        <div id="skill-resilience" class="skill-card utility-card"></div>
+    </div>
+
+    <!-- Prestige Branch -->
+    <div class="branch prestige" id="prestige-branch" style="display:none;">
+        <h2>👑 Prestige Skills</h2>
+        <p style="text-align:center;color:#aaa;font-size:12px;margin-bottom:15px;">Prestige points are earned from prestiging. These skills persist through prestige resets.</p>
+        <div class="prestige-grid" id="prestige-skills-container"></div>
+    </div>
+
+    <div class="respec-info">Respec cost = Level × 50 gold. All regular skill points are refunded. Prestige skills are NOT reset.</div>
 </div>
 
 <script src="gamestate.js"></script>
 <script>
-    // Skill definitions
     var skillData = {
         brute_force:       { name: 'Brute Force', desc: '+2% damage per rank', ranks: 25, cost: 1, tier: 1, branch: 'warrior' },
         toughness:         { name: 'Toughness', desc: '+1% max HP per rank', ranks: 25, cost: 1, tier: 1, branch: 'warrior' },
@@ -136,6 +164,22 @@
         resilience:        { name: 'Resilience', desc: 'Auto-revive with 20% HP per rank', ranks: 5, cost: 5, tier: 4, branch: 'utility' }
     };
 
+    var currentTab = 'warrior';
+
+    function switchTab(tab) {
+        currentTab = tab;
+        document.getElementById('warrior-branch').style.display = tab === 'warrior' ? 'block' : 'none';
+        document.getElementById('mage-branch').style.display = tab === 'mage' ? 'block' : 'none';
+        document.getElementById('utility-branch').style.display = tab === 'utility' ? 'block' : 'none';
+        document.getElementById('prestige-branch').style.display = tab === 'prestige' ? 'block' : 'none';
+        document.getElementById('tab-warrior').classList.toggle('active', tab === 'warrior');
+        document.getElementById('tab-mage').classList.toggle('active', tab === 'mage');
+        document.getElementById('tab-utility').classList.toggle('active', tab === 'utility');
+        document.getElementById('tab-prestige').classList.toggle('active', tab === 'prestige');
+        if (tab === 'prestige') renderPrestigeSkills();
+        updateTopBar();
+    }
+
     function getSkillRank(skillId) {
         if (!gameState.player.skills) return 0;
         return gameState.player.skills[skillId] || 0;
@@ -149,7 +193,6 @@
         var data = skillData[skillId];
         if (!data) return false;
         if (data.tier === 1) return true;
-        // Check if any skill in the previous tier of the same branch has at least 1 rank
         for (var id in skillData) {
             if (skillData[id].branch === data.branch && skillData[id].tier === data.tier - 1) {
                 if (getSkillRank(id) > 0) return true;
@@ -158,23 +201,17 @@
         return false;
     }
 
-    function canAffordSkill(skillId) {
-        var data = skillData[skillId];
-        if (!data) return false;
-        return getSkillPoints() >= data.cost && getSkillRank(skillId) < data.ranks;
-    }
-
     function buySkill(skillId) {
         var data = skillData[skillId];
         if (!data) return;
         if (!isSkillUnlocked(skillId)) { alert('Unlock a Tier ' + (data.tier - 1) + ' skill in this branch first!'); return; }
         if (getSkillRank(skillId) >= data.ranks) { alert('Already max rank!'); return; }
         if (getSkillPoints() < data.cost) { alert('Not enough skill points!'); return; }
-
         gameState.player.skillPoints -= data.cost;
         if (!gameState.player.skills) gameState.player.skills = {};
         if (!gameState.player.skills[skillId]) gameState.player.skills[skillId] = 0;
         gameState.player.skills[skillId]++;
+        gameState.recalculateStats();
         gameState.saveToLocalStorage();
         renderAllSkills();
         updateTopBar();
@@ -182,66 +219,88 @@
 
     function respecSkills() {
         var cost = gameState.player.level * 50;
-        if (gameState.player.gold < cost) { alert('Need ' + cost + ' gold to respec! You have ' + gameState.player.gold + 'g.'); return; }
-        if (!confirm('Respec all skills for ' + cost + ' gold?\n\nAll skill points will be refunded. This cannot be undone.')) return;
-
+        if (gameState.player.gold < cost) { alert('Need ' + cost + ' gold! You have ' + gameState.player.gold + 'g.'); return; }
+        if (!confirm('Respec all regular skills for ' + cost + ' gold?\n\nPrestige skills will NOT be reset.')) return;
         gameState.player.gold -= cost;
         var totalRefund = 0;
         if (gameState.player.skills) {
             for (var id in gameState.player.skills) {
-                if (skillData[id]) {
-                    totalRefund += gameState.player.skills[id] * skillData[id].cost;
-                }
+                if (skillData[id]) totalRefund += gameState.player.skills[id] * skillData[id].cost;
             }
         }
         gameState.player.skills = {};
         gameState.player.skillPoints = (gameState.player.skillPoints || 0) + totalRefund;
+        gameState.recalculateStats();
         gameState.saveToLocalStorage();
         renderAllSkills();
         updateTopBar();
-        alert('✅ Skills reset! Refunded ' + totalRefund + ' skill points. Cost: ' + cost + 'g.');
+        alert('✅ Skills reset! Refunded ' + totalRefund + ' points. Cost: ' + cost + 'g.');
     }
 
     function renderAllSkills() {
-        for (var id in skillData) {
-            renderSkillCard(id);
-        }
+        for (var id in skillData) renderSkillCard(id);
     }
 
     function renderSkillCard(skillId) {
         var data = skillData[skillId];
         var card = document.getElementById('skill-' + skillId);
         if (!card) return;
-
         var rank = getSkillRank(skillId);
         var unlocked = isSkillUnlocked(skillId);
         var maxed = rank >= data.ranks;
-
         card.className = 'skill-card';
         if (data.branch === 'warrior') card.className += ' warrior-card';
         else if (data.branch === 'mage') card.className += ' mage-card';
         else card.className += ' utility-card';
-
         if (maxed) card.className += ' maxed';
         if (!unlocked) card.className += ' locked';
-
-        card.innerHTML =
-            '<div class="skill-name">' + data.name + '</div>' +
-            '<div class="skill-desc">' + data.desc + '</div>' +
-            '<div class="skill-rank">Rank: ' + rank + '/' + data.ranks + '</div>' +
-            '<div class="skill-cost">' + data.cost + 'pt</div>';
-
+        card.innerHTML = '<div class="skill-name">' + data.name + '</div><div class="skill-desc">' + data.desc + '</div><div class="skill-rank">Rank: ' + rank + '/' + data.ranks + '</div><div class="skill-cost">' + data.cost + 'pt</div>';
         card.onclick = function() { buySkill(skillId); };
+    }
+
+    // Prestige Skills
+    function renderPrestigeSkills() {
+        var container = document.getElementById('prestige-skills-container');
+        container.innerHTML = '';
+        var pData = gameState.prestigeSkillData || {};
+        for (var id in pData) {
+            var data = pData[id];
+            var rank = (gameState.player.prestigeSkills && gameState.player.prestigeSkills[id]) ? gameState.player.prestigeSkills[id] : 0;
+            var maxed = rank >= data.ranks;
+            var card = document.createElement('div');
+            card.className = 'skill-card prestige-card';
+            if (maxed) card.classList.add('maxed');
+            card.innerHTML = '<div class="skill-name">' + data.name + '</div><div class="skill-desc">' + data.desc + '</div><div class="skill-rank">Rank: ' + rank + '/' + data.ranks + '</div><div class="skill-cost">' + data.cost + 'pt</div>';
+            card.onclick = (function(skillId) { return function() { buyPrestigeSkill(skillId); }; })(id);
+            container.appendChild(card);
+        }
+    }
+
+    function buyPrestigeSkill(skillId) {
+        var data = gameState.prestigeSkillData[skillId];
+        if (!data) return;
+        var rank = (gameState.player.prestigeSkills && gameState.player.prestigeSkills[skillId]) ? gameState.player.prestigeSkills[skillId] : 0;
+        if (rank >= data.ranks) { alert('Already max rank!'); return; }
+        if ((gameState.player.prestigePoints || 0) < data.cost) { alert('Not enough prestige points! You have ' + (gameState.player.prestigePoints || 0) + '.'); return; }
+        gameState.player.prestigePoints -= data.cost;
+        if (!gameState.player.prestigeSkills) gameState.player.prestigeSkills = {};
+        gameState.player.prestigeSkills[skillId] = rank + 1;
+        gameState.recalculateStats();
+        gameState.saveToLocalStorage();
+        renderPrestigeSkills();
+        updateTopBar();
     }
 
     function updateTopBar() {
         document.getElementById('skill-points-display').textContent = getSkillPoints();
+        document.getElementById('prestige-points-display').textContent = gameState.player.prestigePoints || 0;
         document.getElementById('respec-cost').textContent = gameState.player.level * 50;
     }
 
-    // Initialize
     if (!gameState.player.skills) gameState.player.skills = {};
     if (gameState.player.skillPoints === undefined) gameState.player.skillPoints = 0;
+    if (!gameState.player.prestigeSkills) gameState.player.prestigeSkills = {};
+    if (gameState.player.prestigePoints === undefined) gameState.player.prestigePoints = 0;
 
     renderAllSkills();
     updateTopBar();
