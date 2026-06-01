@@ -13,7 +13,7 @@
         .header p { color: #aaa; margin-top: 10px; }
         .back-btn { padding: 10px 20px; background: #ff6b6b; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; margin-bottom: 20px; }
         .back-btn:hover { transform: translateY(-2px); }
-        .top-bar { display: flex; justify-content: space-between; align-items: center; background: #2a2a3e; border-radius: 10px; padding: 12px 20px; margin-bottom: 20px; border: 2px solid #ff6b6b; }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; background: #2a2a3e; border-radius: 10px; padding: 12px 20px; margin-bottom: 20px; border: 2px solid #ff6b6b; flex-wrap: wrap; gap: 10px; }
         .tab-bar { display: flex; gap: 10px; margin-bottom: 20px; }
         .tab-btn { padding: 12px 25px; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; transition: all 0.3s ease; color: #fff; }
         .tab-btn.active { transform: translateY(-3px); box-shadow: 0 5px 20px rgba(0,0,0,0.3); }
@@ -25,12 +25,6 @@
         .minigame-card h2 { font-size: 24px; margin-bottom: 10px; color: #ffd93d; }
         .minigame-card .icon { font-size: 48px; margin-bottom: 10px; }
         .minigame-card .stats { font-size: 13px; color: #aaa; margin-bottom: 15px; }
-        .option-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 15px; }
-        .option-btn { padding: 10px 18px; border: none; border-radius: 6px; font-weight: bold; font-size: 13px; cursor: pointer; transition: all 0.3s ease; color: #fff; }
-        .option-btn.active { transform: translateY(-2px); box-shadow: 0 3px 10px rgba(0,0,0,0.3); }
-        .option-btn.owned { border: 2px solid #43e97b; }
-        .bait-btn { background: #667eea; } .bait-btn.active { background: #4ecdc4; }
-        .depth-btn { background: #e74c3c; } .depth-btn.active { background: #c0392b; }
         .action-btn { padding: 14px 35px; background: linear-gradient(135deg, #4ecdc4 0%, #2ecc71 100%); color: #fff; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; transition: all 0.3s ease; margin: 5px; }
         .action-btn:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 5px 20px rgba(0,0,0,0.3); }
         .action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -45,7 +39,7 @@
         .mat-item { background: #2a2a3e; border: 1px solid #4ecdc4; border-radius: 6px; padding: 6px; text-align: center; font-size: 11px; }
         .mat-item .mat-icon { font-size: 20px; display: block; }
         .streak-badge { display: inline-block; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; }
-        @media (max-width: 600px) { .option-row { flex-direction: column; align-items: center; } }
+        @media (max-width: 600px) { .top-bar { flex-direction: column; text-align: center; } }
     </style>
 </head>
 <body>
@@ -53,11 +47,13 @@
     <button class="back-btn" onclick="window.location.href='index.html'">← Back to Menu</button>
     <div class="header">
         <h1>🎮 Minigames</h1>
-        <p>Fish, mine, and gather resources! Free to play. Sell your loot for gold.</p>
+        <p>Fish and mine for loot! 50 actions each per hour. Sell your haul for gold.</p>
     </div>
     <div class="top-bar">
         <span>💰 Gold: <strong id="gold-display" style="color:#ffd93d;">0</strong></span>
-        <span>📦 Loot in inventory: <strong id="loot-count" style="color:#4ecdc4;">0</strong></span>
+        <span>📦 Loot: <strong id="loot-count" style="color:#4ecdc4;">0</strong></span>
+        <span>🎣 Fish: <strong id="fish-remaining" style="color:#43e97b;">50</strong></span>
+        <span>⛏️ Mine: <strong id="mine-remaining" style="color:#43e97b;">50</strong></span>
     </div>
 
     <div class="tab-bar">
@@ -111,7 +107,58 @@
         document.getElementById('mine-panel').style.display = tab === 'mine' ? 'block' : 'none';
     }
 
+    function minutesSince(timestamp) {
+        return (Date.now() - timestamp) / 60000;
+    }
+
+    function checkFishReset() {
+        if (gameState.player.fishActions <= 0 && gameState.player.fishResetTime === 0) {
+            gameState.player.fishResetTime = Date.now();
+            gameState.saveToLocalStorage();
+        }
+        if (gameState.player.fishResetTime > 0 && minutesSince(gameState.player.fishResetTime) >= 60) {
+            gameState.player.fishActions = 50;
+            gameState.player.fishResetTime = 0;
+            gameState.saveToLocalStorage();
+        }
+        var el = document.getElementById('fish-remaining');
+        el.textContent = gameState.player.fishActions + ' left';
+        if (gameState.player.fishActions <= 0 && gameState.player.fishResetTime > 0) {
+            var minsLeft = 60 - Math.floor(minutesSince(gameState.player.fishResetTime));
+            el.textContent = 'Resets in ' + minsLeft + 'm';
+        }
+        el.style.color = gameState.player.fishActions <= 0 ? '#e74c3c' : gameState.player.fishActions <= 15 ? '#f39c12' : '#43e97b';
+        document.getElementById('fish-btn').disabled = gameState.player.fishActions <= 0;
+        document.getElementById('fish-speed-btn').disabled = gameState.player.fishActions < 5;
+    }
+
+    function checkMineReset() {
+        if (gameState.player.mineActions <= 0 && gameState.player.mineResetTime === 0) {
+            gameState.player.mineResetTime = Date.now();
+            gameState.saveToLocalStorage();
+        }
+        if (gameState.player.mineResetTime > 0 && minutesSince(gameState.player.mineResetTime) >= 60) {
+            gameState.player.mineActions = 50;
+            gameState.player.mineResetTime = 0;
+            gameState.saveToLocalStorage();
+        }
+        var el = document.getElementById('mine-remaining');
+        el.textContent = gameState.player.mineActions + ' left';
+        if (gameState.player.mineActions <= 0 && gameState.player.mineResetTime > 0) {
+            var minsLeft = 60 - Math.floor(minutesSince(gameState.player.mineResetTime));
+            el.textContent = 'Resets in ' + minsLeft + 'm';
+        }
+        el.style.color = gameState.player.mineActions <= 0 ? '#e74c3c' : gameState.player.mineActions <= 15 ? '#f39c12' : '#43e97b';
+        document.getElementById('mine-btn').disabled = gameState.player.mineActions <= 0;
+        document.getElementById('mine-speed-btn').disabled = gameState.player.mineActions < 5;
+    }
+
     function doFishing() {
+        checkFishReset();
+        if (gameState.player.fishActions < 1) { alert('No fishing actions left! Wait for the timer to reset.'); return; }
+        gameState.player.fishActions--;
+        gameState.saveToLocalStorage();
+        checkFishReset();
         var btn = document.getElementById('fish-btn'); btn.disabled = true; btn.textContent = '🎣 Casting...';
         setTimeout(function() {
             var result = gameState.fish();
@@ -128,6 +175,11 @@
     }
 
     function doFishingSpeed() {
+        checkFishReset();
+        if (gameState.player.fishActions < 5) { alert('Need 5 actions! Only ' + gameState.player.fishActions + ' left.'); return; }
+        gameState.player.fishActions -= 5;
+        gameState.saveToLocalStorage();
+        checkFishReset();
         var btn = document.getElementById('fish-speed-btn'); btn.disabled = true; btn.textContent = '⚡ Fishing...';
         var totalMsg = '';
         for (var i = 0; i < 5; i++) { totalMsg += gameState.fish().reward.icon + ' '; }
@@ -152,6 +204,11 @@
     }
 
     function doMining() {
+        checkMineReset();
+        if (gameState.player.mineActions < 1) { alert('No mining actions left! Wait for the timer to reset.'); return; }
+        gameState.player.mineActions--;
+        gameState.saveToLocalStorage();
+        checkMineReset();
         var btn = document.getElementById('mine-btn'); btn.disabled = true; btn.textContent = '⛏️ Mining...';
         setTimeout(function() {
             var result = gameState.mine();
@@ -164,6 +221,11 @@
     }
 
     function doMiningSpeed() {
+        checkMineReset();
+        if (gameState.player.mineActions < 5) { alert('Need 5 actions! Only ' + gameState.player.mineActions + ' left.'); return; }
+        gameState.player.mineActions -= 5;
+        gameState.saveToLocalStorage();
+        checkMineReset();
         var btn = document.getElementById('mine-speed-btn'); btn.disabled = true; btn.textContent = '⚡ Mining...';
         var totalMsg = '';
         for (var i = 0; i < 5; i++) { totalMsg += gameState.mine().reward.icon + ' '; }
@@ -190,8 +252,12 @@
     function updateDisplay() {
         document.getElementById('gold-display').textContent = gameState.player.gold;
         var lootCount = 0;
-        for (var i = 0; i < gameState.player.inventory.length; i++) { if (gameState.player.inventory[i].type === 'loot') lootCount += gameState.player.inventory[i].quantity; }
+        for (var i = 0; i < gameState.player.inventory.length; i++) {
+            if (gameState.player.inventory[i].type === 'loot') lootCount += gameState.player.inventory[i].quantity;
+        }
         document.getElementById('loot-count').textContent = lootCount;
+        checkFishReset();
+        checkMineReset();
         var container = document.getElementById('loot-display');
         var html = '';
         var lootItems = {};
@@ -212,6 +278,12 @@
         container.innerHTML = html;
     }
 
+    // Add resetTime fields to gamestate if needed
+    if (!gameState.player.fishResetTime) gameState.player.fishResetTime = 0;
+    if (!gameState.player.mineResetTime) gameState.player.mineResetTime = 0;
+
+    checkFishReset();
+    checkMineReset();
     updateDisplay();
 </script>
 </body>

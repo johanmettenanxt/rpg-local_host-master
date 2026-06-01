@@ -163,8 +163,7 @@
                     if (item.stats.heal) sd += '<span style="color:#43e97b;">❤️' + item.stats.heal + ' </span>';
                     if (item.stats.mana) sd += '<span style="color:#6ee7de;">💙' + item.stats.mana + '</span>';
                 }
-                if (item.tier) sd += ' <span style="color:' + tierColor + ';">[' + gameState.getTierName(item.tier) + ']</span>';
-
+                if (item.tier && item.type !== 'loot' && item.type !== 'pet') sd += ' <span style="color:' + tierColor + ';">[' + gameState.getTierName(item.tier) + ']</span>';
                 var rt = '';
                 if (item.requirement) {
                     if (item.requirement.type === 'kills') rt = '🔒 ' + item.requirement.amount + ' kills required';

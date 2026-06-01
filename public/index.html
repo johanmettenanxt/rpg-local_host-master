@@ -173,7 +173,7 @@
             { name: '📿 Amulets', filter: function(i) { return i.type === 'amulet' && i.id !== gameState.player.equippedAmulet; }, borderColor: '#ffd93d' },
             { name: '🐾 Pets', filter: function(i) { return i.type === 'pet' && i.id !== gameState.player.activePet; }, borderColor: '#f59e0b' },
             { name: '🧪 Consumables', filter: function(i) { return i.type === 'consumable'; }, borderColor: '#ffd93d' },
-            { name: '💎 Loot & Other', filter: function(i) { return i.type === 'loot' && i.id !== gameState.player.equippedWeapon && i.id !== gameState.player.equippedArmor && i.id !== gameState.player.equippedAmulet && i.id !== gameState.player.activePet; }, borderColor: '#aaa' }
+            { name: '💎 Loot & Other', filter: function(i) { return i.type === 'loot'; }, borderColor: '#aaa' }
         ];
 
         for (var c = 0; c < categories.length; c++) {
@@ -210,11 +210,11 @@
                     if (item.stats.fireDamage) sd += '<span style="color:#ff6b6b;">🔥+' + item.stats.fireDamage + '% </span>';
                     if (item.stats.manaRegen) sd += '<span style="color:#6ee7de;">💙+' + item.stats.manaRegen + '/turn </span>';
                     if (item.stats.critChance) sd += '<span style="color:#ffd93d;">💥+' + item.stats.critChance + '% </span>';
+                    if (item.stats.intBoost) sd += '<span style="color:#a366ff;">📚+' + item.stats.intBoost + ' </span>';
                     if (item.stats.heal) sd += '<span style="color:#43e97b;">❤️' + item.stats.heal + ' </span>';
                     if (item.stats.mana) sd += '<span style="color:#6ee7de;">💙' + item.stats.mana + '</span>';
                 }
-                if (item.tier) sd += ' <span style="color:' + tierColor + ';">[' + gameState.getTierName(item.tier) + ']</span>';
-                if (sd) h += '<div class="inventory-item-stats">' + sd + '</div>';
+                if (item.tier && item.type !== 'loot') sd += ' <span style="color:' + tierColor + ';">[' + gameState.getTierName(item.tier) + ']</span>';                if (sd) h += '<div class="inventory-item-stats">' + sd + '</div>';
                 if (inventoryMode === 'sell' && item.price) { var sp = Math.floor(item.price / 2); h += '<div class="inventory-item-price">💰 Sell: ' + sp + ' Gold</div>'; }
                 else if (inventoryMode === 'upgrade' && item.tier && item.tier < 5) { var cost = gameState.getUpgradeCost(item.tier); h += '<div class="inventory-item-price">⬆️ ' + cost.gold + 'g + ' + cost.amount + 'x T' + cost.materialTier + ' mats</div>'; }
                 card.innerHTML = h;
@@ -224,7 +224,6 @@
             section.appendChild(grid); container.appendChild(section);
         }
     }
-
     function handleInventoryClick(item) {
         if (inventoryMode === 'equip') {
             if (item.type === 'weapon' || item.type === 'armor' || item.type === 'amulet') {
