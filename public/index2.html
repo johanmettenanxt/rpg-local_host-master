@@ -104,6 +104,7 @@
             <button class="ability-btn item" id="item-btn">📦 Item</button>
             <button class="ability-btn flee" id="flee-btn">💨 Flee</button>
         </div>
+        <button class="ability-btn" id="auto-btn" style="background:linear-gradient(135deg,#ffd93d 0%,#f59e0b 100%);color:#1a1a2e;width:100%;margin-top:8px;" onclick="toggleAuto()">🤖 Auto Battle: OFF</button>
     </div>
 </div>
 
@@ -210,6 +211,8 @@
     };
 
     var currentBattle = null;
+    var autoBattle = false;
+    var autoTimer = null;
 
     function BattleSystem(config) {
         var self = this;
@@ -278,8 +281,8 @@
         this.spawnEnemy = function() {
             if (self.isBossFight) {
                 var b = self.bossData;
-                var bh = self.player.maxHealth * 0.5;
-                var bd = self.player.maxHealth * 0.12;
+                var bh = 80 + (b.worldLevel * 15);
+                var bd = 15 + (b.worldLevel * 3);
                 self.enemy = {
                     name: b.name, icon: b.icon, level: b.worldLevel,
                     maxHealth: Math.floor(bh * b.healthMult), health: Math.floor(bh * b.healthMult),
@@ -294,8 +297,8 @@
                 self.isElite = Math.random() < 0.15;
                 var eliteMult = self.isElite ? 1.5 : 1;
                 var eliteGoldMult = self.isElite ? 2 : 1;
-                var bh = self.player.maxHealth * 0.4;
-                var bd = self.player.maxHealth * 0.10;
+                var bh = 40 + (self.worldLevel * 8);
+                var bd = 8 + (self.worldLevel * 1.5);
                 self.enemy = {
                     name: (self.isElite ? '⭐ ' : '') + tpl.name,
                     icon: tpl.icon,
@@ -408,6 +411,15 @@
                 self.addLog('💀 You were defeated!');
                 self.gameActive = false;
                 self.updateUI();
+                if (autoBattle) {
+                    autoBattle = false;
+                    if (autoTimer) clearTimeout(autoTimer);
+                    var btn = document.getElementById('auto-btn');
+                    if (btn) {
+                        btn.textContent = '🤖 Auto Battle: OFF';
+                        btn.style.background = 'linear-gradient(135deg,#ffd93d 0%,#f59e0b 100%)';
+                    }
+                }
                 setTimeout(function() { self.showDefeat(); }, 600);
             } else if (self.enemy.health <= 0) {
                 self.enemiesDefeated++;
@@ -435,7 +447,6 @@
             if (bg > 0) m += ' (+' + bg + ')';
             self.addLog(m);
 
-            // CHECK FOR LEVEL UP AND SYNC IMMEDIATELY
             if (gameState.player.level > oldLevel) {
                 self.addLog('🎉 LEVEL UP! Now level ' + gameState.player.level + '! HP and Mana restored!');
                 self.syncPlayerStats();
@@ -484,7 +495,6 @@
                     type: 'amulet', price: 0, quantity: 1, unique: true
                 });
 
-                // First defeat: guaranteed pet drop
                 if (self.bossData.petDrop && gameState.player.pets.indexOf(self.bossData.petDrop) === -1) {
                     gameState.player.pets.push(self.bossData.petDrop);
                     gameState.addPetToInventory(self.bossData.petDrop);
@@ -503,7 +513,6 @@
                 victoryMsg += '\n💰 +' + (gr + bg) + ' Gold | +' + self.enemy.expReward + ' EXP';
                 self.showVictory(victoryMsg);
             } else {
-                // Repeat kill: 15% chance for pet drop
                 if (self.bossData.petDrop && gameState.player.pets.indexOf(self.bossData.petDrop) === -1) {
                     if (Math.random() < 0.15) {
                         gameState.player.pets.push(self.bossData.petDrop);
@@ -535,6 +544,15 @@
         this.showVictory = function(msg) {
             self.gameActive = false;
             self.updateUI();
+            if (autoBattle) {
+                autoBattle = false;
+                if (autoTimer) clearTimeout(autoTimer);
+                var btn = document.getElementById('auto-btn');
+                if (btn) {
+                    btn.textContent = '🤖 Auto Battle: OFF';
+                    btn.style.background = 'linear-gradient(135deg,#ffd93d 0%,#f59e0b 100%)';
+                }
+            }
             document.getElementById('victory-message').textContent = msg;
             document.getElementById('victory-overlay').classList.remove('hidden');
             document.getElementById('victory-continue-btn').onclick = function() { window.location.href = 'index.html'; };
@@ -562,6 +580,7 @@
             self.updateUI();
             self.updateCombatLog();
             self.addLog('🔄 You stand up ready to fight again!');
+            if (autoBattle) runAuto();
         };
 
         this.spawnNext = function() {
@@ -619,7 +638,40 @@
         this.updateUI();
     }
 
-    function backToMenu() { window.location.href = 'index.html'; }
+    function toggleAuto(){
+        autoBattle = !autoBattle;
+        var btn = document.getElementById('auto-btn');
+        if(autoBattle){
+            btn.textContent = '🤖 Auto Battle: ON';
+            btn.style.background = 'linear-gradient(135deg,#43e97b 0%,#22c55e 100%)';
+            runAuto();
+        } else {
+            btn.textContent = '🤖 Auto Battle: OFF';
+            btn.style.background = 'linear-gradient(135deg,#ffd93d 0%,#f59e0b 100%)';
+            if(autoTimer) clearTimeout(autoTimer);
+        }
+    }
+
+    function runAuto(){
+        if(!autoBattle || !currentBattle || !currentBattle.gameActive) return;
+        var p = currentBattle.player;
+        var e = currentBattle.enemy;
+        var ratio = p.health / p.maxHealth;
+        var t = gameState.getTotalStats();
+        var strikeDmg = Math.floor(t.damage * 0.8 + currentBattle.rand([5,15]));
+        var fireballDmg = Math.floor(t.intelligence * 1.0 + currentBattle.rand([10,25]));
+        var bestDmg = strikeDmg > fireballDmg ? 'strike' : 'fireball';
+
+        if(ratio < 0.25 && p.mana >= 25){
+            currentBattle.useAbility('heal');
+        } else if(p.mana >= 20 && bestDmg === 'fireball'){
+            currentBattle.useAbility('fireball');
+        } else {
+            currentBattle.useAbility('strike');
+        }
+
+        autoTimer = setTimeout(runAuto, 1200);
+    }    function backToMenu() { window.location.href = 'index.html'; }
 
     var params = new URLSearchParams(window.location.search);
     var wp = params.get('world');
