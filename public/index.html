@@ -25,6 +25,7 @@
         .menu-btn.sell-btn { background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); }
         .menu-btn.equip-btn { background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%); }
         .menu-btn.upgrade-btn { background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); }
+        .menu-btn.danger-btn { background: linear-gradient(135deg, #ff6b6b 0%, #c0392b 100%); }
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; justify-content: center; align-items: center; z-index: 1000; }
         .modal.hidden, .hidden { display: none !important; }
         .modal-content { background: #2a2a3e; border: 3px solid #ff6b6b; border-radius: 15px; padding: 30px; max-width: 1000px; max-height: 85vh; overflow-y: auto; box-shadow: 0 0 30px rgba(255,107,107,0.5); position: relative; }
@@ -33,9 +34,9 @@
         .close-btn { position: absolute; top: 15px; right: 15px; background: #ff6b6b; color: #fff; border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 24px; cursor: pointer; transition: all 0.3s ease; z-index: 10; }
         .close-btn:hover { transform: scale(1.1); }
         .inventory-info { background: #1a1a2e; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-weight: bold; color: #ffd93d; font-size: 18px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
-        .inventory-mode-buttons { display: flex; gap: 10px; }
+        .inventory-mode-buttons { display: flex; gap: 10px; flex-wrap: wrap; }
         .inventory-category-section { margin-bottom: 25px; }
-        .inventory-category-header { color: #ff6b6b; font-size: 20px; font-weight: bold; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 2px solid #ff6b6b; }
+        .inventory-category-header { color: #ff6b6b; font-size: 20px; font-weight: bold; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 2px solid #ff6b6b; display: flex; justify-content: space-between; align-items: center; }
         .inventory-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
         .inventory-item { background: #1a1a2e; border: 2px solid #4ecdc4; border-radius: 10px; padding: 12px; text-align: center; cursor: pointer; transition: all 0.3s ease; position: relative; }
         .inventory-item:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
@@ -95,6 +96,7 @@
                 <button class="menu-btn small-btn sell-btn" id="mode-sell-btn">💰 Sell Mode</button>
                 <button class="menu-btn small-btn upgrade-btn" id="mode-upgrade-btn">⬆️ Upgrade Mode</button>
                 <button class="menu-btn small-btn" id="mode-view-btn" style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);">👁️ View Mode</button>
+                <button class="menu-btn small-btn danger-btn" id="mode-sellall-btn">💸 Sell All Loot</button>
             </div>
         </div>
         <div class="inventory-info" style="background:#333; padding:8px; margin-bottom:20px; border-radius:6px; text-align:center;" id="inventory-mode-indicator">
@@ -150,11 +152,31 @@
         document.getElementById('mode-equip-btn').style.opacity = mode === 'equip' ? '1' : '0.6';
         document.getElementById('mode-sell-btn').style.opacity = mode === 'sell' ? '1' : '0.6';
         document.getElementById('mode-upgrade-btn').style.opacity = mode === 'upgrade' ? '1' : '0.6';
+        document.getElementById('mode-sellall-btn').style.opacity = mode === 'sellall' ? '1' : '0.6';
         var indicator = document.getElementById('inventory-mode-indicator');
         if (mode === 'view') indicator.innerHTML = '<span style="color:#4ecdc4;">👁️ View Mode - Click an item to see details</span>';
         else if (mode === 'equip') indicator.innerHTML = '<span style="color:#f39c12;">⚔️ Equip Mode - Click to equip</span>';
         else if (mode === 'sell') indicator.innerHTML = '<span style="color:#e74c3c;">💰 Sell Mode - Click to sell for 50%</span>';
         else if (mode === 'upgrade') indicator.innerHTML = '<span style="color:#06b6d4;">⬆️ Upgrade Mode - Click to upgrade</span>';
+        else if (mode === 'sellall') indicator.innerHTML = '<span style="color:#ff6b6b;">💸 Sell All Loot - Sells all fish, ores, and non-unique loot</span>';
+        if (mode === 'sellall') sellAllLoot();
+        else renderInventory();
+    }
+
+    function sellAllLoot(){
+        var totalGold = 0;
+        var soldCount = 0;
+        for (var i = gameState.player.inventory.length - 1; i >= 0; i--) {
+            var item = gameState.player.inventory[i];
+            if (item.type === 'loot' && !item.unique) {
+                totalGold += (item.price || 1) * (item.quantity || 1);
+                soldCount += (item.quantity || 1);
+                gameState.player.inventory.splice(i, 1);
+            }
+        }
+        gameState.player.gold += totalGold;
+        gameState.saveToLocalStorage();
+        alert('💸 Sold ' + soldCount + ' items for ' + totalGold + ' gold!');
         renderInventory();
     }
 
@@ -214,7 +236,8 @@
                     if (item.stats.heal) sd += '<span style="color:#43e97b;">❤️' + item.stats.heal + ' </span>';
                     if (item.stats.mana) sd += '<span style="color:#6ee7de;">💙' + item.stats.mana + '</span>';
                 }
-                if (item.tier && item.type !== 'loot') sd += ' <span style="color:' + tierColor + ';">[' + gameState.getTierName(item.tier) + ']</span>';                if (sd) h += '<div class="inventory-item-stats">' + sd + '</div>';
+                if (item.tier && item.type !== 'loot') sd += ' <span style="color:' + tierColor + ';">[' + gameState.getTierName(item.tier) + ']</span>';
+                if (sd) h += '<div class="inventory-item-stats">' + sd + '</div>';
                 if (inventoryMode === 'sell' && item.price) { var sp = Math.floor(item.price / 2); h += '<div class="inventory-item-price">💰 Sell: ' + sp + ' Gold</div>'; }
                 else if (inventoryMode === 'upgrade' && item.tier && item.tier < 5) { var cost = gameState.getUpgradeCost(item.tier); h += '<div class="inventory-item-price">⬆️ ' + cost.gold + 'g + ' + cost.amount + 'x T' + cost.materialTier + ' mats</div>'; }
                 card.innerHTML = h;
@@ -257,6 +280,8 @@
             if (!item.tier) { alert('Cannot upgrade!'); }
             else if (item.tier >= 5) { alert('Max tier!'); }
             else { var cost = gameState.getUpgradeCost(item.tier); alert('Cost: ' + cost.gold + 'g + ' + cost.amount + 'x T' + cost.materialTier + ' mats'); }
+        } else if (inventoryMode === 'sellall') {
+            // handled by button
         } else {
             var info = item.icon + ' ' + item.name + '\n' + (item.description || '') + '\n';
             if (item.tier) info += 'Tier: ' + gameState.getTierName(item.tier) + '\n';
@@ -315,7 +340,6 @@
             return;
         }
 
-        // First click - show confirmation
         var container = document.getElementById('prestige-btn-container');
         if (container && container.getAttribute('data-confirming') !== 'true') {
             container.setAttribute('data-confirming', 'true');
@@ -389,6 +413,7 @@
         document.getElementById('mode-equip-btn').onclick = function() { setInventoryMode('equip'); };
         document.getElementById('mode-sell-btn').onclick = function() { setInventoryMode('sell'); };
         document.getElementById('mode-upgrade-btn').onclick = function() { setInventoryMode('upgrade'); };
+        document.getElementById('mode-sellall-btn').onclick = function() { setInventoryMode('sellall'); };
     });
 </script>
 </body>

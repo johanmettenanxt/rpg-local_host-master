@@ -8,9 +8,10 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: #fff; font-family: 'Arial', sans-serif; min-height: 100vh; padding: 20px; }
         .hidden { display: none !important; }
-        .battle-container { background: #2a2a3e; border: 3px solid #ff6b6b; border-radius: 10px; padding: 20px; max-width: 600px; width: 100%; margin: 0 auto; box-shadow: 0 0 20px rgba(255,107,107,0.5); }
+        .battle-container { background: #2a2a3e; border: 3px solid #ff6b6b; border-radius: 10px; padding: 20px; max-width: 650px; width: 100%; margin: 0 auto; box-shadow: 0 0 20px rgba(255,107,107,0.5); }
         .battle-container.boss-fight { border-color: #ffd93d; box-shadow: 0 0 30px rgba(255,217,61,0.5); }
         .battle-container.elite-fight { border-color: #ffd700; box-shadow: 0 0 30px rgba(255,215,0,0.5); }
+        .battle-container.global-fight { border-color: #ff4500; box-shadow: 0 0 40px rgba(255,69,0,0.7); }
         .back-btn { margin-bottom: 15px; padding: 10px 15px; background: #ff6b6b; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; transition: all 0.3s ease; }
         .back-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
         .menu-btn { padding: 15px 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; transition: all 0.3s ease; }
@@ -22,21 +23,27 @@
         .player-stats, .enemy-stats { background: #1a1a2e; padding: 15px; border-radius: 8px; border-left: 4px solid #4ecdc4; }
         .enemy-stats.boss-stats { border-left-color: #ffd93d; }
         .enemy-stats.elite-stats { border-left-color: #ffd700; }
+        .enemy-stats.global-stats { border-left-color: #ff4500; }
         .player-name, .enemy-name { font-weight: bold; margin-bottom: 10px; font-size: 16px; }
-        .stat-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-        .health-bar, .mana-bar { flex: 1; height: 20px; background: #333; border-radius: 5px; overflow: hidden; border: 1px solid #555; }
+        .stat-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; position: relative; }
+        .health-bar, .mana-bar { flex: 1; height: 24px; background: #333; border-radius: 5px; overflow: hidden; border: 1px solid #555; position: relative; }
         .health-fill { height: 100%; background: linear-gradient(90deg, #ff6b6b 0%, #ff8e8e 100%); border-radius: 5px; transition: width 0.3s ease; }
         .health-fill.boss-health { background: linear-gradient(90deg, #ffd93d 0%, #ff8c00 100%); }
         .health-fill.elite-health { background: linear-gradient(90deg, #ffd700 0%, #ffaa00 100%); }
+        .health-fill.global-health { background: linear-gradient(90deg, #ff4500 0%, #ff6347 100%); }
         .mana-fill { height: 100%; background: linear-gradient(90deg, #4ecdc4 0%, #6ee7de 100%); border-radius: 5px; transition: width 0.3s ease; }
-        .stat-text { min-width: 70px; text-align: right; font-size: 12px; color: #aaa; }
+        .stat-text { min-width: 80px; text-align: right; font-size: 12px; color: #aaa; }
+        .hp-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; color: #fff; text-shadow: 1px 1px 2px #000; pointer-events: none; }
         .combat-log-section { background: #1a1a2e; border: 2px solid #ff6b6b; border-radius: 8px; padding: 15px; margin-bottom: 15px; }
         .combat-log-title { font-weight: bold; margin-bottom: 10px; color: #ff6b6b; }
         .combat-log { height: 100px; overflow-y: auto; font-size: 12px; line-height: 1.6; color: #ccc; }
         .combat-log::-webkit-scrollbar { width: 6px; }
         .combat-log::-webkit-scrollbar-track { background: #333; border-radius: 3px; }
         .combat-log::-webkit-scrollbar-thumb { background: #ff6b6b; border-radius: 3px; }
-        .turn-info { background: #1a1a2e; border-left: 4px solid #ffd93d; padding: 10px; margin-bottom: 20px; border-radius: 4px; font-size: 12px; color: #aaa; }
+        .turn-info { background: #1a1a2e; border-left: 4px solid #ffd93d; padding: 10px; margin-bottom: 10px; border-radius: 4px; font-size: 12px; color: #aaa; }
+        .auto-config { display: flex; gap: 8px; margin-bottom: 10px; align-items: center; flex-wrap: wrap; }
+        .auto-config label { color: #aaa; font-size: 12px; }
+        .auto-config select { padding: 6px 10px; border-radius: 6px; border: 2px solid #4ecdc4; background: #1a1a2e; color: #fff; font-size: 12px; }
         .abilities-section { margin-bottom: 20px; }
         .ability-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 8px; }
         .ability-row:last-child { grid-template-columns: repeat(5, 1fr); }
@@ -59,6 +66,7 @@
         .defeat-box h2 { color: #ff6b6b; font-size: 36px; margin-bottom: 20px; }
         .victory-box h2 { color: #ffd93d; font-size: 36px; margin-bottom: 20px; }
         .defeat-box p, .victory-box p { color: #aaa; font-size: 16px; margin-bottom: 25px; }
+        .global-hp-info { text-align: center; color: #ffd93d; font-size: 13px; margin-bottom: 10px; }
         @media (max-width: 600px) {
             .battle-container { padding: 15px; }
             .battle-title { font-size: 18px; }
@@ -72,17 +80,18 @@
     <div class="battle-header">
         <div class="battle-title" id="battle-type">⚔️ Battle</div>
     </div>
+    <div id="global-hp-display" class="global-hp-info hidden"></div>
     <div class="battle-stats">
         <div class="player-stats">
             <div class="player-name">❤️ <span id="player-display-name">Player</span></div>
             <div class="level-info">Level <span id="player-level">1</span> | EXP: <span id="player-exp">0</span>/<span id="player-exp-max">100</span></div>
-            <div class="stat-bar"><div class="health-bar"><div class="health-fill" id="player-health-fill"></div></div><div class="stat-text" id="player-health-text">100/100</div></div>
+            <div class="stat-bar"><div class="health-bar"><div class="health-fill" id="player-health-fill"></div><div class="hp-overlay" id="player-hp-overlay"></div></div><div class="stat-text" id="player-health-text">100/100</div></div>
             <div class="stat-bar"><div class="mana-bar"><div class="mana-fill" id="player-mana-fill"></div></div><div class="stat-text" id="player-mana-text">50/50</div></div>
         </div>
         <div class="enemy-stats" id="enemy-stats-panel">
             <div class="enemy-name">👹 <span id="enemy-display-name">Enemy</span></div>
             <div class="level-info">Level <span id="enemy-level">1</span> | 💰 Gold: <span id="enemy-gold">0</span></div>
-            <div class="stat-bar"><div class="health-bar"><div class="health-fill" id="enemy-health-fill"></div></div><div class="stat-text" id="enemy-health-text">100/100</div></div>
+            <div class="stat-bar"><div class="health-bar"><div class="health-fill" id="enemy-health-fill"></div><div class="hp-overlay" id="enemy-hp-overlay"></div></div><div class="stat-text" id="enemy-health-text">100/100</div></div>
         </div>
     </div>
     <div class="combat-log-section">
@@ -90,6 +99,14 @@
         <div class="combat-log" id="combat-log"></div>
     </div>
     <div class="turn-info" id="turn-info">Turn 1 • Use abilities wisely!</div>
+    <div class="auto-config">
+        <label>🤖 Auto Config:</label>
+        <select id="auto-mode" onchange="updateAutoMode()">
+            <option value="balanced">Balanced</option>
+            <option value="melee">⚔️ Melee Only</option>
+            <option value="magic">🔮 Magic Only</option>
+        </select>
+    </div>
     <div class="abilities-section">
         <div class="ability-row">
             <button class="ability-btn strike" id="strike-btn">⚔️ Strike</button>
@@ -213,10 +230,19 @@
     var currentBattle = null;
     var autoBattle = false;
     var autoTimer = null;
+    var autoMode = 'balanced';
+    var globalBossHP = parseInt(localStorage.getItem('globalBossHP') || '1000000');
+    var globalBossMaxHP = 1000000;
+    var isGlobalBoss = false;
+
+    function updateAutoMode(){
+        autoMode = document.getElementById('auto-mode').value;
+    }
 
     function BattleSystem(config) {
         var self = this;
         this.isBossFight = config.isBossFight || false;
+        this.isGlobalBoss = config.isGlobalBoss || false;
         this.isElite = false;
         this.bossIndex = config.bossIndex;
         this.worldLevel = config.worldLevel;
@@ -226,7 +252,15 @@
         this.poisonDamage = 0;
         this.prevLevel = gameState.player.level;
 
-        if (this.isBossFight) {
+        isGlobalBoss = this.isGlobalBoss;
+
+        if (this.isGlobalBoss) {
+            document.getElementById('battle-screen').classList.add('global-fight');
+            document.getElementById('enemy-stats-panel').classList.add('global-stats');
+            document.getElementById('battle-type').innerHTML = '👑 GLOBAL BOSS: World Eater';
+            document.getElementById('global-hp-display').classList.remove('hidden');
+            document.getElementById('global-hp-display').textContent = '🌍 Global HP: ' + globalBossHP.toLocaleString() + ' / ' + globalBossMaxHP.toLocaleString();
+        } else if (this.isBossFight) {
             this.bossData = gameState.bosses[this.bossIndex];
             this.worldLevel = this.bossData.worldLevel;
             document.getElementById('battle-screen').classList.add('boss-fight');
@@ -279,7 +313,18 @@
         };
 
         this.spawnEnemy = function() {
-            if (self.isBossFight) {
+            if (self.isGlobalBoss) {
+                var bh = 5000;
+                var bd = 200;
+                self.enemy = {
+                    name: 'World Eater', icon: '🌍', level: 999,
+                    maxHealth: globalBossHP, health: globalBossHP,
+                    baseDamage: bd,
+                    goldMin: 5000, goldMax: 10000, isBoss: true, isGlobal: true,
+                    expReward: 5000
+                };
+                document.getElementById('enemy-health-fill').classList.add('global-health');
+            } else if (self.isBossFight) {
                 var b = self.bossData;
                 var bh = 80 + (b.worldLevel * 15);
                 var bd = 15 + (b.worldLevel * 3);
@@ -335,12 +380,14 @@
                 if (self.player.rage > 0) { d = Math.floor(d * 1.5); self.player.rage = 0; }
                 if (isCrit) d = Math.floor(d * 2);
                 self.enemy.health = Math.max(0, self.enemy.health - d);
+                if(self.isGlobalBoss){ globalBossHP = Math.max(0, globalBossHP - d); localStorage.setItem('globalBossHP', globalBossHP); }
                 msg = '⚔️ Strike: ' + d + ' dmg' + (isCrit ? ' 💥CRIT!' : '');
             } else if (key === 'fireball') {
                 var d = self.rand([30, 50]) + Math.floor(t.intelligence * 0.6);
                 if (self.player.rage > 0) { d = Math.floor(d * 1.5); self.player.rage = 0; }
                 if (isCrit) d = Math.floor(d * 2);
                 self.enemy.health = Math.max(0, self.enemy.health - d);
+                if(self.isGlobalBoss){ globalBossHP = Math.max(0, globalBossHP - d); localStorage.setItem('globalBossHP', globalBossHP); }
                 msg = '🔥 Fireball: ' + d + ' dmg' + (isCrit ? ' 💥CRIT!' : '');
             } else if (key === 'heal') {
                 var h = self.rand([30, 50]);
@@ -366,7 +413,7 @@
                 self.player.health = Math.min(self.player.maxHealth, self.player.health + h);
                 msg = '📦 Item: +' + h + ' HP';
             } else if (key === 'flee') {
-                if (self.isBossFight) { msg = '🚫 Cannot flee from bosses!'; }
+                if (self.isBossFight || self.isGlobalBoss) { msg = '🚫 Cannot flee!'; }
                 else if (Math.random() < 0.4) { self.gameActive = false; self.endBattle(false); return; }
                 else msg = '💨 Failed to flee!';
             }
@@ -381,6 +428,7 @@
             if (!self.gameActive) return;
             if (self.poisonTurns > 0) {
                 self.enemy.health = Math.max(0, self.enemy.health - self.poisonDamage);
+                if(self.isGlobalBoss){ globalBossHP = Math.max(0, globalBossHP - self.poisonDamage); localStorage.setItem('globalBossHP', globalBossHP); }
                 self.addLog('☠️ Poison deals ' + self.poisonDamage + ' damage! (' + (self.poisonTurns - 1) + ' turns left)');
                 self.poisonTurns--;
                 if (self.enemy.health <= 0) { self.enemy.health = 0; self.updateUI(); self.checkBattleEnd(); return; }
@@ -423,7 +471,10 @@
                 setTimeout(function() { self.showDefeat(); }, 600);
             } else if (self.enemy.health <= 0) {
                 self.enemiesDefeated++;
-                if (self.isBossFight) {
+                if (self.isGlobalBoss) {
+                    self.addLog('🏆 GLOBAL BOSS DEFEATED!');
+                    self.globalReward();
+                } else if (self.isBossFight) {
                     self.addLog('🏆 ' + self.enemy.name + ' HAS BEEN DEFEATED!');
                     self.bossReward();
                 } else {
@@ -432,6 +483,18 @@
                     self.spawnNext();
                 }
             }
+        };
+
+        this.globalReward = function() {
+            var gr = self.rand([5000, 10000]);
+            gameState.gainGold(gr);
+            gameState.gainExp(5000);
+            gameState.addKill();
+            self.totalGoldEarned += gr;
+            globalBossHP = globalBossMaxHP;
+            localStorage.setItem('globalBossHP', globalBossHP);
+            gameState.saveToLocalStorage();
+            self.showVictory('🌍 Global Boss defeated!\n💰 +' + gr + ' Gold | +5000 EXP\nGlobal boss respawned!');
         };
 
         this.reward = function() {
@@ -623,12 +686,19 @@
             document.getElementById('enemy-gold').textContent = self.enemy.goldMin + '-' + self.enemy.goldMax;
             document.getElementById('player-health-fill').style.width = (self.player.health / self.player.maxHealth * 100) + '%';
             document.getElementById('player-health-text').textContent = self.player.health + '/' + self.player.maxHealth;
+            document.getElementById('player-hp-overlay').textContent = Math.floor(self.player.health) + ' / ' + self.player.maxHealth;
             document.getElementById('enemy-health-fill').style.width = (self.enemy.health / self.enemy.maxHealth * 100) + '%';
-            document.getElementById('enemy-health-text').textContent = self.enemy.health + '/' + self.enemy.maxHealth;
+            document.getElementById('enemy-health-text').textContent = Math.floor(self.enemy.health) + '/' + self.enemy.maxHealth;
+            document.getElementById('enemy-hp-overlay').textContent = Math.floor(self.enemy.health) + ' / ' + self.enemy.maxHealth;
             document.getElementById('player-mana-fill').style.width = (self.player.mana / self.player.maxMana * 100) + '%';
             document.getElementById('player-mana-text').textContent = self.player.mana + '/' + self.player.maxMana;
             var ps = self.poisonTurns > 0 ? ' ☠️ Poison: ' + self.poisonTurns + 't' : '';
             document.getElementById('turn-info').textContent = 'Turn ' + self.turn + ' • Kills: ' + self.enemiesDefeated + ' • Gold: ' + self.totalGoldEarned + ps;
+            if (self.isGlobalBoss) {
+                document.getElementById('global-hp-display').textContent = '🌍 Global HP: ' + globalBossHP.toLocaleString() + ' / ' + globalBossMaxHP.toLocaleString();
+                self.enemy.health = globalBossHP;
+                self.enemy.maxHealth = globalBossMaxHP;
+            }
             var buttons = document.querySelectorAll('.ability-btn');
             for (var i = 0; i < buttons.length; i++) { buttons[i].disabled = !self.gameActive; }
         };
@@ -642,8 +712,8 @@
         autoBattle = !autoBattle;
         var btn = document.getElementById('auto-btn');
         if(autoBattle){
-            btn.textContent = '🤖 Auto Battle: ON';
-            btn.style.background = 'linear-gradient(135deg,#43e97b 0%,#22c55e 100%)';
+            var modeLabel = autoMode === 'melee' ? '⚔️ Melee' : autoMode === 'magic' ? '🔮 Magic' : 'Balanced';
+            btn.textContent = '🤖 Auto Battle: ON (' + modeLabel + ')';            btn.style.background = 'linear-gradient(135deg,#43e97b 0%,#22c55e 100%)';
             runAuto();
         } else {
             btn.textContent = '🤖 Auto Battle: OFF';
@@ -654,20 +724,24 @@
 
     function runAuto(){
         if(!autoBattle || !currentBattle || !currentBattle.gameActive) return;
-        var p = currentBattle.player;
-        var e = currentBattle.enemy;
-        var ratio = p.health / p.maxHealth;
-        var t = gameState.getTotalStats();
-        var strikeDmg = Math.floor(t.damage * 0.8 + currentBattle.rand([5,15]));
-        var fireballDmg = Math.floor(t.intelligence * 1.0 + currentBattle.rand([10,25]));
-        var bestDmg = strikeDmg > fireballDmg ? 'strike' : 'fireball';
 
-        if(ratio < 0.25 && p.mana >= 25){
-            currentBattle.useAbility('heal');
-        } else if(p.mana >= 20 && bestDmg === 'fireball'){
-            currentBattle.useAbility('fireball');
-        } else {
+        if(autoMode === 'melee'){
             currentBattle.useAbility('strike');
+        } else if(autoMode === 'magic'){
+            if(currentBattle.player.mana >= 20){
+                currentBattle.useAbility('fireball');
+            } else {
+                currentBattle.useAbility('strike');
+            }
+        } else {
+            var t = gameState.getTotalStats();
+            var strikeDmg = Math.floor(t.damage * 0.8 + currentBattle.rand([5,15]));
+            var fireballDmg = Math.floor(t.intelligence * 1.0 + currentBattle.rand([10,25]));
+            if(currentBattle.player.mana >= 20 && fireballDmg > strikeDmg){
+                currentBattle.useAbility('fireball');
+            } else {
+                currentBattle.useAbility('strike');
+            }
         }
 
         autoTimer = setTimeout(runAuto, 1200);
@@ -676,7 +750,9 @@
     var params = new URLSearchParams(window.location.search);
     var wp = params.get('world');
     var bp = params.get('boss');
-    if (bp !== null) {
+    if (bp === 'global') {
+        currentBattle = new BattleSystem({ isGlobalBoss: true });
+    } else if (bp !== null) {
         currentBattle = new BattleSystem({ isBossFight: true, bossIndex: parseInt(bp) });
     } else if (wp !== null) {
         currentBattle = new BattleSystem({ isBossFight: false, worldLevel: gameState.worlds[parseInt(wp)].level });
