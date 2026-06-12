@@ -460,13 +460,9 @@
                 self.gameActive = false;
                 self.updateUI();
                 if (autoBattle) {
-                    autoBattle = false;
-                    if (autoTimer) clearTimeout(autoTimer);
-                    var btn = document.getElementById('auto-btn');
-                    if (btn) {
-                        btn.textContent = '🤖 Auto Battle: OFF';
-                        btn.style.background = 'linear-gradient(135deg,#ffd93d 0%,#f59e0b 100%)';
-                    }
+                    self.addLog('🔄 Auto-reviving...');
+                    setTimeout(function() { self.restart(); }, 800);
+                    return;
                 }
                 setTimeout(function() { self.showDefeat(); }, 600);
             } else if (self.enemy.health <= 0) {
