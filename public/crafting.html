@@ -203,8 +203,10 @@
         container.innerHTML = html;
     }
 
-    renderRecipes();
-    renderMaterials();
+    setTimeout(function(){
+        renderRecipes();
+        renderMaterials();
+    }, 500);
 </script>
 </body>
 </html>

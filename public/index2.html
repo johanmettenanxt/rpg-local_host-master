@@ -497,9 +497,11 @@
     var params = new URLSearchParams(window.location.search);
     var wp = params.get('world');
     var bp = params.get('boss');
-    if (bp === 'global') { currentBattle = new BattleSystem({ isGlobalBoss: true }); }
-    else if (bp !== null) { currentBattle = new BattleSystem({ isBossFight: true, bossIndex: parseInt(bp) }); }
-    else if (wp !== null) { currentBattle = new BattleSystem({ isBossFight: false, worldLevel: gameState.worlds[parseInt(wp)].level }); }
+    setTimeout(function(){
+        if (bp === 'global') { currentBattle = new BattleSystem({ isGlobalBoss: true }); }
+        else if (bp !== null) { currentBattle = new BattleSystem({ isBossFight: true, bossIndex: parseInt(bp) }); }
+        else if (wp !== null) { currentBattle = new BattleSystem({ isBossFight: false, worldLevel: gameState.worlds[parseInt(wp)].level }); }
+    }, 500);
 </script>
 </body>
 </html>

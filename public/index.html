@@ -69,8 +69,14 @@
     </style>
 </head>
 <body>
-<div id="main-menu" class="menu-container">
+<div id="login-screen" class="menu-container">
     <div class="menu-content">
+        <h1>⚔️ RPG Battle Arena</h1>
+        <input type="text" id="username-input" placeholder="Enter username" style="padding:12px;border-radius:8px;border:2px solid #4ecdc4;background:#1a1a2e;color:#fff;font-size:16px;width:100%;margin-bottom:15px;text-align:center;">
+        <button class="menu-btn" onclick="login()" style="width:100%;">🎮 Enter Game</button>
+    </div>
+</div>
+<div id="main-menu" class="menu-container hidden">    <div class="menu-content">
         <h1>⚔️ RPG Battle Arena</h1>
         <div class="menu-buttons">
             <button class="menu-btn worlds-btn" id="btn-worlds">🌍 Worlds & Bosses</button>
@@ -141,6 +147,20 @@
 
 <script src="gamestate.js"></script>
 <script>
+    function login(){
+        var name = document.getElementById('username-input').value.trim();
+        if(!name){alert('Enter a username!');return;}
+        currentUsername = name;
+        localStorage.setItem('rpgUsername', name);
+        document.getElementById('login-screen').classList.add('hidden');
+        document.getElementById('main-menu').classList.remove('hidden');
+        gameState.loadFromServer();
+    }
+
+    if(currentUsername){
+        document.getElementById('login-screen').classList.add('hidden');
+        document.getElementById('main-menu').classList.remove('hidden');
+    }
     var inventoryMode = 'view';
 
     function showInventory() { document.getElementById('inventory-modal').classList.remove('hidden'); setInventoryMode('view'); }

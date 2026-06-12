@@ -52,8 +52,8 @@
     <div class="top-bar">
         <span>💰 Gold: <strong id="gold-display" style="color:#ffd93d;">0</strong></span>
         <span>📦 Loot: <strong id="loot-count" style="color:#4ecdc4;">0</strong></span>
-        <span>🎣 Fish: <strong id="fish-remaining" style="color:#43e97b;">50</strong></span>
-        <span>⛏️ Mine: <strong id="mine-remaining" style="color:#43e97b;">50</strong></span>
+        <span>🎣 Fish: <strong id="fish-remaining" style="color:#43e97b;">-</strong></span>
+        <span>⛏️ Mine: <strong id="mine-remaining" style="color:#43e97b;">-</strong></span>
     </div>
 
     <div class="tab-bar">
@@ -90,7 +90,7 @@
 
     <div class="inventory-preview">
         <h3>📦 Your Loot</h3>
-        <div class="mats-grid" id="loot-display"><span style="color:#aaa;">No loot yet. Go fishing or mining!</span></div>
+        <div class="mats-grid" id="loot-display"><span style="color:#aaa;">Loading...</span></div>
     </div>
 </div>
 
@@ -108,11 +108,12 @@
     }
 
     function minutesSince(timestamp) {
+        if(!timestamp || timestamp <= 0) return 999;
         return (Date.now() - timestamp) / 60000;
     }
 
     function checkFishReset() {
-        if (gameState.player.fishActions <= 0 && gameState.player.fishResetTime === 0) {
+        if (gameState.player.fishActions <= 0 && !gameState.player.fishResetTime) {
             gameState.player.fishResetTime = Date.now();
             gameState.saveToLocalStorage();
         }
@@ -122,18 +123,21 @@
             gameState.saveToLocalStorage();
         }
         var el = document.getElementById('fish-remaining');
-        el.textContent = gameState.player.fishActions + ' left';
+        if(!el) return;
         if (gameState.player.fishActions <= 0 && gameState.player.fishResetTime > 0) {
             var minsLeft = 60 - Math.floor(minutesSince(gameState.player.fishResetTime));
             el.textContent = 'Resets in ' + minsLeft + 'm';
+            el.style.color = '#e74c3c';
+        } else {
+            el.textContent = gameState.player.fishActions + ' left';
+            el.style.color = gameState.player.fishActions <= 0 ? '#e74c3c' : gameState.player.fishActions <= 15 ? '#f39c12' : '#43e97b';
         }
-        el.style.color = gameState.player.fishActions <= 0 ? '#e74c3c' : gameState.player.fishActions <= 15 ? '#f39c12' : '#43e97b';
-        document.getElementById('fish-btn').disabled = gameState.player.fishActions <= 0;
-        document.getElementById('fish-speed-btn').disabled = gameState.player.fishActions < 5;
+        var fb = document.getElementById('fish-btn'); if(fb) fb.disabled = gameState.player.fishActions <= 0;
+        var fsb = document.getElementById('fish-speed-btn'); if(fsb) fsb.disabled = gameState.player.fishActions < 5;
     }
 
     function checkMineReset() {
-        if (gameState.player.mineActions <= 0 && gameState.player.mineResetTime === 0) {
+        if (gameState.player.mineActions <= 0 && !gameState.player.mineResetTime) {
             gameState.player.mineResetTime = Date.now();
             gameState.saveToLocalStorage();
         }
@@ -143,19 +147,22 @@
             gameState.saveToLocalStorage();
         }
         var el = document.getElementById('mine-remaining');
-        el.textContent = gameState.player.mineActions + ' left';
+        if(!el) return;
         if (gameState.player.mineActions <= 0 && gameState.player.mineResetTime > 0) {
             var minsLeft = 60 - Math.floor(minutesSince(gameState.player.mineResetTime));
             el.textContent = 'Resets in ' + minsLeft + 'm';
+            el.style.color = '#e74c3c';
+        } else {
+            el.textContent = gameState.player.mineActions + ' left';
+            el.style.color = gameState.player.mineActions <= 0 ? '#e74c3c' : gameState.player.mineActions <= 15 ? '#f39c12' : '#43e97b';
         }
-        el.style.color = gameState.player.mineActions <= 0 ? '#e74c3c' : gameState.player.mineActions <= 15 ? '#f39c12' : '#43e97b';
-        document.getElementById('mine-btn').disabled = gameState.player.mineActions <= 0;
-        document.getElementById('mine-speed-btn').disabled = gameState.player.mineActions < 5;
+        var mb = document.getElementById('mine-btn'); if(mb) mb.disabled = gameState.player.mineActions <= 0;
+        var msb = document.getElementById('mine-speed-btn'); if(msb) msb.disabled = gameState.player.mineActions < 5;
     }
 
     function doFishing() {
         checkFishReset();
-        if (gameState.player.fishActions < 1) { alert('No fishing actions left! Wait for the timer to reset.'); return; }
+        if (gameState.player.fishActions < 1) { alert('No fishing actions left!'); return; }
         gameState.player.fishActions--;
         gameState.saveToLocalStorage();
         checkFishReset();
@@ -176,7 +183,7 @@
 
     function doFishingSpeed() {
         checkFishReset();
-        if (gameState.player.fishActions < 5) { alert('Need 5 actions! Only ' + gameState.player.fishActions + ' left.'); return; }
+        if (gameState.player.fishActions < 5) { alert('Need 5 actions!'); return; }
         gameState.player.fishActions -= 5;
         gameState.saveToLocalStorage();
         checkFishReset();
@@ -205,7 +212,7 @@
 
     function doMining() {
         checkMineReset();
-        if (gameState.player.mineActions < 1) { alert('No mining actions left! Wait for the timer to reset.'); return; }
+        if (gameState.player.mineActions < 1) { alert('No mining actions left!'); return; }
         gameState.player.mineActions--;
         gameState.saveToLocalStorage();
         checkMineReset();
@@ -222,7 +229,7 @@
 
     function doMiningSpeed() {
         checkMineReset();
-        if (gameState.player.mineActions < 5) { alert('Need 5 actions! Only ' + gameState.player.mineActions + ' left.'); return; }
+        if (gameState.player.mineActions < 5) { alert('Need 5 actions!'); return; }
         gameState.player.mineActions -= 5;
         gameState.saveToLocalStorage();
         checkMineReset();
@@ -278,13 +285,12 @@
         container.innerHTML = html;
     }
 
-    // Add resetTime fields to gamestate if needed
     if (!gameState.player.fishResetTime) gameState.player.fishResetTime = 0;
     if (!gameState.player.mineResetTime) gameState.player.mineResetTime = 0;
 
-    checkFishReset();
-    checkMineReset();
-    updateDisplay();
+    setTimeout(function(){
+        updateDisplay();
+    }, 500);
 </script>
 </body>
 </html>

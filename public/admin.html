@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #1a1a2e; color: #fff; font-family: Arial, sans-serif; padding: 20px; }
+        h1 { color: #ff6b6b; margin-bottom: 20px; }
+        h2 { color: #ffd93d; margin: 15px 0 10px 0; font-size: 18px; }
+        .player-list { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+        .player-btn { padding: 10px 20px; background: #4ecdc4; color: #1a1a2e; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .player-btn:hover { background: #3dbdb5; }
+        .panel { display: flex; gap: 20px; flex-wrap: wrap; }
+        .left { flex: 1; min-width: 300px; }
+        .right { flex: 1; min-width: 300px; }
+        textarea { width: 100%; height: 400px; background: #2a2a3e; color: #fff; border: 2px solid #ff6b6b; border-radius: 8px; padding: 15px; font-family: monospace; font-size: 13px; }
+        .stat-row { display: flex; gap: 10px; margin-bottom: 8px; align-items: center; }
+        .stat-row label { width: 100px; color: #aaa; font-size: 13px; }
+        .stat-row input { flex: 1; padding: 8px; border-radius: 6px; border: 2px solid #4ecdc4; background: #1a1a2e; color: #fff; font-size: 13px; }
+        .item-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
+        .item-row input { padding: 8px; border-radius: 6px; border: 2px solid #4ecdc4; background: #1a1a2e; color: #fff; font-size: 13px; }
+        .item-row .item-id { flex: 2; }
+        .item-row .item-qty { width: 70px; }
+        button { padding: 10px 20px; background: #43e97b; color: #1a1a2e; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px; }
+        button:hover { background: #22c55e; }
+        button.danger { background: #ff6b6b; color: #fff; }
+        button.danger:hover { background: #e74c3c; }
+        button.small { padding: 6px 12px; font-size: 12px; }
+        #status { margin-top: 10px; color: #ffd93d; }
+        .inventory-list { max-height: 200px; overflow-y: auto; background: #2a2a3e; border: 1px solid #4ecdc4; border-radius: 6px; padding: 10px; margin-bottom: 10px; font-size: 12px; }
+        .inv-item { padding: 4px 0; border-bottom: 1px solid #333; display: flex; justify-content: space-between; }
+        .inv-item span { color: #ff6b6b; cursor: pointer; }
+    </style>
+</head>
+<body>
+<h1>🛠️ Admin Panel</h1>
+<div class="player-list" id="player-list">Loading...</div>
+<div class="panel">
+    <div class="left">
+        <h2>📊 Quick Edit</h2>
+        <div class="stat-row"><label>Level:</label><input type="number" id="edit-level"></div>
+        <div class="stat-row"><label>Gold:</label><input type="number" id="edit-gold"></div>
+        <div class="stat-row"><label>Exp:</label><input type="number" id="edit-exp"></div>
+        <div class="stat-row"><label>Strength:</label><input type="number" id="edit-str"></div>
+        <div class="stat-row"><label>Intelligence:</label><input type="number" id="edit-int"></div>
+        <div class="stat-row"><label>Defense:</label><input type="number" id="edit-def"></div>
+        <div class="stat-row"><label>Total Kills:</label><input type="number" id="edit-kills"></div>
+        <div class="stat-row"><label>Health:</label><input type="number" id="edit-hp"></div>
+        <div class="stat-row"><label>Max Health:</label><input type="number" id="edit-maxhp"></div>
+        <div class="stat-row"><label>Mana:</label><input type="number" id="edit-mana"></div>
+        <div class="stat-row"><label>Max Mana:</label><input type="number" id="edit-maxmana"></div>
+        <button onclick="applyQuickEdits()">💾 Apply Quick Edits</button>
+
+        <h2>🎒 Add Item</h2>
+        <div class="item-row" style="position:relative;">
+            <input type="text" class="item-id" id="add-item-id" placeholder="Type to search items..." autocomplete="off">
+            <input type="number" class="item-qty" id="add-item-qty" value="1" min="1">
+            <button class="small" onclick="addItemToPlayer()">➕ Add</button>
+        </div>
+        <div class="inventory-list" id="inv-preview"></div>
+    </div>
+    <div class="right">
+        <h2>📝 Raw JSON</h2>
+        <textarea id="editor" placeholder="Select a player..."></textarea>
+        <br>
+        <button onclick="savePlayer()">💾 Save JSON</button>
+        <button class="danger small" onclick="deletePlayer()" style="margin-left:10px;">🗑️ Delete Player</button>
+        <div id="status"></div>
+    </div>
+</div>
+
+<script>
+    var currentPlayer = '';
+    var currentData = null;
+    var allItems = [
+        {id:"wooden_sword",name:"Wooden Sword",icon:"⚔️"},{id:"iron_sword",name:"Iron Sword",icon:"⚔️"},{id:"steel_sword",name:"Steel Sword",icon:"⚔️"},{id:"battle_axe",name:"Battle Axe",icon:"🪓"},{id:"silver_sword",name:"Silver Sword",icon:"⚔️"},{id:"greatsword",name:"Greatsword",icon:"⚔️"},{id:"blessed_sword",name:"Blessed Sword",icon:"✨⚔️"},{id:"obsidian_blade",name:"Obsidian Blade",icon:"⚫⚔️"},{id:"dragon_slayer_sword",name:"Dragon Slayer Sword",icon:"🐲⚔️"},
+        {id:"wooden_bow",name:"Wooden Bow",icon:"🏹"},{id:"short_bow",name:"Short Bow",icon:"🏹"},{id:"longbow",name:"Longbow",icon:"🏹"},{id:"crossbow",name:"Crossbow",icon:"🎯"},{id:"elven_bow",name:"Elven Bow",icon:"🏹"},{id:"heavy_crossbow",name:"Heavy Crossbow",icon:"🎯"},{id:"frost_bow",name:"Frost Bow",icon:"❄️🏹"},{id:"celestial_longbow",name:"Celestial Longbow",icon:"⭐🏹"},
+        {id:"wooden_staff",name:"Wooden Staff",icon:"🪵🔮"},{id:"mana_wand",name:"Mana Wand",icon:"✨🪄"},{id:"crystal_staff",name:"Crystal Staff",icon:"💎🔮"},{id:"fire_scepter",name:"Fire Scepter",icon:"🔥🔱"},{id:"arcane_staff",name:"Arcane Staff",icon:"🌀🔮"},{id:"shadow_wand",name:"Shadow Wand",icon:"🌑🪄"},{id:"divine_staff",name:"Divine Staff",icon:"☀️🔮"},{id:"celestial_orb",name:"Celestial Orb",icon:"⭐💎"},
+        {id:"leather_armor",name:"Leather Armor",icon:"🛡️"},{id:"iron_armor",name:"Iron Armor",icon:"🛡️"},{id:"steel_armor",name:"Steel Armor",icon:"🛡️"},{id:"dragon_armor",name:"Dragon Scale Armor",icon:"🐲🛡️"},{id:"divine_armor",name:"Divine Armor",icon:"✨🛡️"},
+        {id:"health_potion",name:"Health Potion",icon:"🧪"},{id:"mana_potion",name:"Mana Potion",icon:"💙"},{id:"greater_health_potion",name:"Greater Health Potion",icon:"🧪"},{id:"greater_mana_potion",name:"Greater Mana Potion",icon:"💙"},
+        {id:"goblin_coin",name:"Goblin Coin",icon:"👛"},{id:"copper_ore",name:"Copper Ore",icon:"🟠"},{id:"forest_herb",name:"Forest Herb",icon:"🍃"},{id:"wooden_ring",name:"Wooden Ring",icon:"💍"},{id:"orc_fang",name:"Orc Fang",icon:"🦷"},{id:"silver_dust",name:"Silver Dust",icon:"✨"},{id:"shadow_essence",name:"Shadow Essence",icon:"🌑"},
+        {id:"dark_crystal",name:"Dark Crystal",icon:"⚫"},{id:"bone_fragment",name:"Bone Fragment",icon:"🦴"},{id:"soul_stone",name:"Soul Stone",icon:"💀"},{id:"dragon_scale",name:"Dragon Scale",icon:"🐲"},{id:"infernal_ash",name:"Infernal Ash",icon:"🔥"},{id:"ancient_rune",name:"Ancient Rune",icon:"📿"},
+        {id:"abyssal_pearl",name:"Abyssal Pearl",icon:"🪨"},{id:"void_shard",name:"Void Shard",icon:"⬛"},{id:"eternity_stone",name:"Eternity Stone",icon:"⭐"},{id:"primordial_essence",name:"Primordial Essence",icon:"🌀"},{id:"cosmic_dust",name:"Cosmic Dust",icon:"🌌"},{id:"eldritch_core",name:"Eldritch Core",icon:"👾"},
+        {id:"transcendent_shard",name:"Transcendent Shard",icon:"✨"},{id:"celestial_core",name:"Celestial Core",icon:"⭐"},{id:"divine_crown",name:"Divine Crown",icon:"👑"},{id:"abyssal_heart",name:"Abyssal Heart",icon:"🖤"},{id:"leviathan_scale",name:"Leviathan Scale",icon:"🐋"},{id:"deep_pearl",name:"Deep Pearl",icon:"🫧"},
+        {id:"phoenix_feather",name:"Phoenix Feather",icon:"🔥"},{id:"eternal_ember",name:"Eternal Ember",icon:"✨"},{id:"rebirth_crystal",name:"Rebirth Crystal",icon:"💎"},{id:"eternal_fragment",name:"Eternal Fragment",icon:"⏮️"},{id:"absolute_essence",name:"Absolute Essence",icon:"🌟"},{id:"infinity_shard",name:"Infinity Shard",icon:"♾️"},
+        {id:"gold",name:"Gold",icon:"💰"},{id:"diamond",name:"Diamond",icon:"💠"}
+    ];
+
+    allItems.sort(function(a,b){ return a.name.localeCompare(b.name); });
+
+    var itemInput = document.getElementById('add-item-id');
+    var suggestionBox = document.createElement('div');
+    suggestionBox.style.cssText = 'position:absolute;top:100%;left:0;background:#2a2a3e;border:2px solid #4ecdc4;border-radius:6px;max-height:200px;overflow-y:auto;z-index:1000;display:none;font-size:12px;';
+    itemInput.parentNode.appendChild(suggestionBox);
+
+    itemInput.addEventListener('input', function(){
+        var val = this.value.toLowerCase();
+        if(val.length === 0){ suggestionBox.style.display = 'none'; return; }
+        var matches = allItems.filter(function(i){ return i.name.toLowerCase().indexOf(val) !== -1 || i.id.toLowerCase().indexOf(val) !== -1; }).slice(0, 10);
+        if(matches.length === 0){ suggestionBox.style.display = 'none'; return; }
+        var html = '';
+        matches.forEach(function(m){
+            html += '<div style="padding:6px 10px;cursor:pointer;border-bottom:1px solid #333;" onmousedown="selectItem(\'' + m.id + '\')">' + (m.icon||'📦') + ' ' + m.name + ' <span style="color:#aaa;font-size:10px;">(' + m.id + ')</span></div>';
+        });
+        suggestionBox.innerHTML = html;
+        suggestionBox.style.display = 'block';
+        suggestionBox.style.width = itemInput.offsetWidth + 'px';
+    });
+
+    document.addEventListener('click', function(e){
+        if(e.target !== itemInput) suggestionBox.style.display = 'none';
+    });
+
+    function selectItem(id){
+        document.getElementById('add-item-id').value = id;
+        suggestionBox.style.display = 'none';
+    }
+
+    function loadPlayers(){
+        fetch('/api/saves').then(r=>r.json()).then(function(players){
+            var html = '';
+            players.forEach(function(p){
+                html += '<button class="player-btn" onclick="loadPlayer(\'' + p.username + '\')">' + p.username + '</button>';
+            });
+            document.getElementById('player-list').innerHTML = html;
+        });
+    }
+
+    function loadPlayer(name){
+        currentPlayer = name;
+        fetch('/api/saves/' + name).then(r=>r.json()).then(function(data){
+            currentData = data;
+            document.getElementById('editor').value = JSON.stringify(data, null, 2);
+            var p = data.player;
+            document.getElementById('edit-level').value = p.level;
+            document.getElementById('edit-gold').value = p.gold;
+            document.getElementById('edit-exp').value = p.exp;
+            document.getElementById('edit-str').value = p.strength;
+            document.getElementById('edit-int').value = p.intelligence;
+            document.getElementById('edit-def').value = p.defense;
+            document.getElementById('edit-kills').value = p.totalKills;
+            document.getElementById('edit-hp').value = p.health;
+            document.getElementById('edit-maxhp').value = p.maxHealth;
+            document.getElementById('edit-mana').value = p.mana;
+            document.getElementById('edit-maxmana').value = p.maxMana;
+            updateInvPreview();
+        });
+    }
+
+    function updateInvPreview(){
+        if(!currentData) return;
+        var html = '';
+        var inv = currentData.player.inventory || [];
+        inv.forEach(function(item, idx){
+            html += '<div class="inv-item">' + (item.icon||'📦') + ' ' + (item.name||item.id) + ' x' + (item.quantity||1) + ' <span onclick="removeItem(' + idx + ')">❌</span></div>';
+        });
+        document.getElementById('inv-preview').innerHTML = html || '<div style="color:#aaa;">Empty</div>';
+    }
+
+    function removeItem(idx){
+        if(!currentData) return;
+        currentData.player.inventory.splice(idx, 1);
+        document.getElementById('editor').value = JSON.stringify(currentData, null, 2);
+        updateInvPreview();
+    }
+
+    function applyQuickEdits(){
+        if(!currentData) return;
+        var p = currentData.player;
+        p.level = parseInt(document.getElementById('edit-level').value) || p.level;
+        p.gold = parseInt(document.getElementById('edit-gold').value) || p.gold;
+        p.exp = parseInt(document.getElementById('edit-exp').value) || p.exp;
+        p.strength = parseInt(document.getElementById('edit-str').value) || p.strength;
+        p.intelligence = parseInt(document.getElementById('edit-int').value) || p.intelligence;
+        p.defense = parseInt(document.getElementById('edit-def').value) || p.defense;
+        p.totalKills = parseInt(document.getElementById('edit-kills').value) || p.totalKills;
+        p.health = parseInt(document.getElementById('edit-hp').value) || p.health;
+        p.maxHealth = parseInt(document.getElementById('edit-maxhp').value) || p.maxHealth;
+        p.mana = parseInt(document.getElementById('edit-mana').value) || p.mana;
+        p.maxMana = parseInt(document.getElementById('edit-maxmana').value) || p.maxMana;
+        document.getElementById('editor').value = JSON.stringify(currentData, null, 2);
+        document.getElementById('status').textContent = '✅ Quick edits applied. Save JSON to confirm.';
+    }
+
+    function addItemToPlayer(){
+        if(!currentData) return;
+        var id = document.getElementById('add-item-id').value.trim();
+        var qty = parseInt(document.getElementById('add-item-qty').value) || 1;
+        if(!id) return;
+        var found = false;
+        for(var i=0; i<currentData.player.inventory.length; i++){
+            if(currentData.player.inventory[i].id === id){
+                currentData.player.inventory[i].quantity = (currentData.player.inventory[i].quantity||1) + qty;
+                found = true;
+                break;
+            }
+        }
+        if(!found){
+            var match = allItems.find(function(it){ return it.id === id; });
+            currentData.player.inventory.push({id:id, name: match ? match.name : id.replace(/_/g,' '), icon: match ? match.icon : '📦', price:0, type:'loot', quantity:qty});
+        }
+        document.getElementById('editor').value = JSON.stringify(currentData, null, 2);
+        updateInvPreview();
+        document.getElementById('status').textContent = '✅ Item added. Save JSON to confirm.';
+    }
+
+    function savePlayer(){
+        if(!currentPlayer) return;
+        try {
+            var data = JSON.parse(document.getElementById('editor').value);
+            currentData = data;
+            fetch('/api/saves/' + currentPlayer, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({data: data})
+            }).then(function(r){ return r.json(); }).then(function(){
+                document.getElementById('status').textContent = '✅ Saved!';
+                updateInvPreview();
+                setTimeout(function(){ document.getElementById('status').textContent = ''; }, 2000);
+            });
+        } catch(e) {
+            document.getElementById('status').textContent = '❌ Invalid JSON!';
+        }
+    }
+
+    function deletePlayer(){
+        if(!currentPlayer || !confirm('Delete ' + currentPlayer + ' forever?')) return;
+        fetch('/api/saves/' + currentPlayer, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({data: {player: {}}})
+        }).then(function(){
+            document.getElementById('status').textContent = '🗑️ Deleted.';
+            currentPlayer = '';
+            currentData = null;
+            document.getElementById('editor').value = '';
+            loadPlayers();
+        });
+    }
+
+    loadPlayers();
+</script></body>
+</html>

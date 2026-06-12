@@ -247,8 +247,10 @@
         setTimeout(function() { resultDiv.style.opacity = '1'; }, 100);
     }
 
-    updateDisplay();
-    renderShop();
+    setTimeout(function(){
+        updateDisplay();
+        renderShop();
+    }, 500);
 </script>
 </body>
 </html>

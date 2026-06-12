@@ -302,8 +302,10 @@
     if (!gameState.player.prestigeSkills) gameState.player.prestigeSkills = {};
     if (gameState.player.prestigePoints === undefined) gameState.player.prestigePoints = 0;
 
-    renderAllSkills();
-    updateTopBar();
+    setTimeout(function(){
+        renderAllSkills();
+        updateTopBar();
+    }, 500);
 </script>
 </body>
 </html>
