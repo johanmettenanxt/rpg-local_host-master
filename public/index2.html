@@ -145,99 +145,33 @@
 <script src="gamestate.js"></script>
 <script>
     var enemyDatabase = {
-        1: [
-            {name:'Goblin',icon:'👹',healthMult:0.6,damageMult:0.6,goldMin:10,goldMax:15},
-            {name:'Goblin Archer',icon:'🏹',healthMult:0.5,damageMult:0.7,goldMin:12,goldMax:18},
-            {name:'Wild Boar',icon:'🐗',healthMult:0.8,damageMult:0.6,goldMin:15,goldMax:20},
-            {name:'Dire Wolf',icon:'🐺',healthMult:0.7,damageMult:0.8,goldMin:18,goldMax:22},
-            {name:'Troll',icon:'👹',healthMult:1.0,damageMult:0.8,goldMin:20,goldMax:25},
-            {name:'Forest Sprite',icon:'🧚',healthMult:0.4,damageMult:0.9,goldMin:14,goldMax:19}
-        ],
-        10: [
-            {name:'Orc Warrior',icon:'⚔️',healthMult:0.8,damageMult:0.9,goldMin:25,goldMax:35},
-            {name:'Shadow Beast',icon:'👾',healthMult:0.9,damageMult:0.9,goldMin:28,goldMax:38},
-            {name:'Giant Spider',icon:'🕷️',healthMult:0.7,damageMult:0.8,goldMin:22,goldMax:30},
-            {name:'Stone Golem',icon:'🪨',healthMult:1.3,damageMult:0.7,goldMin:30,goldMax:40},
-            {name:'Orc Shaman',icon:'🧙‍♂️',healthMult:0.6,damageMult:1.1,goldMin:35,goldMax:45},
-            {name:'War Troll',icon:'👺',healthMult:1.1,damageMult:1.0,goldMin:32,goldMax:42}
-        ],
-        25: [
-            {name:'Dark Knight',icon:'⚔️',healthMult:1.0,damageMult:1.0,goldMin:40,goldMax:55},
-            {name:'Demon',icon:'👿',healthMult:1.0,damageMult:1.2,goldMin:45,goldMax:60},
-            {name:'Wraith',icon:'😈',healthMult:0.8,damageMult:1.3,goldMin:50,goldMax:65},
-            {name:'Void Beast',icon:'⬛',healthMult:1.2,damageMult:1.1,goldMin:42,goldMax:58},
-            {name:'Skeleton Warrior',icon:'💀',healthMult:0.9,damageMult:1.0,goldMin:38,goldMax:50},
-            {name:'Crypt Stalker',icon:'👣',healthMult:0.7,damageMult:1.4,goldMin:48,goldMax:62}
-        ],
-        45: [
-            {name:'Wyvern',icon:'🐉',healthMult:1.2,damageMult:1.3,goldMin:60,goldMax:80},
-            {name:'Lich Knight',icon:'💀',healthMult:1.1,damageMult:1.4,goldMin:65,goldMax:85},
-            {name:'Nightmare Beast',icon:'😱',healthMult:1.4,damageMult:1.4,goldMin:70,goldMax:90},
-            {name:'Infernal Guard',icon:'🔥',healthMult:1.3,damageMult:1.3,goldMin:55,goldMax:75},
-            {name:'Shadow Lord',icon:'🖤',healthMult:1.3,damageMult:1.4,goldMin:75,goldMax:95},
-            {name:'Fire Drake',icon:'🐲',healthMult:1.5,damageMult:1.2,goldMin:68,goldMax:88}
-        ],
-        70: [
-            {name:'Greater Demon',icon:'👿',healthMult:1.5,damageMult:1.7,goldMin:90,goldMax:120},
-            {name:'Ancient Dragon',icon:'🐉',healthMult:1.7,damageMult:1.5,goldMin:100,goldMax:130},
-            {name:'Reality Ripper',icon:'⚡',healthMult:1.4,damageMult:1.8,goldMin:95,goldMax:125},
-            {name:'Arch Lich',icon:'💀',healthMult:1.3,damageMult:1.9,goldMin:110,goldMax:140},
-            {name:'Void Lord',icon:'⬛',healthMult:1.6,damageMult:1.6,goldMin:105,goldMax:135},
-            {name:'Rift Walker',icon:'🚶',healthMult:1.2,damageMult:2.0,goldMin:115,goldMax:145}
-        ],
-        100: [
-            {name:'Eldritch Abomination',icon:'👾',healthMult:2.0,damageMult:2.1,goldMin:150,goldMax:200},
-            {name:'Void Emperor',icon:'⬛',healthMult:2.1,damageMult:2.1,goldMin:160,goldMax:210},
-            {name:'Cosmic Horror',icon:'🌌',healthMult:2.0,damageMult:2.0,goldMin:145,goldMax:195},
-            {name:'Apocalypse Herald',icon:'📯',healthMult:2.0,damageMult:2.2,goldMin:170,goldMax:220},
-            {name:'Eldritch Watcher',icon:'👁️',healthMult:1.8,damageMult:2.3,goldMin:155,goldMax:205},
-            {name:'Void Warden',icon:'🔒',healthMult:2.3,damageMult:1.9,goldMin:165,goldMax:215}
-        ],
-        135: [
-            {name:'Transcendent Being',icon:'✨',healthMult:2.5,damageMult:2.5,goldMin:220,goldMax:300},
-            {name:'Beyond Existence',icon:'🌌',healthMult:2.7,damageMult:2.7,goldMin:250,goldMax:330},
-            {name:'Celestial Tyrant',icon:'⭐',healthMult:2.6,damageMult:2.6,goldMin:230,goldMax:310},
-            {name:'God of Ruin',icon:'⚡',healthMult:2.8,damageMult:2.6,goldMin:260,goldMax:340},
-            {name:'Star Weaver',icon:'🌟',healthMult:2.4,damageMult:2.8,goldMin:240,goldMax:320},
-            {name:'Lightbane',icon:'☀️',healthMult:2.9,damageMult:2.4,goldMin:270,goldMax:350}
-        ],
-        175: [
-            {name:'Abyssal Horror',icon:'🦑',healthMult:3.2,damageMult:3.2,goldMin:350,goldMax:480},
-            {name:'Deep One',icon:'🐙',healthMult:3.0,damageMult:3.4,goldMin:330,goldMax:460},
-            {name:'Leviathan Spawn',icon:'🐋',healthMult:3.5,damageMult:3.0,goldMin:370,goldMax:500},
-            {name:'Trench Walker',icon:'🚶',healthMult:3.1,damageMult:3.3,goldMin:340,goldMax:470},
-            {name:'Abyssal Mage',icon:'🧙',healthMult:2.8,damageMult:3.6,goldMin:360,goldMax:490},
-            {name:'Void Kraken',icon:'🐙',healthMult:3.4,damageMult:3.1,goldMin:380,goldMax:510}
-        ],
-        210: [
-            {name:'Phoenix Knight',icon:'🔥',healthMult:3.8,damageMult:3.8,goldMin:500,goldMax:700},
-            {name:'Eternal Flame',icon:'💥',healthMult:3.6,damageMult:4.0,goldMin:480,goldMax:680},
-            {name:'Ash Warden',icon:'🛡️',healthMult:4.0,damageMult:3.6,goldMin:520,goldMax:720},
-            {name:'Inferno Lord',icon:'👑',healthMult:3.9,damageMult:3.9,goldMin:510,goldMax:710},
-            {name:'Cinder Beast',icon:'🐗',healthMult:4.2,damageMult:3.5,goldMin:490,goldMax:690},
-            {name:'Blaze Spirit',icon:'👻',healthMult:3.5,damageMult:4.2,goldMin:530,goldMax:730}
-        ],
-        250: [
-            {name:'The Eternal One',icon:'👑',healthMult:4.5,damageMult:4.5,goldMin:800,goldMax:1100},
-            {name:'The Infinite Terror',icon:'👻',healthMult:4.7,damageMult:4.7,goldMin:850,goldMax:1150},
-            {name:'Absolute Sovereign',icon:'⭐',healthMult:4.5,damageMult:4.8,goldMin:820,goldMax:1120},
-            {name:'Chaos Unbound',icon:'🌀',healthMult:4.8,damageMult:4.5,goldMin:880,goldMax:1180},
-            {name:'Void Incarnate',icon:'⬛',healthMult:5.0,damageMult:4.4,goldMin:900,goldMax:1200},
-            {name:'Infinity Golem',icon:'♾️',healthMult:5.2,damageMult:4.3,goldMin:920,goldMax:1250}
-        ]
+        1:[{name:'Goblin',icon:'👹',healthMult:0.6,damageMult:0.6,goldMin:10,goldMax:15},{name:'Goblin Archer',icon:'🏹',healthMult:0.5,damageMult:0.7,goldMin:12,goldMax:18},{name:'Wild Boar',icon:'🐗',healthMult:0.8,damageMult:0.6,goldMin:15,goldMax:20},{name:'Dire Wolf',icon:'🐺',healthMult:0.7,damageMult:0.8,goldMin:18,goldMax:22},{name:'Troll',icon:'👹',healthMult:1.0,damageMult:0.8,goldMin:20,goldMax:25},{name:'Forest Sprite',icon:'🧚',healthMult:0.4,damageMult:0.9,goldMin:14,goldMax:19}],
+        10:[{name:'Orc Warrior',icon:'⚔️',healthMult:0.8,damageMult:0.9,goldMin:25,goldMax:35},{name:'Shadow Beast',icon:'👾',healthMult:0.9,damageMult:0.9,goldMin:28,goldMax:38},{name:'Giant Spider',icon:'🕷️',healthMult:0.7,damageMult:0.8,goldMin:22,goldMax:30},{name:'Stone Golem',icon:'🪨',healthMult:1.3,damageMult:0.7,goldMin:30,goldMax:40},{name:'Orc Shaman',icon:'🧙‍♂️',healthMult:0.6,damageMult:1.1,goldMin:35,goldMax:45},{name:'War Troll',icon:'👺',healthMult:1.1,damageMult:1.0,goldMin:32,goldMax:42}],
+        25:[{name:'Dark Knight',icon:'⚔️',healthMult:1.0,damageMult:1.0,goldMin:40,goldMax:55},{name:'Demon',icon:'👿',healthMult:1.0,damageMult:1.2,goldMin:45,goldMax:60},{name:'Wraith',icon:'😈',healthMult:0.8,damageMult:1.3,goldMin:50,goldMax:65},{name:'Void Beast',icon:'⬛',healthMult:1.2,damageMult:1.1,goldMin:42,goldMax:58},{name:'Skeleton Warrior',icon:'💀',healthMult:0.9,damageMult:1.0,goldMin:38,goldMax:50},{name:'Crypt Stalker',icon:'👣',healthMult:0.7,damageMult:1.4,goldMin:48,goldMax:62}],
+        45:[{name:'Wyvern',icon:'🐉',healthMult:1.2,damageMult:1.3,goldMin:60,goldMax:80},{name:'Lich Knight',icon:'💀',healthMult:1.1,damageMult:1.4,goldMin:65,goldMax:85},{name:'Nightmare Beast',icon:'😱',healthMult:1.4,damageMult:1.4,goldMin:70,goldMax:90},{name:'Infernal Guard',icon:'🔥',healthMult:1.3,damageMult:1.3,goldMin:55,goldMax:75},{name:'Shadow Lord',icon:'🖤',healthMult:1.3,damageMult:1.4,goldMin:75,goldMax:95},{name:'Fire Drake',icon:'🐲',healthMult:1.5,damageMult:1.2,goldMin:68,goldMax:88}],
+        70:[{name:'Greater Demon',icon:'👿',healthMult:1.5,damageMult:1.7,goldMin:90,goldMax:120},{name:'Ancient Dragon',icon:'🐉',healthMult:1.7,damageMult:1.5,goldMin:100,goldMax:130},{name:'Reality Ripper',icon:'⚡',healthMult:1.4,damageMult:1.8,goldMin:95,goldMax:125},{name:'Arch Lich',icon:'💀',healthMult:1.3,damageMult:1.9,goldMin:110,goldMax:140},{name:'Void Lord',icon:'⬛',healthMult:1.6,damageMult:1.6,goldMin:105,goldMax:135},{name:'Rift Walker',icon:'🚶',healthMult:1.2,damageMult:2.0,goldMin:115,goldMax:145}],
+        100:[{name:'Eldritch Abomination',icon:'👾',healthMult:2.0,damageMult:2.1,goldMin:150,goldMax:200},{name:'Void Emperor',icon:'⬛',healthMult:2.1,damageMult:2.1,goldMin:160,goldMax:210},{name:'Cosmic Horror',icon:'🌌',healthMult:2.0,damageMult:2.0,goldMin:145,goldMax:195},{name:'Apocalypse Herald',icon:'📯',healthMult:2.0,damageMult:2.2,goldMin:170,goldMax:220},{name:'Eldritch Watcher',icon:'👁️',healthMult:1.8,damageMult:2.3,goldMin:155,goldMax:205},{name:'Void Warden',icon:'🔒',healthMult:2.3,damageMult:1.9,goldMin:165,goldMax:215}],
+        135:[{name:'Transcendent Being',icon:'✨',healthMult:2.5,damageMult:2.5,goldMin:220,goldMax:300},{name:'Beyond Existence',icon:'🌌',healthMult:2.7,damageMult:2.7,goldMin:250,goldMax:330},{name:'Celestial Tyrant',icon:'⭐',healthMult:2.6,damageMult:2.6,goldMin:230,goldMax:310},{name:'God of Ruin',icon:'⚡',healthMult:2.8,damageMult:2.6,goldMin:260,goldMax:340},{name:'Star Weaver',icon:'🌟',healthMult:2.4,damageMult:2.8,goldMin:240,goldMax:320},{name:'Lightbane',icon:'☀️',healthMult:2.9,damageMult:2.4,goldMin:270,goldMax:350}],
+        175:[{name:'Abyssal Horror',icon:'🦑',healthMult:3.2,damageMult:3.2,goldMin:350,goldMax:480},{name:'Deep One',icon:'🐙',healthMult:3.0,damageMult:3.4,goldMin:330,goldMax:460},{name:'Leviathan Spawn',icon:'🐋',healthMult:3.5,damageMult:3.0,goldMin:370,goldMax:500},{name:'Trench Walker',icon:'🚶',healthMult:3.1,damageMult:3.3,goldMin:340,goldMax:470},{name:'Abyssal Mage',icon:'🧙',healthMult:2.8,damageMult:3.6,goldMin:360,goldMax:490},{name:'Void Kraken',icon:'🐙',healthMult:3.4,damageMult:3.1,goldMin:380,goldMax:510}],
+        210:[{name:'Phoenix Knight',icon:'🔥',healthMult:3.8,damageMult:3.8,goldMin:500,goldMax:700},{name:'Eternal Flame',icon:'💥',healthMult:3.6,damageMult:4.0,goldMin:480,goldMax:680},{name:'Ash Warden',icon:'🛡️',healthMult:4.0,damageMult:3.6,goldMin:520,goldMax:720},{name:'Inferno Lord',icon:'👑',healthMult:3.9,damageMult:3.9,goldMin:510,goldMax:710},{name:'Cinder Beast',icon:'🐗',healthMult:4.2,damageMult:3.5,goldMin:490,goldMax:690},{name:'Blaze Spirit',icon:'👻',healthMult:3.5,damageMult:4.2,goldMin:530,goldMax:730}],
+        250:[{name:'The Eternal One',icon:'👑',healthMult:4.5,damageMult:4.5,goldMin:800,goldMax:1100},{name:'The Infinite Terror',icon:'👻',healthMult:4.7,damageMult:4.7,goldMin:850,goldMax:1150},{name:'Absolute Sovereign',icon:'⭐',healthMult:4.5,damageMult:4.8,goldMin:820,goldMax:1120},{name:'Chaos Unbound',icon:'🌀',healthMult:4.8,damageMult:4.5,goldMin:880,goldMax:1180},{name:'Void Incarnate',icon:'⬛',healthMult:5.0,damageMult:4.4,goldMin:900,goldMax:1200},{name:'Infinity Golem',icon:'♾️',healthMult:5.2,damageMult:4.3,goldMin:920,goldMax:1250}]
     };
 
     var currentBattle = null;
     var autoBattle = false;
     var autoTimer = null;
     var autoMode = 'balanced';
-    var globalBossHP = parseInt(localStorage.getItem('globalBossHP') || '1000000');
+    var globalBossHP = parseInt(localStorage.getItem('globalBossHP')) || 1000000;
     var globalBossMaxHP = 1000000;
     var isGlobalBoss = false;
 
-    function updateAutoMode(){
-        autoMode = document.getElementById('auto-mode').value;
-    }
+    fetch('/api/globalboss').then(function(r){return r.json();}).then(function(data){
+        globalBossHP = data.hp;
+        globalBossMaxHP = data.maxHp;
+        localStorage.setItem('globalBossHP', globalBossHP);
+    });
+
+    function updateAutoMode(){ autoMode = document.getElementById('auto-mode').value; }
 
     function BattleSystem(config) {
         var self = this;
@@ -250,8 +184,6 @@
         this.totalGoldEarned = 0;
         this.poisonTurns = 0;
         this.poisonDamage = 0;
-        this.prevLevel = gameState.player.level;
-
         isGlobalBoss = this.isGlobalBoss;
 
         if (this.isGlobalBoss) {
@@ -259,7 +191,6 @@
             document.getElementById('enemy-stats-panel').classList.add('global-stats');
             document.getElementById('battle-type').innerHTML = '👑 GLOBAL BOSS: World Eater';
             document.getElementById('global-hp-display').classList.remove('hidden');
-            document.getElementById('global-hp-display').textContent = '🌍 Global HP: ' + globalBossHP.toLocaleString() + ' / ' + globalBossMaxHP.toLocaleString();
         } else if (this.isBossFight) {
             this.bossData = gameState.bosses[this.bossIndex];
             this.worldLevel = this.bossData.worldLevel;
@@ -268,27 +199,14 @@
             document.getElementById('battle-type').innerHTML = '👑 BOSS: ' + this.bossData.name;
         } else {
             var w = null;
-            for (var i = 0; i < gameState.worlds.length; i++) {
-                if (gameState.worlds[i].level === this.worldLevel) { w = gameState.worlds[i]; break; }
-            }
+            for (var i = 0; i < gameState.worlds.length; i++) { if (gameState.worlds[i].level === this.worldLevel) { w = gameState.worlds[i]; break; } }
             document.getElementById('battle-type').innerHTML = '⚔️ ' + (w ? w.name : 'World ' + this.worldLevel);
         }
 
-        this.player = {
-            name: gameState.player.name,
-            level: gameState.player.level,
-            maxHealth: gameState.player.maxHealth,
-            health: gameState.player.maxHealth,
-            maxMana: gameState.player.maxMana,
-            mana: gameState.player.maxMana,
-            defending: false,
-            rage: 0
-        };
-
+        this.player = { name: gameState.player.name, level: gameState.player.level, maxHealth: gameState.player.maxHealth, health: gameState.player.maxHealth, maxMana: gameState.player.maxMana, mana: gameState.player.maxMana, defending: false, rage: 0 };
         this.turn = 1;
         this.combatLog = [];
         this.gameActive = true;
-        this.prevLevel = gameState.player.level;
 
         this.syncPlayerStats = function() {
             gameState.recalculateStats();
@@ -314,48 +232,19 @@
 
         this.spawnEnemy = function() {
             if (self.isGlobalBoss) {
-                var bh = 5000;
-                var bd = 200;
-                self.enemy = {
-                    name: 'World Eater', icon: '🌍', level: 999,
-                    maxHealth: globalBossHP, health: globalBossHP,
-                    baseDamage: bd,
-                    goldMin: 5000, goldMax: 10000, isBoss: true, isGlobal: true,
-                    expReward: 5000
-                };
+                self.enemy = { name: 'World Eater', icon: '🌍', level: 999, maxHealth: globalBossHP, health: globalBossHP, baseDamage: 200, goldMin: 5000, goldMax: 10000, isBoss: true, isGlobal: true, expReward: 5000 };
                 document.getElementById('enemy-health-fill').classList.add('global-health');
             } else if (self.isBossFight) {
                 var b = self.bossData;
-                var bh = 80 + (b.worldLevel * 15);
-                var bd = 15 + (b.worldLevel * 3);
-                self.enemy = {
-                    name: b.name, icon: b.icon, level: b.worldLevel,
-                    maxHealth: Math.floor(bh * b.healthMult), health: Math.floor(bh * b.healthMult),
-                    baseDamage: Math.floor(bd * b.damageMult),
-                    goldMin: b.goldMin, goldMax: b.goldMax, isBoss: true,
-                    amulet: b.amulet, expReward: b.expReward
-                };
+                self.enemy = { name: b.name, icon: b.icon, level: b.worldLevel, maxHealth: Math.floor((80+b.worldLevel*15)*b.healthMult), health: Math.floor((80+b.worldLevel*15)*b.healthMult), baseDamage: Math.floor((15+b.worldLevel*3)*b.damageMult), goldMin: b.goldMin, goldMax: b.goldMax, isBoss: true, amulet: b.amulet, expReward: b.expReward };
                 document.getElementById('enemy-health-fill').classList.add('boss-health');
             } else {
                 var enemies = enemyDatabase[self.worldLevel];
                 var tpl = enemies[Math.floor(Math.random() * enemies.length)];
                 self.isElite = Math.random() < 0.15;
-                var eliteMult = self.isElite ? 1.5 : 1;
-                var eliteGoldMult = self.isElite ? 2 : 1;
-                var bh = 40 + (self.worldLevel * 8);
-                var bd = 8 + (self.worldLevel * 1.5);
-                self.enemy = {
-                    name: (self.isElite ? '⭐ ' : '') + tpl.name,
-                    icon: tpl.icon,
-                    level: self.worldLevel,
-                    maxHealth: Math.floor(bh * tpl.healthMult * eliteMult),
-                    health: Math.floor(bh * tpl.healthMult * eliteMult),
-                    baseDamage: Math.floor(bd * tpl.damageMult * eliteMult),
-                    goldMin: Math.floor(tpl.goldMin * eliteGoldMult),
-                    goldMax: Math.floor(tpl.goldMax * eliteGoldMult),
-                    isBoss: false,
-                    isElite: self.isElite
-                };
+                var em = self.isElite ? 1.5 : 1;
+                var egm = self.isElite ? 2 : 1;
+                self.enemy = { name: (self.isElite?'⭐ ':'')+tpl.name, icon: tpl.icon, level: self.worldLevel, maxHealth: Math.floor((40+self.worldLevel*8)*tpl.healthMult*em), health: Math.floor((40+self.worldLevel*8)*tpl.healthMult*em), baseDamage: Math.floor((8+self.worldLevel*1.5)*tpl.damageMult*em), goldMin: Math.floor(tpl.goldMin*egm), goldMax: Math.floor(tpl.goldMax*egm), isBoss: false, isElite: self.isElite };
                 if (self.isElite) {
                     document.getElementById('battle-screen').classList.add('elite-fight');
                     document.getElementById('enemy-stats-panel').classList.add('elite-stats');
@@ -368,7 +257,7 @@
 
         this.useAbility = function(key) {
             if (!self.gameActive) return;
-            var costs = { strike: 0, fireball: 20, heal: 25, stun: 15, poison: 15, defend: 0, rage: 30, item: 0, flee: 0 };
+            var costs = { strike:0, fireball:20, heal:25, stun:15, poison:15, defend:0, rage:30, item:0, flee:0 };
             if (costs[key] > self.player.mana) { self.addLog('⚠️ Not enough mana!'); return; }
             self.player.mana = Math.max(0, self.player.mana - costs[key]);
             var t = gameState.getTotalStats();
@@ -376,21 +265,21 @@
             var isCrit = Math.random() < 0.10;
 
             if (key === 'strike') {
-                var d = self.rand([15, 25]) + Math.floor(t.damage * 0.5);
+                var d = self.rand([15,25]) + Math.floor(t.damage * 0.5);
                 if (self.player.rage > 0) { d = Math.floor(d * 1.5); self.player.rage = 0; }
                 if (isCrit) d = Math.floor(d * 2);
                 self.enemy.health = Math.max(0, self.enemy.health - d);
-                if(self.isGlobalBoss){ globalBossHP = Math.max(0, globalBossHP - d); localStorage.setItem('globalBossHP', globalBossHP); }
+                if (self.isGlobalBoss) { globalBossHP = Math.max(0, globalBossHP - d); fetch('/api/globalboss/damage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({damage:d})}); }
                 msg = '⚔️ Strike: ' + d + ' dmg' + (isCrit ? ' 💥CRIT!' : '');
             } else if (key === 'fireball') {
-                var d = self.rand([30, 50]) + Math.floor(t.intelligence * 0.6);
+                var d = self.rand([30,50]) + Math.floor(t.intelligence * 0.6);
                 if (self.player.rage > 0) { d = Math.floor(d * 1.5); self.player.rage = 0; }
                 if (isCrit) d = Math.floor(d * 2);
                 self.enemy.health = Math.max(0, self.enemy.health - d);
-                if(self.isGlobalBoss){ globalBossHP = Math.max(0, globalBossHP - d); localStorage.setItem('globalBossHP', globalBossHP); }
+                if (self.isGlobalBoss) { globalBossHP = Math.max(0, globalBossHP - d); fetch('/api/globalboss/damage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({damage:d})}); }
                 msg = '🔥 Fireball: ' + d + ' dmg' + (isCrit ? ' 💥CRIT!' : '');
             } else if (key === 'heal') {
-                var h = self.rand([30, 50]);
+                var h = self.rand([30,50]);
                 if (t.healBoost > 0) h = Math.floor(h * (1 + t.healBoost / 100));
                 self.player.health = Math.min(self.player.maxHealth, self.player.health + h);
                 msg = '💚 Heal: +' + h + ' HP';
@@ -408,7 +297,7 @@
                 self.player.rage = 1.5;
                 msg = '😈 Rage! Next attack +50% dmg';
             } else if (key === 'item') {
-                var h = self.rand([40, 80]);
+                var h = self.rand([40,80]);
                 if (t.healBoost > 0) h = Math.floor(h * (1 + t.healBoost / 100));
                 self.player.health = Math.min(self.player.maxHealth, self.player.health + h);
                 msg = '📦 Item: +' + h + ' HP';
@@ -428,7 +317,7 @@
             if (!self.gameActive) return;
             if (self.poisonTurns > 0) {
                 self.enemy.health = Math.max(0, self.enemy.health - self.poisonDamage);
-                if(self.isGlobalBoss){ globalBossHP = Math.max(0, globalBossHP - self.poisonDamage); localStorage.setItem('globalBossHP', globalBossHP); }
+                if (self.isGlobalBoss) { globalBossHP = Math.max(0, globalBossHP - self.poisonDamage); fetch('/api/globalboss/damage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({damage:self.poisonDamage})}); }
                 self.addLog('☠️ Poison deals ' + self.poisonDamage + ' damage! (' + (self.poisonTurns - 1) + ' turns left)');
                 self.poisonTurns--;
                 if (self.enemy.health <= 0) { self.enemy.health = 0; self.updateUI(); self.checkBattleEnd(); return; }
@@ -438,14 +327,13 @@
                 self.enemy.stunned = false;
             } else {
                 var dmg = self.rand([self.enemy.baseDamage * 0.7, self.enemy.baseDamage * 1.3]);
-                var actual = dmg;
                 if (self.player.defending) {
-                    actual = Math.floor(dmg * 0.4);
+                    var actual = Math.floor(dmg * 0.4);
                     self.player.defending = false;
                     self.addLog(self.enemy.icon + ' ' + self.enemy.name + ' attacks! Defended: ' + actual + ' dmg');
                 } else {
-                    self.player.health = Math.max(0, self.player.health - actual);
-                    self.addLog(self.enemy.icon + ' ' + self.enemy.name + ' attacks for ' + actual + ' dmg!');
+                    self.player.health = Math.max(0, self.player.health - dmg);
+                    self.addLog(self.enemy.icon + ' ' + self.enemy.name + ' attacks for ' + dmg + ' dmg!');
                 }
             }
             self.player.mana = Math.min(self.player.maxMana, self.player.mana + 15);
@@ -459,36 +347,22 @@
                 self.addLog('💀 You were defeated!');
                 self.gameActive = false;
                 self.updateUI();
-                if (autoBattle) {
-                    self.addLog('🔄 Auto-reviving...');
-                    setTimeout(function() { self.restart(); }, 800);
-                    return;
-                }
+                if (autoBattle) { self.addLog('🔄 Auto-reviving...'); setTimeout(function() { self.restart(); }, 800); return; }
                 setTimeout(function() { self.showDefeat(); }, 600);
             } else if (self.enemy.health <= 0) {
                 self.enemiesDefeated++;
-                if (self.isGlobalBoss) {
-                    self.addLog('🏆 GLOBAL BOSS DEFEATED!');
-                    self.globalReward();
-                } else if (self.isBossFight) {
-                    self.addLog('🏆 ' + self.enemy.name + ' HAS BEEN DEFEATED!');
-                    self.bossReward();
-                } else {
-                    self.addLog('✨ ' + self.enemy.name + ' defeated! (' + self.enemiesDefeated + ' total)');
-                    self.reward();
-                    self.spawnNext();
-                }
+                if (self.isGlobalBoss) { self.addLog('🏆 GLOBAL BOSS DEFEATED!'); self.globalReward(); }
+                else if (self.isBossFight) { self.addLog('🏆 ' + self.enemy.name + ' HAS BEEN DEFEATED!'); self.bossReward(); }
+                else { self.addLog('✨ ' + self.enemy.name + ' defeated! (' + self.enemiesDefeated + ' total)'); self.reward(); self.spawnNext(); }
             }
         };
 
         this.globalReward = function() {
-            var gr = self.rand([5000, 10000]);
-            gameState.gainGold(gr);
-            gameState.gainExp(5000);
-            gameState.addKill();
+            var gr = self.rand([5000,10000]);
+            gameState.gainGold(gr); gameState.gainExp(5000); gameState.addKill();
             self.totalGoldEarned += gr;
             globalBossHP = globalBossMaxHP;
-            localStorage.setItem('globalBossHP', globalBossHP);
+            fetch('/api/globalboss/reset',{method:'POST'});
             gameState.saveToLocalStorage();
             self.showVictory('🌍 Global Boss defeated!\n💰 +' + gr + ' Gold | +5000 EXP\nGlobal boss respawned!');
         };
@@ -502,28 +376,12 @@
             gameState.gainExp(w ? w.baseExp : 50);
             gameState.addKill();
             self.totalGoldEarned += gr + bg;
-            var m = '💰 ' + gr + ' Gold!';
-            if (bg > 0) m += ' (+' + bg + ')';
-            self.addLog(m);
-
-            if (gameState.player.level > oldLevel) {
-                self.addLog('🎉 LEVEL UP! Now level ' + gameState.player.level + '! HP and Mana restored!');
-                self.syncPlayerStats();
-            }
-
+            self.addLog('💰 ' + gr + ' Gold!' + (bg > 0 ? ' (+' + bg + ')' : ''));
+            if (gameState.player.level > oldLevel) { self.addLog('🎉 LEVEL UP! Now level ' + gameState.player.level + '!'); self.syncPlayerStats(); }
             var dropTable = gameState.dropTables[self.worldLevel];
             if (dropTable) {
-                var roll = Math.random();
-                var cum = 0;
-                for (var j = 0; j < dropTable.length; j++) {
-                    cum += dropTable[j].dropRate;
-                    if (roll < cum) {
-                        gameState.addDropToInventory(dropTable[j]);
-                        gameState.addMaterial(dropTable[j]);
-                        self.addLog('💎 ' + dropTable[j].name + '!');
-                        break;
-                    }
-                }
+                var roll = Math.random(), cum = 0;
+                for (var j = 0; j < dropTable.length; j++) { cum += dropTable[j].dropRate; if (roll < cum) { gameState.addDropToInventory(dropTable[j]); gameState.addMaterial(dropTable[j]); self.addLog('💎 ' + dropTable[j].name + '!'); break; } }
             }
         };
 
@@ -534,84 +392,24 @@
             gameState.gainExp(self.enemy.expReward);
             gameState.addKill();
             self.totalGoldEarned += gr + bg;
-            var m = '💰 ' + gr + ' Gold!';
-            if (bg > 0) m += ' (+' + bg + ')';
-            self.addLog(m + ' +' + self.enemy.expReward + ' EXP');
-
-            if (gameState.player.level > oldLevel) {
-                self.addLog('🎉 LEVEL UP! Now level ' + gameState.player.level + '!');
-                self.syncPlayerStats();
-            }
+            self.addLog('💰 ' + gr + ' Gold!' + (bg>0?' (+'+bg+')':'') + ' +' + self.enemy.expReward + ' EXP');
+            if (gameState.player.level > oldLevel) { self.addLog('🎉 LEVEL UP!'); self.syncPlayerStats(); }
 
             if (!gameState.player.bossDefeats[self.bossData.worldLevel]) {
                 gameState.player.bossDefeats[self.bossData.worldLevel] = true;
-                gameState.addToInventory({
-                    id: self.enemy.amulet.id,
-                    name: self.enemy.amulet.name,
-                    icon: self.enemy.amulet.icon,
-                    description: self.enemy.amulet.description,
-                    stats: JSON.parse(JSON.stringify(self.enemy.amulet.stats)),
-                    type: 'amulet', price: 0, quantity: 1, unique: true
-                });
-
-                if (self.bossData.petDrop && gameState.player.pets.indexOf(self.bossData.petDrop) === -1) {
-                    gameState.player.pets.push(self.bossData.petDrop);
-                    gameState.addPetToInventory(self.bossData.petDrop);
-                    var petInfo = gameState.getPetById(self.bossData.petDrop);
-                    if (petInfo) {
-                        self.addLog('🐾 Pet earned: ' + petInfo.icon + ' ' + petInfo.name + '!');
-                    }
-                }
-
+                gameState.addToInventory({ id: self.enemy.amulet.id, name: self.enemy.amulet.name, icon: self.enemy.amulet.icon, description: self.enemy.amulet.description, stats: JSON.parse(JSON.stringify(self.enemy.amulet.stats)), type: 'amulet', price: 0, quantity: 1, unique: true });
+                if (self.bossData.petDrop && gameState.player.pets.indexOf(self.bossData.petDrop) === -1) { gameState.player.pets.push(self.bossData.petDrop); gameState.addPetToInventory(self.bossData.petDrop); }
                 gameState.saveToLocalStorage();
-                var victoryMsg = '🎉 First defeat! Earned ' + self.enemy.amulet.name + '!\n' + self.enemy.amulet.description;
-                if (self.bossData.petDrop) {
-                    var petInfo = gameState.getPetById(self.bossData.petDrop);
-                    if (petInfo) victoryMsg += '\n🐾 Pet: ' + petInfo.icon + ' ' + petInfo.name;
-                }
-                victoryMsg += '\n💰 +' + (gr + bg) + ' Gold | +' + self.enemy.expReward + ' EXP';
-                self.showVictory(victoryMsg);
+                self.showVictory('🎉 First defeat! Earned ' + self.enemy.amulet.name + '!\n💰 +' + (gr+bg) + ' Gold | +' + self.enemy.expReward + ' EXP');
             } else {
-                if (self.bossData.petDrop && gameState.player.pets.indexOf(self.bossData.petDrop) === -1) {
-                    if (Math.random() < 0.15) {
-                        gameState.player.pets.push(self.bossData.petDrop);
-                        gameState.addPetToInventory(self.bossData.petDrop);
-                        var petInfo = gameState.getPetById(self.bossData.petDrop);
-                        if (petInfo) {
-                            self.addLog('🐾 Pet dropped: ' + petInfo.icon + ' ' + petInfo.name + '!');
-                        }
-                    }
-                }
-
-                var dropTable = gameState.dropTables[self.bossData.worldLevel];
-                if (dropTable) {
-                    var roll = Math.random();
-                    var cum = 0;
-                    for (var j = 0; j < dropTable.length; j++) {
-                        cum += dropTable[j].dropRate;
-                        if (roll < cum) {
-                            gameState.addDropToInventory(dropTable[j]);
-                            break;
-                        }
-                    }
-                }
-                gameState.saveToLocalStorage();
-                self.showVictory('💰 +' + (gr + bg) + ' Gold | +' + self.enemy.expReward + ' EXP');
+                if (self.bossData.petDrop && gameState.player.pets.indexOf(self.bossData.petDrop) === -1 && Math.random() < 0.15) { gameState.player.pets.push(self.bossData.petDrop); gameState.addPetToInventory(self.bossData.petDrop); }
+                self.showVictory('💰 +' + (gr+bg) + ' Gold | +' + self.enemy.expReward + ' EXP');
             }
         };
 
         this.showVictory = function(msg) {
-            self.gameActive = false;
-            self.updateUI();
-            if (autoBattle) {
-                autoBattle = false;
-                if (autoTimer) clearTimeout(autoTimer);
-                var btn = document.getElementById('auto-btn');
-                if (btn) {
-                    btn.textContent = '🤖 Auto Battle: OFF';
-                    btn.style.background = 'linear-gradient(135deg,#ffd93d 0%,#f59e0b 100%)';
-                }
-            }
+            self.gameActive = false; self.updateUI();
+            if (autoBattle) { autoBattle = false; if (autoTimer) clearTimeout(autoTimer); var btn = document.getElementById('auto-btn'); if (btn) { btn.textContent = '🤖 Auto Battle: OFF'; btn.style.background = 'linear-gradient(135deg,#ffd93d 0%,#f59e0b 100%)'; } }
             document.getElementById('victory-message').textContent = msg;
             document.getElementById('victory-overlay').classList.remove('hidden');
             document.getElementById('victory-continue-btn').onclick = function() { window.location.href = 'index.html'; };
@@ -619,58 +417,21 @@
 
         this.showDefeat = function() {
             document.getElementById('defeat-overlay').classList.remove('hidden');
-            document.getElementById('retry-btn').onclick = function() {
-                document.getElementById('defeat-overlay').classList.add('hidden');
-                self.restart();
-            };
+            document.getElementById('retry-btn').onclick = function() { document.getElementById('defeat-overlay').classList.add('hidden'); self.restart(); };
             document.getElementById('defeat-back-btn').onclick = function() { window.location.href = 'index.html'; };
         };
 
         this.restart = function() {
-            self.syncPlayerStats();
-            self.player.defending = false;
-            self.player.rage = 0;
-            self.turn = 1;
-            self.combatLog = [];
-            self.gameActive = true;
-            self.poisonTurns = 0;
-            self.poisonDamage = 0;
-            self.spawnEnemy();
-            self.updateUI();
-            self.updateCombatLog();
-            self.addLog('🔄 You stand up ready to fight again!');
+            self.syncPlayerStats(); self.player.defending = false; self.player.rage = 0; self.turn = 1; self.combatLog = []; self.gameActive = true; self.poisonTurns = 0; self.poisonDamage = 0;
+            self.spawnEnemy(); self.updateUI(); self.updateCombatLog(); self.addLog('🔄 You stand up ready to fight again!');
             if (autoBattle) runAuto();
         };
 
-        this.spawnNext = function() {
-            self.addLog('🎪 A new enemy appears!');
-            self.spawnEnemy();
-            self.turn = 1;
-            self.updateUI();
-        };
-
-        this.endBattle = function(fled) {
-            if (fled === undefined) fled = true;
-            if (fled) self.addLog('💨 Successfully escaped! Defeated ' + self.enemiesDefeated + ' enemies. Earned ' + self.totalGoldEarned + ' Gold.');
-            setTimeout(function() { window.location.href = 'index.html'; }, 1500);
-        };
-
+        this.spawnNext = function() { self.addLog('🎪 A new enemy appears!'); self.spawnEnemy(); self.turn = 1; self.updateUI(); };
+        this.endBattle = function(fled) { if (fled === undefined) fled = true; if (fled) self.addLog('💨 Successfully escaped!'); setTimeout(function() { window.location.href = 'index.html'; }, 1500); };
         this.rand = function(range) { return Math.floor(Math.random() * (range[1] - range[0] + 1)) + range[0]; };
-
-        this.addLog = function(msg) {
-            self.combatLog.push('[Turn ' + self.turn + '] ' + msg);
-            if (self.combatLog.length > 15) self.combatLog.shift();
-            self.updateCombatLog();
-        };
-
-        this.updateCombatLog = function() {
-            var el = document.getElementById('combat-log');
-            el.innerHTML = '';
-            for (var i = 0; i < self.combatLog.length; i++) {
-                el.innerHTML += '<div>' + self.combatLog[i] + '</div>';
-            }
-            el.scrollTop = el.scrollHeight;
-        };
+        this.addLog = function(msg) { self.combatLog.push('[Turn ' + self.turn + '] ' + msg); if (self.combatLog.length > 15) self.combatLog.shift(); self.updateCombatLog(); };
+        this.updateCombatLog = function() { var el = document.getElementById('combat-log'); el.innerHTML = ''; for (var i = 0; i < self.combatLog.length; i++) { el.innerHTML += '<div>' + self.combatLog[i] + '</div>'; } el.scrollTop = el.scrollHeight; };
 
         this.updateUI = function() {
             document.getElementById('player-display-name').textContent = self.player.name;
@@ -681,15 +442,14 @@
             document.getElementById('enemy-level').textContent = self.enemy.level;
             document.getElementById('enemy-gold').textContent = self.enemy.goldMin + '-' + self.enemy.goldMax;
             document.getElementById('player-health-fill').style.width = (self.player.health / self.player.maxHealth * 100) + '%';
-            document.getElementById('player-health-text').textContent = self.player.health + '/' + self.player.maxHealth;
+            document.getElementById('player-health-text').textContent = Math.floor(self.player.health) + '/' + self.player.maxHealth;
             document.getElementById('player-hp-overlay').textContent = Math.floor(self.player.health) + ' / ' + self.player.maxHealth;
             document.getElementById('enemy-health-fill').style.width = (self.enemy.health / self.enemy.maxHealth * 100) + '%';
             document.getElementById('enemy-health-text').textContent = Math.floor(self.enemy.health) + '/' + self.enemy.maxHealth;
             document.getElementById('enemy-hp-overlay').textContent = Math.floor(self.enemy.health) + ' / ' + self.enemy.maxHealth;
             document.getElementById('player-mana-fill').style.width = (self.player.mana / self.player.maxMana * 100) + '%';
-            document.getElementById('player-mana-text').textContent = self.player.mana + '/' + self.player.maxMana;
-            var ps = self.poisonTurns > 0 ? ' ☠️ Poison: ' + self.poisonTurns + 't' : '';
-            document.getElementById('turn-info').textContent = 'Turn ' + self.turn + ' • Kills: ' + self.enemiesDefeated + ' • Gold: ' + self.totalGoldEarned + ps;
+            document.getElementById('player-mana-text').textContent = Math.floor(self.player.mana) + '/' + self.player.maxMana;
+            document.getElementById('turn-info').textContent = 'Turn ' + self.turn + ' • Kills: ' + self.enemiesDefeated + ' • Gold: ' + self.totalGoldEarned + (self.poisonTurns > 0 ? ' ☠️ Poison: ' + self.poisonTurns + 't' : '');
             if (self.isGlobalBoss) {
                 document.getElementById('global-hp-display').textContent = '🌍 Global HP: ' + globalBossHP.toLocaleString() + ' / ' + globalBossMaxHP.toLocaleString();
                 self.enemy.health = globalBossHP;
@@ -704,55 +464,42 @@
         this.updateUI();
     }
 
-    function toggleAuto(){
+    function toggleAuto() {
         autoBattle = !autoBattle;
         var btn = document.getElementById('auto-btn');
-        if(autoBattle){
+        if (autoBattle) {
             var modeLabel = autoMode === 'melee' ? '⚔️ Melee' : autoMode === 'magic' ? '🔮 Magic' : 'Balanced';
-            btn.textContent = '🤖 Auto Battle: ON (' + modeLabel + ')';            btn.style.background = 'linear-gradient(135deg,#43e97b 0%,#22c55e 100%)';
+            btn.textContent = '🤖 Auto Battle: ON (' + modeLabel + ')';
+            btn.style.background = 'linear-gradient(135deg,#43e97b 0%,#22c55e 100%)';
             runAuto();
         } else {
             btn.textContent = '🤖 Auto Battle: OFF';
             btn.style.background = 'linear-gradient(135deg,#ffd93d 0%,#f59e0b 100%)';
-            if(autoTimer) clearTimeout(autoTimer);
+            if (autoTimer) clearTimeout(autoTimer);
         }
     }
 
-    function runAuto(){
-        if(!autoBattle || !currentBattle || !currentBattle.gameActive) return;
-
-        if(autoMode === 'melee'){
-            currentBattle.useAbility('strike');
-        } else if(autoMode === 'magic'){
-            if(currentBattle.player.mana >= 20){
-                currentBattle.useAbility('fireball');
-            } else {
-                currentBattle.useAbility('strike');
-            }
-        } else {
+    function runAuto() {
+        if (!autoBattle || !currentBattle || !currentBattle.gameActive) return;
+        if (autoMode === 'melee') { currentBattle.useAbility('strike'); }
+        else if (autoMode === 'magic') { if (currentBattle.player.mana >= 20) currentBattle.useAbility('fireball'); else currentBattle.useAbility('strike'); }
+        else {
             var t = gameState.getTotalStats();
-            var strikeDmg = Math.floor(t.damage * 0.8 + currentBattle.rand([5,15]));
-            var fireballDmg = Math.floor(t.intelligence * 1.0 + currentBattle.rand([10,25]));
-            if(currentBattle.player.mana >= 20 && fireballDmg > strikeDmg){
-                currentBattle.useAbility('fireball');
-            } else {
-                currentBattle.useAbility('strike');
-            }
+            var sd = Math.floor(t.damage * 0.8 + currentBattle.rand([5,15]));
+            var fd = Math.floor(t.intelligence * 1.0 + currentBattle.rand([10,25]));
+            if (currentBattle.player.mana >= 20 && fd > sd) currentBattle.useAbility('fireball'); else currentBattle.useAbility('strike');
         }
-
         autoTimer = setTimeout(runAuto, 1200);
-    }    function backToMenu() { window.location.href = 'index.html'; }
+    }
+
+    function backToMenu() { window.location.href = 'index.html'; }
 
     var params = new URLSearchParams(window.location.search);
     var wp = params.get('world');
     var bp = params.get('boss');
-    if (bp === 'global') {
-        currentBattle = new BattleSystem({ isGlobalBoss: true });
-    } else if (bp !== null) {
-        currentBattle = new BattleSystem({ isBossFight: true, bossIndex: parseInt(bp) });
-    } else if (wp !== null) {
-        currentBattle = new BattleSystem({ isBossFight: false, worldLevel: gameState.worlds[parseInt(wp)].level });
-    }
+    if (bp === 'global') { currentBattle = new BattleSystem({ isGlobalBoss: true }); }
+    else if (bp !== null) { currentBattle = new BattleSystem({ isBossFight: true, bossIndex: parseInt(bp) }); }
+    else if (wp !== null) { currentBattle = new BattleSystem({ isBossFight: false, worldLevel: gameState.worlds[parseInt(wp)].level }); }
 </script>
 </body>
 </html>
