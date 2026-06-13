@@ -194,6 +194,7 @@
                 gameState.player.inventory.splice(i, 1);
             }
         }
+        gameState.player.materials = {};
         gameState.player.gold += totalGold;
         gameState.saveToLocalStorage();
         alert('💸 Sold ' + soldCount + ' items for ' + totalGold + ' gold!');
@@ -299,9 +300,16 @@
         } else if (inventoryMode === 'upgrade') {
             if (!item.tier) { alert('Cannot upgrade!'); }
             else if (item.tier >= 5) { alert('Max tier!'); }
-            else { var cost = gameState.getUpgradeCost(item.tier); alert('Cost: ' + cost.gold + 'g + ' + cost.amount + 'x T' + cost.materialTier + ' mats'); }
-        } else if (inventoryMode === 'sellall') {
-            // handled by button
+            else {
+                var result = gameState.upgradeItem(item.id);
+                alert(result.message);
+                gameState.recalculateStats();
+                renderInventory();
+            }
+            if (mode === 'sellall') {
+                if (confirm('Sell ALL non-unique loot? This cannot be undone.')) sellAllLoot();
+                else setInventoryMode('view');
+            }
         } else {
             var info = item.icon + ' ' + item.name + '\n' + (item.description || '') + '\n';
             if (item.tier) info += 'Tier: ' + gameState.getTierName(item.tier) + '\n';

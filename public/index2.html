@@ -354,6 +354,13 @@
                 if (self.isGlobalBoss) { self.addLog('🏆 GLOBAL BOSS DEFEATED!'); self.globalReward(); }
                 else if (self.isBossFight) { self.addLog('🏆 ' + self.enemy.name + ' HAS BEEN DEFEATED!'); self.bossReward(); }
                 else { self.addLog('✨ ' + self.enemy.name + ' defeated! (' + self.enemiesDefeated + ' total)'); self.reward(); self.spawnNext(); }
+            } else {
+                var execRank = gameState.getSkillRank('execute');
+                if (execRank > 0 && self.enemy.health > 0 && self.enemy.health <= self.enemy.maxHealth * (execRank * 0.02)) {
+                    self.enemy.health = 0;
+                    self.addLog('💀 Execute! Enemy below ' + (execRank * 2) + '% HP - instant kill!');
+                    self.checkBattleEnd();
+                }
             }
         };
 
